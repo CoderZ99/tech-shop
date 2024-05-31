@@ -1,5 +1,5 @@
-
 const userRouter = require('./user')
+const authRouter = require('./auth')
 
 function routes(app) {
     
