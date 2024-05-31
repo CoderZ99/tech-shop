@@ -7,7 +7,7 @@ router.get('/get-all', userController.getAllUsers)
 
 router.get('/:username', userController.getByUsername)
 
-router.post('/register', userController.createUser)
+// router.post('/register', userController.createUser)
 
 router.post('/block/:username', userController.blockUser)
 

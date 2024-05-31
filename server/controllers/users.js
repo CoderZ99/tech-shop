@@ -44,39 +44,39 @@ const usersController = {
    * @param {Object} res - The response object.
    * @return {Promise<Object>} - The response object with a status code and message.
    */
-  createUser: async (req, res) => {
-    try {
-      const { username, password, full_name, role, phone, status } = req.body;
+  // createUser: async (req, res) => {
+  //   try {
+  //     const { username, password, full_name, role, phone, status } = req.body;
 
-      // Check if the username already exists
-      let checkUsername = await userService.getByUsername(username);
-      if (checkUsername) {
-        return res
-          .status(400)
-          .json({ message: "username already exists!", error: 1 });
-      }
-      // Create the new user
-      await userService.createUser({
-        username,
-        password,
-        full_name,
-        role,
-        phone,
-        status,
-      });
+  //     // Check if the username already exists
+  //     let checkUsername = await userService.getByUsername(username);
+  //     if (checkUsername) {
+  //       return res
+  //         .status(400)
+  //         .json({ message: "username already exists!", error: 1 });
+  //     }
+  //     // Create the new user
+  //     await userService.createUser({
+  //       username,
+  //       password,
+  //       full_name,
+  //       role,
+  //       phone,
+  //       status,
+  //     });
 
-      // Return the response
-      res.status(201).json({
-        message: "success",
-        error: 0,
-      });
-    } catch (error) {
-      res.json({
-        message: `error! ${error.message}`,
-        error: 1,
-      });
-    }
-  },
+  //     // Return the response
+  //     res.status(201).json({
+  //       message: "success",
+  //       error: 0,
+  //     });
+  //   } catch (error) {
+  //     res.json({
+  //       message: `error! ${error.message}`,
+  //       error: 1,
+  //     });
+  //   }
+  // },
   /**
    * Blocks a user by their username.
    *
