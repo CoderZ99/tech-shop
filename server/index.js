@@ -3,6 +3,9 @@ const app = express()
 
 const cors = require("cors")
 
+// Cookie parser
+const cookieParser = require("cookie-parser")
+app.use(cookieParser())
 // Parse data from forms
 app.use(express.urlencoded({ extended: false }))
 // Parse application/json

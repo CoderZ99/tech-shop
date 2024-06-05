@@ -92,8 +92,8 @@ const authController = {
       }
       console.table(payload)
       // Generate JWT
-      const accessToken = await tokenService.generateAccessToken(payload)
-      const refreshToken = await tokenService.generateRefreshToken(payload)
+      const accessToken = tokenService.generateAccessToken(payload)
+      const refreshToken = tokenService.generateRefreshToken(payload)
       console.log(`accessToken: ${accessToken}`)
       console.log(`refreshToken: ${refreshToken}`)
 
@@ -111,11 +111,134 @@ const authController = {
         sameSite: "none",
       })
 
-      //TODO: Add refresh token to database
+      // Save refresh token to database
+      const saveToken = await tokenService.updateUserRefreshToken(
+        payload.username,
+        refreshToken
+      )
+      if (!saveToken) {
+        return res.status(500).json({
+          message: "Error while saving refresh token to database!",
+        })
+      }
 
       // Return the response
       res.status(200).json({
         message: "Login successfully!",
+        data: {
+          accessToken,
+          refreshToken,
+        },
+      })
+    } catch (error) {
+      res.json({
+        message: `Error: ${error.message}`,
+      })
+    }
+  },
+  // Refresh access token
+  refreshAccessToken: async (req, res) => {
+    try {
+      console.log(`refresh access token process`)
+      // Get refresh token from cookies
+      const refreshToken = req?.cookies?.refreshToken
+      console.log(`refreshToken: ${refreshToken}`)
+      if (!refreshToken) {
+        return res.status(401).json({
+          message:
+            "The refresh token does not exist because you are not logged in!",
+        })
+      }
+
+      // Verify refresh token signature
+      const payloadDecoded = await tokenService.verifyToken(
+        refreshToken,
+        process.env.JWT_REFRESH_KEY
+      )
+      if (!payloadDecoded) {
+        return res
+          .status(401)
+          .json({ message: "The refresh token signature is invalid!" })
+      }
+
+      // Verify refresh token exits in database
+      const user = await tokenService.checkRefreshToken(refreshToken)
+      console.log(`user: ${JSON.stringify(user, null, 2)}`)
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: "The refresh token is not exits in database!" })
+      }
+
+      // Verify refresh token is yours
+      if (user.refresh_token !== refreshToken) {
+        return res
+          .status(401)
+          .json({ message: "The refresh token is not yours!" })
+      }
+
+      // Payload
+      const newPayload = {
+        username: user.username,
+        role: user.role,
+      }
+
+      // Generate new token
+      const newAccessToken = tokenService.generateAccessToken(newPayload)
+      const newRefreshToken = tokenService.generateRefreshToken(newPayload)
+
+      // Save refresh token to database
+      const saveToken = await tokenService.updateUserRefreshToken(
+        user.username,
+        newRefreshToken
+      )
+      if (!saveToken) {
+        return res.status(500).json({
+          message: "Error while saving refresh token to database!",
+        })
+      }
+
+      // Set token to cookies
+      res.cookie("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+      })
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+      })
+
+      // Return the response
+      res.status(200).json({
+        message: "Refresh access token successfully!",
+      })
+    } catch (error) {
+      res.json({
+        message: `Error: ${error.message}`,
+      })
+    }
+  },
+  // Logout
+  logout: async (req, res) => {
+    try {
+      // Get refresh token from cookies
+      res.clearCookie("accessToken")
+      res.clearCookie("refreshToken")
+      // Clear refresh token in database
+      const token = ""
+      const clearToken = await tokenService.updateUserRefreshToken(
+        req.user.username,
+        token
+      )
+      if (!clearToken) {
+        return res.status(500).json({
+          message: "Error while saving refresh token to database!",
+        })
+      }
+      res.status(200).json({
+        message: "Logout successfully!",
       })
     } catch (error) {
       res.json({

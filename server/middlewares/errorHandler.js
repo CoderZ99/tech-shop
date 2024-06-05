@@ -1,5 +1,6 @@
 // middlewares/errorHandler.js
 module.exports = (err, req, res, next) => {
+  console.log("System error:")
   console.error(err.stack)
 
   // Default error code is 500

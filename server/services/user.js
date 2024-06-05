@@ -10,17 +10,21 @@ const userService = {
   blockUser: async (username) => {
     return await User.findOneAndUpdate(
       { username: username },
-      { status: "disable" }
+      { status: "disable" },
+      { new: true }
     )
   },
   unblockUser: async (username) => {
     return await User.findOneAndUpdate(
       { username: username },
-      { status: "active" }
+      { status: "active" },
+      { new: true }
     )
   },
   updateUser: async (username, data) => {
-    return await User.findOneAndUpdate({ username: username }, data)
+    return await User.findOneAndUpdate({ username: username }, data, {
+      new: true,
+    })
   },
 }
 
