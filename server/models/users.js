@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose")
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const userSchema = new Schema({
   username: {
@@ -17,12 +17,13 @@ const userSchema = new Schema({
     enum: ["user", "admin"],
     default: "user",
   },
-  phone: { type: String },
+  phone: { type: String, default: "" },
   status: { type: String, enum: ["active", "disable"], default: "active" },
-});
+  refresh_token: { type: String, default: "" },
+})
 
 // Define index
-userSchema.index({ username: 1 }, { unique: true });
+userSchema.index({ username: 1 }, { unique: true })
 
 // Create and export model from schema
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema)

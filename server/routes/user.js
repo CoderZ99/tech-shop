@@ -1,18 +1,19 @@
-const express = require('express')
+const express = require("express")
 const router = express.Router()
 
-const userController = require('../controllers/users')
+const userController = require("../controllers/users")
 
-router.get('/get-all', userController.getAllUsers)
+// Check role admin middleware
+const { verifyAdmin } = require("../middlewares/auth")
 
-router.get('/:username', userController.getByUsername)
+router.get("/get-all", userController.getAllUsers)
 
-// router.post('/register', userController.createUser)
+router.get("/:username", userController.getByUsername)
 
-router.post('/block/:username', userController.blockUser)
+router.post("/block/:username", verifyAdmin, userController.blockUser)
 
-router.post('/unblock/:username', userController.unblockUser)
+router.post("/unblock/:username", verifyAdmin, userController.unblockUser)
 
-router.put('/update/:username', userController.updateUser)
+router.put("/update/:username", userController.updateUser)
 
-module.exports = router;
+module.exports = router
