@@ -12,9 +12,7 @@ const authController = {
       // Check if the username already exists
       let checkUsername = await userService.getByUsername(username)
       if (checkUsername) {
-        return res
-          .status(400)
-          .json({ message: "The username already exists!", error: 1 })
+        return res.status(400).json({ message: "The username already exists!" })
       }
 
       // Hash the password
@@ -72,17 +70,13 @@ const authController = {
       // Check if the username exists
       const user = await userService.getByUsername(username)
       if (!user) {
-        return res
-          .status(404)
-          .json({ message: "The username does not exist!", error: 1 })
+        return res.status(404).json({ message: "The username does not exist!" })
       }
 
       // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password)
       if (!isMatch) {
-        return res
-          .status(401)
-          .json({ message: "The password is incorrect!", error: 1 })
+        return res.status(401).json({ message: "The password is incorrect!" })
       }
 
       // Payload
@@ -240,6 +234,7 @@ const authController = {
       res.status(200).json({
         message: "Logout successfully!",
       })
+      console.log("Logout successfully!")
     } catch (error) {
       res.json({
         message: `Error: ${error.message}`,

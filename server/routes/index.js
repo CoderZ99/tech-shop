@@ -7,7 +7,7 @@ const { loginRequired } = require("../middlewares/auth")
 function routes(app) {
   app.use("/api/v1/auth", authRouter)
 
-  app.use("/api/v1/users", loginRequired, userRouter)
+  app.use("/api/v1/user", loginRequired, userRouter)
 }
 
 module.exports = routes

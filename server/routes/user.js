@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const userController = require("../controllers/users")
+const userController = require("../controllers/user")
 
 // Check role admin middleware
 const { verifyAdmin } = require("../middlewares/auth")

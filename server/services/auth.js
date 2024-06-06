@@ -1,11 +1,17 @@
-const User = require('../models/users')
+const User = require("../models/user")
 
 const authService = {
-    register: async({username, password, full_name, role, phone, status}) => {
-        const newUser = new User({username, password, full_name, role, phone, status})
-        return await newUser.save()
-    }
+  register: async ({ username, password, full_name, role, phone, status }) => {
+    const newUser = new User({
+      username,
+      password,
+      full_name,
+      role,
+      phone,
+      status,
+    })
+    return await newUser.save()
+  },
 }
-
 
 module.exports = authService

@@ -42,7 +42,7 @@ const usersController = {
       const { username } = req.params
       const data = await userService.blockUser(username)
       if (!data) {
-        return res.status(404).json({ message: "user not found!", error: 1 })
+        return res.status(404).json({ message: "user not found!" })
       }
       res.status(200).json({
         message: "success",
@@ -60,7 +60,7 @@ const usersController = {
       const { username } = req.params
       const data = await userService.unblockUser(username)
       if (!data) {
-        return res.status(404).json({ message: "user not found!", error: 1 })
+        return res.status(404).json({ message: "user not found!" })
       }
       res.status(200).json({
         message: "success",
@@ -84,7 +84,7 @@ const usersController = {
       console.log(username)
       const result = await userService.updateUser(username, data)
       if (!result) {
-        return res.status(404).json({ message: "user not found!", error: 1 })
+        return res.status(404).json({ message: "user not found!" })
       }
       res.status(200).json({
         message: "success",
@@ -101,7 +101,7 @@ const usersController = {
     try {
       const data = await userService.getAllUsers()
       if (!data) {
-        return res.status(404).json({ message: "user not found!", error: 1 })
+        return res.status(404).json({ message: "user not found!" })
       }
 
       res.status(200).json({

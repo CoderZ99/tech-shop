@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const User = require("../models/users")
+const User = require("../models/user")
 
 /**
  * Generates a JSON Web Token (JWT) access token using the provided payload.
