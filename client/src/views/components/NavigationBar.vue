@@ -55,6 +55,7 @@
         >
           <ShoppingCartOutlined style="font-size: 25px" />
         </a-button>
+
         <a-dropdown>
           <template #overlay>
             <a-menu>
@@ -85,12 +86,12 @@
 
 <script setup>
   // Imports
+  import { useCartStore } from "@/stores/cart"
   import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons-vue"
   import { ref } from "vue"
-
   // Data
   const searchValue = ref("")
-
+  const cartStore = useCartStore()
   // Methods
   const onSearch = (value) => {
     alert(value)

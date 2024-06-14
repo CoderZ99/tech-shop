@@ -10,9 +10,9 @@ router.get("/get-all", userController.getAllUsers)
 
 router.get("/:username", userController.getByUsername)
 
-router.post("/block/:username", verifyAdmin, userController.blockUser)
+router.put("/block/:username", verifyAdmin, userController.blockUser)
 
-router.post("/unblock/:username", verifyAdmin, userController.unblockUser)
+router.put("/unblock/:username", verifyAdmin, userController.unblockUser)
 
 router.put("/update/:username", userController.updateUser)
 

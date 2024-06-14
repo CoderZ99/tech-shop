@@ -1,7 +1,23 @@
 const express = require("express")
 const app = express()
 
+// Cors
 const cors = require("cors")
+const allowedOrigins = ["http://localhost:3000"]
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Kiểm tra xem nguồn yêu cầu có nằm trong danh sách cho phép hay không
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  methods: "GET,POST,PUT,DELETE", // Chỉ cho phép các phương thức này
+  // allowedHeaders: "Content-Type,Authorization", // Chỉ cho phép các header này
+  credentials: true, // Cho phép gửi cookie
+}
+app.use(cors(corsOptions))
 
 // Cookie parser
 const cookieParser = require("cookie-parser")

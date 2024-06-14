@@ -44,19 +44,16 @@ const authController = {
         return res.status(400).json({
           message:
             "There was an error creating the account, please try again.!",
-          error: 1,
         })
       }
 
       // Return the response
       res.status(201).json({
         message: "Account successfully created!",
-        error: 0,
       })
     } catch (error) {
       res.json({
         message: `Error: ${error.message}`,
-        error: 1,
       })
     }
   },

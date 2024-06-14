@@ -12,7 +12,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please provide password"],
     },
-    full_name: { type: String, default: "" },
+    name: { type: String, default: "" },
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -20,7 +20,7 @@ const userSchema = new Schema(
     },
     phone: { type: String, default: "" },
     status: { type: String, enum: ["active", "disable"], default: "active" },
-    refresh_token: { type: String, default: "" },
+    refreshToken: { type: String, default: "" },
   },
   { timestamps: true }
 )

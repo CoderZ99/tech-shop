@@ -20,6 +20,26 @@ const router = createRouter({
       component: () => import("../views/RegisterView.vue"),
     },
     {
+      path: "/profile",
+      name: "profile",
+      component: () => import("../views/ProfileView.vue"),
+    },
+    {
+      path: "/product-details",
+      name: "product-details",
+      component: () => import("../views/ProductDetailsView.vue"),
+    },
+    {
+      path: "/cart",
+      name: "cart",
+      component: () => import("../views/CartView.vue"),
+    },
+    {
+      path: "/order-summary",
+      name: "order-summary",
+      component: () => import("../views/OrderSummaryView.vue"),
+    },
+    {
       path: "/not-found",
       name: "not-found",
       component: () => import("../views/NotFound.vue"),

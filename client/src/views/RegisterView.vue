@@ -38,7 +38,7 @@
             placeholder="Password"
           />
         </a-form-item>
-        <a-form-item
+        <!-- <a-form-item
           name="confirmPassword"
           v-bind="validateInfos.confirmPassword"
         >
@@ -52,7 +52,7 @@
             v-model:value="formState.confirmPassword"
             placeholder="Confirm Password"
           />
-        </a-form-item>
+        </a-form-item> -->
         <a-form-item
           name="fullname"
           v-bind="validateInfos.fullname"
@@ -64,7 +64,7 @@
             Full name
           </label>
           <a-input
-            v-model:value="formState.fullname"
+            v-model:value="formState.name"
             placeholder="Fullname"
           />
         </a-form-item>
@@ -114,15 +114,15 @@
   const useForm = Form.useForm
   const formRef = ref()
   const formState = reactive({
-    fullname: "",
-    phone: "",
     username: "",
     password: "",
-    confirmPassword: "",
+    // confirmPassword: "",
+    name: "",
+    phone: "",
   })
   // Methods
   const rulesRef = reactive({
-    fullname: [
+    name: [
       {
         required: true,
         message: "Please input your fullname",
@@ -162,22 +162,22 @@
         trigger: "blur",
       },
     ],
-    confirmPassword: [
-      {
-        required: true,
-        message: "Please confirm your password",
-        trigger: "blur",
-      },
-      {
-        validator: (_, value) => {
-          if (value !== formState.password) {
-            return Promise.reject("The two passwords do not match")
-          }
-          return Promise.resolve()
-        },
-        trigger: "blur",
-      },
-    ],
+    // confirmPassword: [
+    //   {
+    //     required: true,
+    //     message: "Please confirm your password",
+    //     trigger: "blur",
+    //   },
+    //   {
+    //     validator: (_, value) => {
+    //       if (value !== formState.password) {
+    //         return Promise.reject("The two passwords do not match")
+    //       }
+    //       return Promise.resolve()
+    //     },
+    //     trigger: "blur",
+    //   },
+    // ],
   })
   const { resetFields, validate, validateInfos } = useForm(
     formState,
