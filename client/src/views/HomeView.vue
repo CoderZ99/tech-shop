@@ -1,214 +1,239 @@
 <template>
-  <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-4">Welcome to Our E-Commerce Store</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div class="min-h-screen bg-gray-100 p-8">
+    <h2 class="text-2xl font-semibold mb-4">Trang Chủ</h2>
+
+    <!-- Carousel -->
+    <a-carousel
+      autoplay
+      class="mb-8"
+    >
       <div
-        v-for="product in products"
-        :key="product.id"
-        class="bg-white rounded shadow p-4"
+        v-for="(banner, index) in banners"
+        :key="index"
       >
         <img
-          :src="product.image"
-          :alt="product.name"
-          class="w-full h-40 object-cover mb-4 rounded"
+          :src="banner.image"
+          :alt="banner.title"
+          class="w-full h-64 object-cover"
         />
-        <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
-        <p class="text-gray-700">{{ product.description }}</p>
-        <div class="mt-4 flex justify-between items-center">
-          <span class="text-lg font-bold">{{ product.price }}</span>
-          <div class="flex justify-between items-center">
-            <a-tooltip placement="bottomLeft">
-              <template #title>
-                <span>Xem chi tiết</span>
-              </template>
-              <a-button
-                @click="viewDetails(product)"
-                type="default"
-                class="flex items-center justify-center"
-                block
-                shape="round"
-                ><EyeOutlined
-              /></a-button>
-            </a-tooltip>
-            <a-tooltip placement="bottomRight">
-              <template #title>
-                <span>Thêm vào giỏ hàng</span>
-              </template>
-              <a-button
-                @click="addToCart(product)"
-                type="primary"
-                class="flex items-center justify-center ml-4"
-                block
-                shape="round"
-                ><ShoppingCartOutlined
-              /></a-button>
-            </a-tooltip>
-          </div>
+      </div>
+    </a-carousel>
+
+    <!-- Product Rows -->
+    <div
+      v-for="(category, index) in categories"
+      :key="index"
+      class="mb-8"
+    >
+      <h3 class="text-xl font-semibold mb-4">{{ category.name }}</h3>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div
+          v-for="product in category.products"
+          :key="product.id"
+          class="bg-white p-4 rounded shadow-md"
+        >
+          <img
+            :src="product.image"
+            :alt="product.name"
+            class="w-full h-32 object-cover mb-4"
+          />
+          <h4 class="text-lg font-semibold">{{ product.name }}</h4>
+          <p>{{ product.price.toLocaleString() }}₫</p>
+          <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+            Thêm vào giỏ
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script setup>
-  // Imports
-  import EyeOutlined from "@ant-design/icons-vue/EyeOutlined"
-  import ShoppingCartOutlined from "@ant-design/icons-vue/ShoppingCartOutlined"
-  import { ref } from "vue"
+  // import "ant-design-vue/dist/antd.css"
 
-  // Data
-  const products = ref([
-    {
-      id: 1,
-      name: "Product 1",
-      description: "Description for Product 1",
-      price: "$100",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      description: "Description for Product 2",
-      price: "$150",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      description: "Description for Product 3",
-      price: "$120",
-      image: "https://via.placeholder.com/300",
-    },
-    // Add more mock data below
-    {
-      id: 4,
-      name: "Product 4",
-      description: "Description for Product 4",
-      price: "$90",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 5,
-      name: "Product 5",
-      description: "Description for Product 5",
-      price: "$80",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 6,
-      name: "Product 6",
-      description: "Description for Product 6",
-      price: "$70",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 7,
-      name: "Product 7",
-      description: "Description for Product 7",
-      price: "$60",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 8,
-      name: "Product 8",
-      description: "Description for Product 8",
-      price: "$50",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 9,
-      name: "Product 9",
-      description: "Description for Product 9",
-      price: "$40",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 10,
-      name: "Product 10",
-      description: "Description for Product 10",
-      price: "$30",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 11,
-      name: "Product 11",
-      description: "Description for Product 11",
-      price: "$20",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 12,
-      name: "Product 12",
-      description: "Description for Product 12",
-      price: "$10",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 13,
-      name: "Product 13",
-      description: "Description for Product 13",
-      price: "$200",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 14,
-      name: "Product 14",
-      description: "Description for Product 14",
-      price: "$190",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 15,
-      name: "Product 15",
-      description: "Description for Product 15",
-      price: "$180",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 16,
-      name: "Product 16",
-      description: "Description for Product 16",
-      price: "$170",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 17,
-      name: "Product 17",
-      description: "Description for Product 17",
-      price: "$160",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 18,
-      name: "Product 18",
-      description: "Description for Product 18",
-      price: "$240",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 19,
-      name: "Product 19",
-      description: "Description for Product 19",
-      price: "$230",
-      image: "https://via.placeholder.com/300",
-    },
-    {
-      id: 20,
-      name: "Product 20",
-      description: "Description for Product 20",
-      price: "$220",
-      image: "https://via.placeholder.com/300",
-    },
-  ])
+  const banners = [
+    { id: 1, title: "Banner 1", image: "https://via.placeholder.com/800x400" },
+    { id: 2, title: "Banner 2", image: "https://via.placeholder.com/800x400" },
+    { id: 3, title: "Banner 3", image: "https://via.placeholder.com/800x400" },
+  ]
 
-  const viewDetails = (product) => {
-    // Logic to view product details
-  }
-
-  const addToCart = (product) => {
-    // Logic to add product to cart
-  }
+  const categories = [
+    {
+      name: "Điện Thoại",
+      products: [
+        {
+          id: 1,
+          name: "iPhone 13",
+          price: 25000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          name: "Samsung Galaxy S21",
+          price: 22000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          name: "OnePlus 9",
+          price: 20000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 4,
+          name: "Xiaomi Mi 11",
+          price: 18000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 5,
+          name: "Oppo Find X3",
+          price: 17000000,
+          image: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+    {
+      name: "Laptop",
+      products: [
+        {
+          id: 1,
+          name: "MacBook Pro",
+          price: 40000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          name: "Dell XPS 13",
+          price: 35000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          name: "HP Spectre x360",
+          price: 32000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 4,
+          name: "Asus ZenBook",
+          price: 30000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 5,
+          name: "Lenovo ThinkPad X1",
+          price: 28000000,
+          image: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+    {
+      name: "Máy Tính Bảng",
+      products: [
+        {
+          id: 1,
+          name: "iPad Pro",
+          price: 30000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          name: "Samsung Galaxy Tab S7",
+          price: 22000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          name: "Surface Pro 7",
+          price: 25000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 4,
+          name: "Lenovo Tab P11",
+          price: 18000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 5,
+          name: "Huawei MatePad Pro",
+          price: 19000000,
+          image: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+    {
+      name: "Đồng Hồ Thông Minh",
+      products: [
+        {
+          id: 1,
+          name: "Apple Watch Series 6",
+          price: 12000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          name: "Samsung Galaxy Watch 3",
+          price: 10000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          name: "Garmin Fenix 6",
+          price: 15000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 4,
+          name: "Fitbit Versa 3",
+          price: 7000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 5,
+          name: "Huawei Watch GT 2",
+          price: 5000000,
+          image: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+    {
+      name: "Phụ Kiện",
+      products: [
+        {
+          id: 1,
+          name: "AirPods Pro",
+          price: 6000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          name: "Samsung Galaxy Buds+",
+          price: 3000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          name: "Anker PowerCore 10000",
+          price: 1000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 4,
+          name: "Logitech MX Master 3",
+          price: 2000000,
+          image: "https://via.placeholder.com/150",
+        },
+        {
+          id: 5,
+          name: "Sandisk Extreme Pro SSD",
+          price: 4000000,
+          image: "https://via.placeholder.com/150",
+        },
+      ],
+    },
+  ]
 </script>
 
-<style scoped>
-  /* Custom styles can go here */
-</style>
+<style scoped></style>

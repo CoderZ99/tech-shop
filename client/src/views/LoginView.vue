@@ -2,12 +2,7 @@
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
       <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
-      <a-form
-        ref="formRef"
-        :model="formState"
-        :rules="rules"
-        @submit.prevent="handleSubmit"
-      >
+      <a-form>
         <a-form-item
           name="username"
           v-bind="validateInfos.username"
@@ -51,15 +46,17 @@
             type="primary"
             htmlType="submit"
             class="w-full"
+            @click.prevent="handleLogin"
           >
             Login
           </a-button>
           <p class="text-center">
             Or
-            <RouterLink
-              to="/register"
+            <a-button
+              type="link"
               class="text-sky-500"
-              >register now!</RouterLink
+              @click="() => $router.push('/register')"
+              >register now!</a-button
             >
           </p>
         </a-form-item>
@@ -71,11 +68,14 @@
 <script setup>
   // Imports
   import { LockOutlined, UserOutlined } from "@ant-design/icons-vue"
-  import { Form } from "ant-design-vue"
-  import { reactive, ref } from "vue"
+  import { Form, message } from "ant-design-vue"
+  import { reactive } from "vue"
+  import { useRouter } from "vue-router"
+  import { login } from "../api/authService.js"
   // Data
+  const router = useRouter()
+  const successMsgDisplayTime = 3
   const useForm = Form.useForm
-  const formRef = ref()
   const formState = reactive({
     username: "",
     password: "",
@@ -116,13 +116,34 @@
       onValidate: (...args) => console.log(...args),
     }
   )
-  const handleSubmit = async () => {
+  const handleLogin = async () => {
     try {
+      let formError = false
       await validate()
-      console.log("Form submitted:", formState)
-      // Add your login logic here
+        .then(() => {})
+        .catch((error) => {
+          formError = true
+        })
+      if (formError === false) {
+        console.log("Form submitted:", formState)
+
+        const loginData = {
+          username: formState.username,
+          password: formState.password,
+        }
+
+        const response = await login(loginData)
+        console.log(`🚀 ~ handleLogin ~ response:`, response)
+
+        message.success(response.data.message, successMsgDisplayTime, () => {
+          // Redirect to home page
+          router.push({ path: "/" })
+        })
+      }
     } catch (error) {
-      console.error("Validation failed:", error)
+      console.log(`🚀 ~ handleLogin ~ error:`, error)
+
+      message.error(error.message)
     }
   }
 </script>

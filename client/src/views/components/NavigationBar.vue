@@ -26,11 +26,11 @@
             class="text-gray-700 hover:bg-gray-200 hover:text-black"
             ><RouterLink to="/products">Products</RouterLink></a-button
           >
-          <a-button
+          <!-- <a-button
             type="text"
             class="text-gray-700 hover:bg-gray-200 hover:text-black"
             ><RouterLink to="/categories">Categories</RouterLink></a-button
-          >
+          > -->
         </div>
       </div>
       <div

@@ -4,8 +4,10 @@ const productsController = {
   // Get all products
   getAll: async (req, res) => {
     try {
-      const products = productService.getAll()
-      res.status(200).json(products)
+      const products = await productService.getAll()
+      console.log(`🚀 ~ getAll: ~ products:`, products)
+
+      res.status(200).json({ products })
     } catch (error) {
       res.status(500).json({ message: error.message })
     }

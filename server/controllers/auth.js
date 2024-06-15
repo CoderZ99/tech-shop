@@ -84,23 +84,41 @@ const authController = {
       console.table(payload)
       // Generate JWT
       const accessToken = tokenService.generateAccessToken(payload)
+
+      console.log(
+        `🚀 ---------------------------------------------------------🚀`
+      )
+      console.log(`🚀 ~ file: auth.js:88 ~ login: ~ accessToken:`, accessToken)
+      console.log(
+        `🚀 ---------------------------------------------------------🚀`
+      )
+
       const refreshToken = tokenService.generateRefreshToken(payload)
-      console.log(`accessToken: ${accessToken}`)
-      console.log(`refreshToken: ${refreshToken}`)
 
-      // Add access toke to cookies
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-      })
+      console.log(
+        `🚀 -----------------------------------------------------------🚀`
+      )
+      console.log(
+        `🚀 ~ file: auth.js:94 ~ login: ~ refreshToken:`,
+        refreshToken
+      )
+      console.log(
+        `🚀 -----------------------------------------------------------🚀`
+      )
 
-      // Add refresh token to cookies
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-      })
+      // // Add access toke to cookies
+      // res.cookie("accessToken", accessToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
+
+      // // Add refresh token to cookies
+      // res.cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
 
       // Save refresh token to database
       const saveToken = await tokenService.updateUserRefreshToken(

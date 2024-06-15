@@ -6,7 +6,7 @@ const userController = require("../controllers/user")
 // Check role admin middleware
 const { verifyAdmin } = require("../middlewares/auth")
 
-router.get("/get-all", userController.getAllUsers)
+router.get("/", userController.getAllUsers)
 
 router.get("/:username", userController.getByUsername)
 

@@ -10,18 +10,26 @@ const productSchema = new Schema(
       type: String,
       required: [true, "Please provide product name"],
     },
-    image: { type: String, default: "" },
+    imageUrl: { type: String, default: "" },
+    detailUrl: { type: String, default: "" },
     brand: { type: String, default: "" },
     category: { type: String, default: "" },
     description: { type: String, default: "" },
     price: {
-      type: Number,
+      type: String,
       required: [true, "Please provide product price"],
     },
-    count_in_stock: { type: Number, default: 0 },
+    sold: { type: Number, default: 0 },
+    stock: { type: Number, default: 0 },
     rating: { type: Number, default: 0 },
-    reviews: [reviewSchema],
-    num_reviews: { type: Number, default: 0 },
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Review",
+      },
+    ],
+    numReviews: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

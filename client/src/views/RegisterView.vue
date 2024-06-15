@@ -21,6 +21,7 @@
           <a-input
             v-model:value="formState.username"
             placeholder="Username"
+            auto
           />
         </a-form-item>
         <a-form-item
@@ -94,10 +95,11 @@
           </a-button>
           <p class="text-center">
             Already have an account?
-            <RouterLink
-              to="/login"
+            <a-button
+              type="link"
               class="text-sky-500"
-              >Login here!</RouterLink
+              @click="() => $router.push('/login')"
+              >Login here!</a-button
             >
           </p>
         </a-form-item>
@@ -108,15 +110,18 @@
 
 <script setup>
   // Imports
-  import { Form } from "ant-design-vue"
+  import { Form, message } from "ant-design-vue"
   import { reactive, ref } from "vue"
+  import { useRouter } from "vue-router"
+  import { register } from "../api/authService.js"
   // Data
+  const router = useRouter()
+  const successMsgDisplayTime = 3
   const useForm = Form.useForm
   const formRef = ref()
   const formState = reactive({
     username: "",
     password: "",
-    // confirmPassword: "",
     name: "",
     phone: "",
   })
@@ -188,11 +193,24 @@
   )
   const handleSubmit = async () => {
     try {
-      await validate()
-      console.log("Form submitted:", formState)
-      // Add your register logic here
+      let formError = false
+      await validate().catch((error) => {
+        formError = true
+      })
+      if (formError === false) {
+        console.log("Form submitted:", formState)
+
+        const response = await register(formState)
+        console.log(`🚀 ~ handleSubmit ~ response:`, response)
+
+        message.success(response.data.message, successMsgDisplayTime, () => {
+          // Redirect to login page
+          router.push({ path: "/login" })
+        })
+      }
     } catch (error) {
-      console.error("Validation failed:", error)
+      // resetFields()
+      message.error(error.message)
     }
   }
 </script>

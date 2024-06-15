@@ -4,7 +4,7 @@
     <div class="flex flex-col items-center">
       <div class="w-4/5 bg-white p-6 rounded shadow-md mr-4">
         <!-- Grid Header -->
-        <div class="grid grid-cols-12 gap-4 border-b pb-4 mb-4 text-gray-700">
+        <div class="grid grid-cols-12 gap-4 border-b pb-4 text-gray-700">
           <div class="col-span-1 mx-auto my-auto">
             <a-checkbox
               @change="selectAllItems"
@@ -31,8 +31,8 @@
 
         <!-- Cart Items List -->
         <div
-          v-for="item in cartItems"
-          :key="item.id"
+          v-for="(item, index) in cartItems"
+          :key="item._id"
           class="grid grid-cols-12 gap-4 items-center border-b py-4"
         >
           <div class="col-span-1 mx-auto my-0">
@@ -42,18 +42,22 @@
             />
           </div>
           <div class="col-span-4 flex items-center">
-            <img
-              :src="item.image"
+            <a-image
+              :width="50"
+              :src="`${'/src/assets/products/' + item.imageUrl}`"
               alt="product"
               class="w-16 h-16 object-cover mr-4"
+              :preview="false"
             />
             <div>
               <p class="font-semibold">{{ item.name }}</p>
             </div>
           </div>
-          <div class="col-span-2">{{ item.price.toLocaleString() }}₫</div>
+          <div class="col-span-2 text-end">
+            {{ item.price.toLocaleString() }}
+          </div>
           <div class="col-span-2 flex items-center">
-            <div>
+            <div class="flex flex-col items-center">
               <div class="flex items-center">
                 <a-button
                   @click="updateQuantity(item, item.quantity - 1)"
@@ -76,8 +80,8 @@
               </div>
             </div>
           </div>
-          <div class="col-span-2 text-red-500">
-            {{ (item.price * item.quantity).toLocaleString() }}₫
+          <div class="col-span-2 text-red-500 text-end">
+            {{ (item.price * item.quantity).toLocaleString() }}
           </div>
           <div class="col-span-1">
             <button
@@ -130,12 +134,9 @@
   // Store
   const cartStore = useCartStore()
 
-  // Mock data
-  import cartItemsData from "../mocks/cartItemsData"
-
   // Data
   const totalPrice = ref(0)
-  const cartItems = reactive([...cartItemsData])
+  const cartItems = reactive(cartStore.getCartItems)
   const allSelected = ref(false)
 
   // Computed values
@@ -145,14 +146,14 @@
   // Methods
   const updateQuantity = (item, quantity) => {
     if (quantity > 0 && quantity <= item.stock) {
-      const cartItem = cartItems.find((cartItem) => cartItem.id === item.id)
+      const cartItem = cartItems.find((cartItem) => cartItem._id === item._id)
       cartItem.quantity = quantity
       calculateTotal()
     }
   }
 
   const removeItem = (item) => {
-    const index = cartItems.findIndex((cartItem) => cartItem.id === item.id)
+    const index = cartItems.findIndex((cartItem) => cartItem._id === item._id)
     if (index > -1) {
       cartItems.splice(index, 1)
       calculateTotal()
@@ -179,12 +180,12 @@
   watch(cartItems, calculateTotal, { deep: true })
 
   const goToOrderSummary = () => {
-    // Update cart items selected status
-    cartStore.updateCartItems(cartItems)
-    // Update cart total
-    cartStore.updateCartTotal(totalPrice.value)
-    // Navigate to order summary
-    router.push({ path: "/order-summary" })
+    // // Update cart items selected status
+    // cartStore.updateCartItems(cartItems)
+    // // Update cart total
+    // cartStore.updateCartTotal(totalPrice.value)
+    // // Navigate to order summary
+    // router.push({ path: "/order-summary" })
   }
 </script>
 

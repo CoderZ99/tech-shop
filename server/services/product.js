@@ -8,6 +8,8 @@ const productService = {
    */
   getAll: async () => {
     const products = await Product.find()
+    console.log(`🚀 ~ getAll: ~ products:`, products)
+
     return products
   },
   /**

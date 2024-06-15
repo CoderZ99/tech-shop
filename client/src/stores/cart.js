@@ -8,6 +8,11 @@ export const useCartStore = defineStore("cart", {
   }),
   // Getters
   getters: {
+    /**
+     * Retrieves the cart items from the state.
+     *
+     * @return {Array} The array of cart items.
+     */
     getCartItems(state) {
       return state.cartItems
     },
@@ -26,16 +31,22 @@ export const useCartStore = defineStore("cart", {
     },
   },
   actions: {
-    // Actions update cartItems
-    updateCartItems(cartItems) {
-      this.cartItems = [...cartItems]
-      console.table(`Cart items updated: ${this.cartItems}`)
+    // Update cart total
+    updateCartTotal(total) {
+      state.cartTotal = total
     },
-
-    // Actions update cartTotal
-    updateCartTotal(cartTotal) {
-      this.cartTotal = cartTotal
-      console.log(`Cart total updated: ${this.cartTotal}`)
+    // Update cart items
+    updateCartItems(items) {
+      state.cartItems = items
+    },
+    // Remove item from cart
+    removeProductFromCart(index) {
+      state.cartItems.splice(index, 1)
+      console.log(`Cart items updated: ${this.cartItems}`)
+    },
+    // Clear cart
+    clearCart() {
+      state.cartItems = []
     },
   },
 })
