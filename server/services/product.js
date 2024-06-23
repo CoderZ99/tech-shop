@@ -9,7 +9,6 @@ const productService = {
   getAll: async () => {
     const products = await Product.find()
     console.log(`🚀 ~ getAll: ~ products:`, products)
-
     return products
   },
   /**
@@ -20,6 +19,11 @@ const productService = {
    */
   getOne: async (id) => {
     const product = await Product.findById(id)
+    return product
+  },
+  //
+  getByDetailUrl: async (detailUrl) => {
+    const product = await Product.findOne({ detailUrl })
     return product
   },
   /**

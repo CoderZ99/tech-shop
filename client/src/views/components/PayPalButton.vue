@@ -3,7 +3,9 @@
 </template>
 
 <script setup>
-  import { onMounted } from "vue"
+  import { defineEmits, onMounted } from "vue"
+
+  const emit = defineEmits(["approve", "cancel", "error"])
 
   const props = defineProps({
     payAmount: {
@@ -41,12 +43,20 @@
             console.table(
               `Transaction completed by ${details.payer.name.given_name}`
             )
+            console.log(details)
             // Handle successful transaction here
+            emit("approve", details)
           })
+        },
+        onCancel(data) {
+          // Show a cancel page, or return to cart
+          console.log(data)
+          emit("cancel", data)
         },
         onError: (err) => {
           console.error(err)
           // Handle error here
+          emit("error", err)
         },
       })
       .render("#paypal-button-container")

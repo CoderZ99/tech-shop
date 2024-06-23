@@ -11,3 +11,13 @@ export function convertVNDToUSD(amountVND) {
   // Round to 2 decimal places
   return amountUSD.toFixed(2)
 }
+
+/**
+ * Converts a price string to a number.
+ *
+ * @param {string} price - The price string to convert to a number.
+ * @return {number} The converted price as a number.
+ */
+export function priceToNumber(price) {
+  return Number(price.replace(/\./g, ""))
+}

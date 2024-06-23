@@ -3,7 +3,7 @@ const app = express()
 
 // Cors
 const cors = require("cors")
-const allowedOrigins = ["http://localhost:3000"]
+const allowedOrigins = ["http://localhost:3000", "http://localhost:4000"]
 const corsOptions = {
   origin: (origin, callback) => {
     // Kiểm tra xem nguồn yêu cầu có nằm trong danh sách cho phép hay không

@@ -1,11 +1,11 @@
 const User = require("../models/user")
 
 const authService = {
-  register: async ({ username, password, full_name, role, phone, status }) => {
+  register: async ({ username, password, name, role, phone, status }) => {
     const newUser = new User({
       username,
       password,
-      full_name,
+      name,
       role,
       phone,
       status,

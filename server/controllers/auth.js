@@ -24,7 +24,7 @@ const authController = {
       console.log(`password-hashed: ${hashedPassword}`)
 
       // Other user info
-      const full_name = req.body.full_name
+      const name = req.body.name
       const role = req.body.role
       const phone = req.body.phone
       const status = req.body.status
@@ -33,7 +33,7 @@ const authController = {
       const createResult = await authService.register({
         username,
         password: hashedPassword,
-        full_name,
+        name,
         role,
         phone,
         status,
@@ -85,46 +85,21 @@ const authController = {
       // Generate JWT
       const accessToken = tokenService.generateAccessToken(payload)
 
-      console.log(
-        `🚀 ---------------------------------------------------------🚀`
-      )
       console.log(`🚀 ~ file: auth.js:88 ~ login: ~ accessToken:`, accessToken)
-      console.log(
-        `🚀 ---------------------------------------------------------🚀`
-      )
 
       const refreshToken = tokenService.generateRefreshToken(payload)
 
       console.log(
-        `🚀 -----------------------------------------------------------🚀`
-      )
-      console.log(
         `🚀 ~ file: auth.js:94 ~ login: ~ refreshToken:`,
         refreshToken
       )
-      console.log(
-        `🚀 -----------------------------------------------------------🚀`
-      )
-
-      // // Add access toke to cookies
-      // res.cookie("accessToken", accessToken, {
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === "production",
-      //   sameSite: "none",
-      // })
-
-      // // Add refresh token to cookies
-      // res.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === "production",
-      //   sameSite: "none",
-      // })
 
       // Save refresh token to database
       const saveToken = await tokenService.updateUserRefreshToken(
-        payload.username,
+        user.username,
         refreshToken
       )
+
       if (!saveToken) {
         return res.status(500).json({
           message: "Error while saving refresh token to database!",
@@ -133,11 +108,15 @@ const authController = {
 
       // Return the response
       res.status(200).json({
-        message: "Login successfully!",
-        data: {
-          accessToken,
-          refreshToken,
+        user: {
+          username: user.username,
+          name: user.name,
+          role: user.role,
+          phone: user.phone,
+          status: user.status,
         },
+        accessToken,
+        refreshToken,
       })
     } catch (error) {
       res.json({
@@ -232,9 +211,7 @@ const authController = {
   // Logout
   logout: async (req, res) => {
     try {
-      // Get refresh token from cookies
-      res.clearCookie("accessToken")
-      res.clearCookie("refreshToken")
+      console.log(`logout process`)
       // Clear refresh token in database
       const token = ""
       const clearToken = await tokenService.updateUserRefreshToken(

@@ -1,57 +1,122 @@
 <template>
-  <div
-    class="profile-view mt-16 p-6 bg-white rounded-lg shadow-md max-w-3xl mx-auto"
-  >
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center">
-        <a-avatar
-          size="large"
-          :src="userStore.getImage"
-        />
-      </div>
-      <a-button
-        type="link"
-        class="text-blue-500"
-      >
-        <a-icon type="edit" />
-        Change Profile Information
-      </a-button>
-    </div>
-    <a-form layout="vertical">
-      <a-form-item label="Username">
+  <div class="w-2/5 mx-auto mt-6">
+    <div class="text-center text-2xl">Hồ Sơ Của Tôi</div>
+  </div>
+  <div class="w-2/5 mt-6 p-6 bg-white rounded shadow-lg max-w-3xl mx-auto">
+    <h4 class="text-gray-600">Quản lý thông tin hồ sơ để bảo mật tài khoản</h4>
+    <a-divider />
+    <div class="w-full">
+      <div>
+        <IdcardOutlined class="text-gray-400 ml-1 mr-2" />
+        <label for="username">Tên đăng nhập</label>
         <a-input
-          :value="userStore.getUsername"
+          id="username"
+          class="pl-3 mt-1"
+          v-model:value="authStore.user.username"
           disabled
         />
-      </a-form-item>
-      <a-form-item label="Name">
-        <a-input :value="user.name" />
-      </a-form-item>
-      <a-form-item label="Phone Number">
-        <a-input :value="user.phone" />
-      </a-form-item>
-      <a-form-item label="Address">
-        <a-input :value="user.address" />
-      </a-form-item>
-    </a-form>
+      </div>
+      <div class="mt-4">
+        <UserOutlined class="text-gray-400 ml-1 mr-2" />
+        <label for="name">Họ và tên</label>
+        <a-input
+          id="name"
+          class="pl-3 mt-1"
+          v-model:value="user.name"
+        />
+      </div>
+      <div class="mt-4">
+        <PhoneOutlined class="text-gray-400 ml-1 mr-2" />
+        <label for="phone">Số điện thoại</label>
+        <a-input
+          id="phone"
+          class="pl-3 mt-1"
+          v-model:value="user.phone"
+        />
+      </div>
+    </div>
+    <a-divider />
+    <div class="w-full flex justify-evenly mt-4">
+      <a-button
+        class="w-1/4"
+        @click="cancelChanges"
+        >Huỷ thay đổi</a-button
+      >
+      <a-button
+        class="w-1/4"
+        type="primary"
+        @click="saveChanges"
+        >Lưu thay đổi</a-button
+      >
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { useUserStore } from "@/stores/user"
-  import { reactive } from "vue"
-  const userStore = useUserStore()
-  const user = reactive({
-    username: userStore.getUsername,
-    name: userStore.getName,
-    phone: userStore.getPhone,
-    address: userStore.getAddress,
+  // Imports
+  import { updateUserProfile } from "@/api/userService"
+  import { useAuthStore } from "@/stores/auth"
+  import {
+    IdcardOutlined,
+    PhoneOutlined,
+    UserOutlined,
+  } from "@ant-design/icons-vue"
+  import { message } from "ant-design-vue"
+  import { onMounted, ref } from "vue"
+
+  // Store
+  const authStore = useAuthStore()
+  // Data
+  const user = ref({})
+  let currentName = ""
+  let currentPhone = ""
+  // Methods
+  const saveChanges = async () => {
+    // Validate data changed
+    console.log(user.value.name, user.value.phone)
+    console.log(currentName, currentPhone)
+    if (user.value.name === currentName && user.value.phone === currentPhone) {
+      message.error("Thay giá trị để cập nhật")
+      return
+    }
+    // Save changes
+    try {
+      // Call API
+      const response = await updateUserProfile(authStore.user?.username, {
+        name: user.value.name,
+        phone: user.value.phone,
+      })
+      // Update store
+      authStore.user.name = response?.data?.user?.name
+      authStore.user.phone = response?.data?.user?.phone
+      currentName = response?.data?.user?.name
+      currentPhone = response?.data?.user?.phone
+      // Show success message
+      console.log(`🚀 ~ saveChanges ~ authStore.user:`, authStore.user)
+      // message.success(response?.data?.message)
+      message.success("Cập nhật thông tin thành công")
+    } catch (error) {
+      console.log(`🚀 ~ saveChanges ~ error:`, error)
+      // message.error(error?.message)
+      message.error("Cập nhật thông tin thất bại")
+    }
+  }
+
+  const cancelChanges = () => {
+    // Update store
+    user.value.name = currentName
+    user.value.phone = currentPhone
+  }
+
+  // Lifecycle
+  // Mounted
+  onMounted(() => {
+    // Get user data from store
+    user.value = authStore.user
+    currentName = user.value.name
+    currentPhone = user.value.phone
+    console.log(`🚀 ~ onBeforeMount ~ authStore.user:`, authStore.user)
   })
 </script>
 
-<style scoped>
-  .profile-view {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-</style>
+<style scoped></style>

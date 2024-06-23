@@ -71,10 +71,11 @@
   import { Form, message } from "ant-design-vue"
   import { reactive } from "vue"
   import { useRouter } from "vue-router"
-  import { login } from "../api/authService.js"
+  // import { login } from "../api/authService.js"
+  import { useAuthStore } from "../stores/auth"
   // Data
   const router = useRouter()
-  const successMsgDisplayTime = 3
+  const authStore = useAuthStore()
   const useForm = Form.useForm
   const formState = reactive({
     username: "",
@@ -132,10 +133,13 @@
           password: formState.password,
         }
 
-        const response = await login(loginData)
-        console.log(`🚀 ~ handleLogin ~ response:`, response)
+        const response = await authStore.login(loginData)
 
-        message.success(response.data.message, successMsgDisplayTime, () => {
+        if (!response) {
+          throw new Error("Login failed")
+        }
+
+        message.success("Login successfully!", 1, () => {
           // Redirect to home page
           router.push({ path: "/" })
         })

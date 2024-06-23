@@ -1,7 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <h2 class="text-2xl font-semibold mb-4">Trang Chủ</h2>
-
     <!-- Carousel -->
     <a-carousel
       autoplay

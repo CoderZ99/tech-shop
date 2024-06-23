@@ -75,25 +75,28 @@ const usersController = {
   },
   updateUser: async (req, res) => {
     try {
+      console.log(`🚀 ~ updateUser: ~ req.body:`, req.body)
+      console.log(`🚀 ~ updateUser: ~ req.params:`, req.params)
       const { username } = req.params
-      const { full_name, phone } = req.body
+      console.log(`🚀 ~ updateUser: ~ username:`, username)
       const data = {
-        full_name: full_name,
-        phone: phone,
+        name: req.body.name,
+        phone: req.body.phone,
       }
-      console.log(username)
+      console.log(`🚀 ~ updateUser: ~ data:`, data)
+
       const result = await userService.updateUser(username, data)
+      console.log(`🚀 ~ updateUser: ~ result:`, result)
       if (!result) {
         return res.status(404).json({ message: "user not found!" })
       }
       res.status(200).json({
-        message: "success",
-        error: 0,
+        message: "Update user successfully!",
+        user: data,
       })
     } catch (error) {
       res.json({
         message: `error! ${error.message}`,
-        error: 1,
       })
     }
   },

@@ -1,4 +1,27 @@
 <template>
+  <!-- Dropdown -->
+  <!-- <div class="container mx-auto p-4">
+    Brand:
+    <a-select
+      v-model:value="value1"
+      style="width: 120px"
+      :options="options1"
+      @change="handleChange"
+      class="filter-list"
+    >
+      <template #suffixIcon><CaretDownOutlined /></template>
+    </a-select>
+    Category:
+    <a-select
+      v-model:value="value2"
+      style="width: 120px"
+      :options="options2"
+      class="filter-list"
+    >
+      <template #suffixIcon><CaretDownOutlined /></template>
+    </a-select>
+  </div> -->
+  <!-- Product List -->
   <div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-4">Danh sách sản phẩm</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -22,6 +45,7 @@
             product.price
           }}</span>
         </div>
+        <!-- Button -->
         <div class="flex justify-between items-center mt-4 self-end">
           <a-tooltip placement="bottomLeft">
             <template #title>
@@ -70,13 +94,18 @@
   import { EyeOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue"
   import { message } from "ant-design-vue"
   import { computed, onMounted, reactive, ref } from "vue"
+  import { useRouter } from "vue-router"
   import { fetchProducts } from "../api/productService"
   import CommonPagination from "../views/components/CommonPagination.vue"
+
   // Data
+  const router = useRouter()
   const products = reactive([])
-  const pageSize = 15
+  const pageSize = 16
   const currentPage = ref(1)
   const cartStore = useCartStore()
+
+  // Computed
   const currentProducts = computed(() => {
     // Logic to paginate products
     const startIndex = (currentPage.value - 1) * pageSize
@@ -84,8 +113,29 @@
     return products.slice(startIndex, endIndex)
   })
 
+  let options1 = reactive([
+    {
+      value: "jack",
+      label: "Jack",
+    },
+    {
+      value: "lucy",
+      label: "Lucy",
+    },
+  ])
+  let options2 = reactive([
+    {
+      value: "lucy",
+      label: "Lucy",
+    },
+  ])
+  const value1 = ref("All")
+  const value2 = ref("All")
+
   // Lifecycle
   onMounted(() => {
+    options1 = [{ value: "All", label: "Tất cả" }, ...options1]
+    options2 = [{ value: "All", label: "Tất cả" }, ...options2]
     getProducts()
     console.log(`🚀 ~ onMounted ~ products:`, products)
   })
@@ -112,47 +162,41 @@
     }
   }
 
-  function updateQuantityIfItemExists(list, item) {
-    // Kiểm tra xem item có trong list hay không dựa trên id
-    const existingItem = list.find(
-      (existingItem) => existingItem._id === item._id
-    )
-
-    if (existingItem) {
-      // Nếu item thêm vào list nhiều hơn stock
-      if (existingItem.quantity + 1 > existingItem.stock) {
-        message.error("Không thể thêm nhiều hơn")
-        return
-      }
-      // Nếu item đã tồn tại trong list, cập nhật giá trị quantity của item
-      existingItem.quantity += 1
-      console.log(`Updated quantity: ${list}`)
-      message.success("Đã cập nhật số lượng sản phẩm trong giỏ hàng")
-    } else {
-      // Nếu item không tồn tại trong list, thêm nó vào list
-      list.push({ ...item, selected: false, quantity: 1 })
-      console.log(`Added new item ${list}`)
-      message.success("Sản phẩm đã được thêm vào giỏ hàng")
-    }
-    return list
-  }
   const addToCart = (product) => {
+    console.log(`🚀 ~ addToCart ~ product:`, product)
+    const addedQuantity = 1
+    // Logic to add product to cart
     try {
       if (product.stock === 0) {
         message.error("Hết hàng")
       }
-      updateQuantityIfItemExists(cartStore.cartItems, product)
-
-      console.log(`🚀 ~ addToCart ~ cartStore.cartItems:`, cartStore.cartItems)
+      let result = cartStore.addItem(product, addedQuantity)
+      console.log(`🚀 ~ addToCart ~ result:`, result)
+      switch (result) {
+        case -1:
+          message.error("Không thể thêm nhiều hơn")
+          break
+        case 1:
+          message.success("Đã cập nhật số sản phẩm trong giỏ hàng")
+          break
+        case 0:
+          message.success("Sản phẩm đã được thêm vào giỏ hàng")
+          break
+      }
     } catch (error) {
       console.log(`🚀 ~ addToCart ~ error:`, error)
+      message.error(error)
     }
   }
   const viewDetails = (product) => {
     // Logic to view product details
+    router.push({ path: `products/${product.detailUrl}` })
   }
 </script>
 
 <style scoped>
+  .filter-list:focus .filter-icon {
+    transform: rotate(180deg);
+  }
   /* Custom styles can go here */
 </style>

@@ -24,3 +24,9 @@ export const fetchProducts = async () => {
 export const getProductById = async (id) => {
   return api.get(`${path}/${id}`)
 }
+
+// Get product by detail url
+export const getProductByDetailUrl = async (url) => {
+  const endpoint = `${path}/detail/${url}`
+  return api.get(endpoint)
+}

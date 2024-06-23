@@ -7,4 +7,6 @@ router.get("/", productsController.getAll)
 
 router.get("/:id", productsController.getOne)
 
+router.get("/detail/:detailUrl", productsController.getByDetailUrl)
+
 module.exports = router

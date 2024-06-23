@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-2xl font-semibold mb-4">Customer Reviews</h2>
+    <!-- Reviews tổng quan -->
     <div class="mb-4 p-4 flex items-start border rounded w-3/4">
       <div class="w-1/3">
         <p class="text-lg font-semibold">Overview</p>
@@ -39,7 +39,7 @@
     </div>
     <div class="w-3/5 flex justify-center mt-4">
       <!-- Hiển thị phân trang -->
-      <ReviewPagination
+      <CommonPagination
         :total="total"
         :pageSize="pageSize"
         :current="currentPage"
@@ -50,10 +50,8 @@
 </template>
 
 <script setup>
-  import { StarFilled } from "@ant-design/icons-vue"
   import { computed, defineProps, ref } from "vue"
   import Review from "./Review.vue"
-  import ReviewPagination from "./ReviewPagination.vue"
 
   const props = defineProps({
     reviews: {
