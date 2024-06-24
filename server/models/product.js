@@ -10,7 +10,8 @@ const productSchema = new Schema(
       type: String,
       required: [true, "Please provide product name"],
     },
-    imageUrl: { type: String, default: "" },
+    image: { type: String, default: "" },
+    isDeleted: { type: Boolean, default: false },
     detailUrl: { type: String, default: "" },
     brand: { type: String, default: "" },
     category: { type: String, default: "" },
@@ -21,15 +22,15 @@ const productSchema = new Schema(
     },
     sold: { type: Number, default: 0 },
     stock: { type: Number, default: 0 },
-    rating: { type: Number, default: 0 },
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Review",
-      },
-    ],
-    numReviews: { type: Number, default: 0 },
+    // rating: { type: Number, default: 0 },
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: true,
+    //     ref: "Review",
+    //   },
+    // ],
+    // numReviews: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

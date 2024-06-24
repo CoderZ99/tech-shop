@@ -1,25 +1,73 @@
 <template>
-  <div class="h-screen bg-gray-800 text-white w-64 flex flex-col">
-    <nav class="flex-1 px-2 space-y-2">
-      <router-link
-        to="/products"
-        class="block py-2 px-4 rounded hover:bg-gray-700"
-        active-class="bg-gray-700"
-      >
-        Products
-      </router-link>
-      <router-link
-        to="/orders"
-        class="block py-2 px-4 rounded hover:bg-gray-700"
-        active-class="bg-gray-700"
-      >
-        Orders
-      </router-link>
+  <div class="min-h-screen flex flex-col bg-gray-800 text-white w-64">
+    <div class="flex items-center justify-center h-16 bg-gray-900">
+      <div class="flex items-center text-xl font-semibold">
+        <SettingOutlined
+          spin="true"
+          class="mr-2"
+        />Admin Dashboard
+      </div>
+    </div>
+    <nav class="flex-1">
+      <ul>
+        <li class="px-6 py-4 hover:bg-gray-700">
+          <button
+            @click="dashboardStore.setUser"
+            class="flex items-center"
+          >
+            <UserOutlined class="mr-2" />
+            Người dùng
+          </button>
+        </li>
+        <li class="px-6 py-4 hover:bg-gray-700">
+          <button
+            @click="dashboardStore.setProduct"
+            class="flex items-center"
+          >
+            <AppstoreOutlined class="mr-2" />
+            Sản phẩm
+          </button>
+        </li>
+        <li class="px-6 py-4 hover:bg-gray-700">
+          <button
+            @click="dashboardStore.setOrder"
+            class="flex items-center"
+          >
+            <ShoppingCartOutlined class="mr-2" />
+            Đơn hàng
+          </button>
+        </li>
+      </ul>
     </nav>
+    <div class="p-6">
+      <button
+        @click="logout"
+        class="flex justify-center w-4/5 mx-auto bg-red-500 text-white py-3 rounded"
+      >
+        <LogoutOutlined class="mr-2" />
+        Đăng xuất
+      </button>
+    </div>
   </div>
 </template>
 
-<script setup></script>
-import { useAuthStore } from "../../stores/auth"
-const authStore = useAuthStore()
+<script setup>
+  import { useDashboardStore } from "@/stores/dashboard";
+import {
+  AppstoreOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+} from "@ant-design/icons-vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+  const router = useRouter()
+  const authStore = useAuthStore()
+  const dashboardStore = useDashboardStore()
+  const handleLogout = () => {
+    authStore.logout()
+    router.push({ path: "/login" })
+  }
+</script>
 <style scoped></style>

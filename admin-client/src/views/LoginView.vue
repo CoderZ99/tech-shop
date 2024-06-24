@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+    <div class="bg-white p-8 rounded shadow-md max-w-sm">
       <h2 class="text-2xl font-semibold mb-6 text-center">Đăng Nhập</h2>
       <form @submit.prevent="handleLogin">
         <div class="mb-4">
@@ -43,10 +43,10 @@
 </template>
 
 <script setup>
-  import { message } from "ant-design-vue"
-  import { ref } from "vue"
-  import { useRouter } from "vue-router"
-  import { useAuthStore } from "../stores/auth"
+  import { message } from "ant-design-vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
   const username = ref("")
   const password = ref("")
   const router = useRouter()

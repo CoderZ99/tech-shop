@@ -42,16 +42,14 @@ const usersController = {
       const { username } = req.params
       const data = await userService.blockUser(username)
       if (!data) {
-        return res.status(404).json({ message: "user not found!" })
+        return res.status(404).json({ message: "Không tìm thấy tài khoản" })
       }
       res.status(200).json({
-        message: "success",
-        error: 0,
+        message: "Thành công",
       })
     } catch (error) {
       res.json({
         message: `error! ${error.message}`,
-        error: 1,
       })
     }
   },
@@ -103,19 +101,10 @@ const usersController = {
   getAllUsers: async (req, res) => {
     try {
       const data = await userService.getAllUsers()
-      if (!data) {
-        return res.status(404).json({ message: "user not found!" })
-      }
-
-      res.status(200).json({
-        message: "success",
-        data: data,
-        error: 0,
-      })
+      res.status(200).json({data})
     } catch (error) {
       res.json({
         message: `error! ${error.message}`,
-        error: 1,
       })
     }
   },

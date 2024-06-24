@@ -7,7 +7,7 @@ const productService = {
    * @return {Promise<Array<Product>>} An array of products.
    */
   getAll: async () => {
-    const products = await Product.find()
+    const products = await Product.find({isDeleted: false})
     console.log(`🚀 ~ getAll: ~ products:`, products)
     return products
   },
@@ -35,6 +35,17 @@ const productService = {
   add: async (product) => {
     const newProduct = new Product(product)
     return await newProduct.save()
+  },
+  update: async (id, product) => {
+    const updatedProduct = await Product.findByIdAndUpdate(id, product, {
+      new: true,
+    })
+    return updatedProduct
+  },
+
+  delete: async (id, product) => {
+    const updatedProduct = await Product.findByIdAndUpdate(id, {$set: {isDeleted: true}}, { new: true })
+    return updatedProduct
   },
 }
 

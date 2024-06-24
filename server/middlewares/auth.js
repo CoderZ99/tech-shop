@@ -14,7 +14,7 @@ const authMiddleware = {
     // Verify token
     const decoded = tokenService.verifyToken(token, process.env.JWT_ACCESS_KEY)
     if (!decoded) {
-      return res.status(401).json({ message: "Token not valid" })
+      return res.status(401).json({ message: "Token không hợp lệ" })
     }
     // Add user info from token to request
     req.user = decoded
@@ -22,7 +22,7 @@ const authMiddleware = {
   },
   verifyAdmin: (req, res, next) => {
     if (req.user.role !== "admin") {
-      return res.status(401).json({ message: "Unauthorized" })
+      return res.status(401).json({ message: "Không được phép" })
     }
     next()
   },

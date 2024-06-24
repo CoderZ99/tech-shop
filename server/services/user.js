@@ -2,7 +2,7 @@ const User = require("../models/user")
 
 const userService = {
   getAllUsers: async () => {
-    return await User.find()
+    return await User.find({role:"user"})
   },
   getByUsername: async (username) => {
     return await User.findOne({ username: username })

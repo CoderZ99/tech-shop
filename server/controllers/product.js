@@ -52,6 +52,31 @@ const productsController = {
       res.status(500).json({ message: error.message })
     }
   },
+
+  // Update product
+  update: async (req, res) => {
+    try {
+      // Get product id
+      const productId = req.params.id
+      const product = req.body
+      const updatedProduct = productService.update(productId, product)
+      res.status(200).json(updatedProduct)
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
+
+  // Delete product
+  deleteProduct: async (req, res) => {
+    try {
+      const productId = req.params.id
+      const product = req.body
+      const deletedProduct = productService.delete(productId, product)
+      res.status(200).json(deletedProduct)
+    } catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+  },
 }
 
 module.exports = productsController

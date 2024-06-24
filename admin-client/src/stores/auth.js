@@ -1,6 +1,6 @@
-import { defineStore } from "pinia"
-import { computed, ref } from "vue"
-import { loginUser } from "../api/authService" // Giả sử bạn có các hàm này
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { loginUser } from "../api/authService"; // Giả sử bạn có các hàm này
 
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(localStorage.getItem("user") || null)
