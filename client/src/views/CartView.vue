@@ -41,7 +41,7 @@
           <div class="col-start-2 col-end-5 flex items-center gap-2">
             <a-image
               :width="50"
-              :src="`${'/src/assets/products/' + item.imageUrl}`"
+              :src="item.image"
               alt="product"
               class="w-16 h-16 object-cover mr-4"
               :preview="false"
@@ -82,7 +82,7 @@
             </div>
           </div>
           <div class="col-end-11 col-span-2 text-red-500 text-end">
-            {{ priceToNumber(item.price) * item.quantity }} ₫
+            {{ (item.price) * item.quantity }}₫
           </div>
           <div class="col-start-12 col-end-13">
             <button
@@ -128,11 +128,10 @@
 
 <script setup>
   // Imports
-  import { useCartStore } from "@/stores/cart"
-  import { ClearOutlined } from "@ant-design/icons-vue"
-  import { ref } from "vue"
-  import { useRouter } from "vue-router"
-  import { priceToNumber } from "../utils/currency"
+  import { useCartStore } from "@/stores/cart";
+import { ClearOutlined } from "@ant-design/icons-vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
   // Router
   const router = useRouter()
 

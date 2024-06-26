@@ -69,7 +69,10 @@ const authController = {
       if (!user) {
         return res.status(404).json({ message: "The username does not exist!" })
       }
-
+      // Check if the user is active
+      if (user.status === "disable") {
+        return res.status(401).json({ message: "The user is disabled!" })
+      }
       // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password)
       if (!isMatch) {

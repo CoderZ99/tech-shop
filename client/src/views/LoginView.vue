@@ -68,11 +68,12 @@
 <script setup>
   // Imports
   import { LockOutlined, UserOutlined } from "@ant-design/icons-vue"
-  import { Form, message } from "ant-design-vue"
-  import { reactive } from "vue"
-  import { useRouter } from "vue-router"
+import { Form, message } from "ant-design-vue"
+import { onMounted, reactive } from "vue"
+import { useRouter } from "vue-router"
   // import { login } from "../api/authService.js"
   import { useAuthStore } from "../stores/auth"
+
   // Data
   const router = useRouter()
   const authStore = useAuthStore()
@@ -150,6 +151,9 @@
       message.error(error.message)
     }
   }
+  onMounted(() => {
+    authStore.logout()
+  })
 </script>
 
 <style scoped>

@@ -17,7 +17,7 @@ const productSchema = new Schema(
     category: { type: String, default: "" },
     description: { type: String, default: "" },
     price: {
-      type: String,
+      type: Number,
       required: [true, "Please provide product price"],
     },
     sold: { type: Number, default: 0 },

@@ -26,12 +26,12 @@
           >
             <RouterLink to="/">Trang chủ</RouterLink>
           </a-button>
-          <a-button
+          <!-- <a-button
             type="text"
             class="text-gray-700 hover:bg-gray-200 hover:text-black"
           >
             <RouterLink to="/products">Sản phẩm</RouterLink>
-          </a-button>
+          </a-button> -->
         </div>
       </div>
       <div class="flex items-center">
@@ -47,7 +47,7 @@
         <a-dropdown>
           <a-dropdown>
             <template #overlay>
-              <a-menu v-if="authStore.isAuthenticated">
+              <a-menu v-if="authStore.isAuthenticated === true">
                 <a-menu-item key="0">
                   <RouterLink to="/profile">Thông tin cá nhân</RouterLink>
                 </a-menu-item>
@@ -85,10 +85,10 @@
 </template>
 
 <script setup>
-  import { useAuthStore } from "@/stores/auth"
-  import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons-vue"
-  import { message } from "ant-design-vue"
-  import { useRouter } from "vue-router"
+  import { useAuthStore } from "@/stores/auth";
+import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons-vue";
+import { message } from "ant-design-vue";
+import { useRouter } from "vue-router";
 
   const router = useRouter()
   const authStore = useAuthStore()

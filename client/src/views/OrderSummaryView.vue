@@ -22,12 +22,12 @@
             <p>{{ item.name }}</p>
           </div>
         </div>
-        <div class="col-span-3 text-end">{{ priceToNumber(item.price) }} ₫</div>
+        <div class="col-span-3 text-end">{{ item.price }} ₫</div>
         <div class="col-span-2 text-end">
           {{ item.quantity }}
         </div>
         <div class="col-span-3 text-red-500 text-end">
-          {{ priceToNumber(item.price) * item.quantity }} ₫
+          {{ item.price * item.quantity }}₫
         </div>
       </div>
 
@@ -135,12 +135,22 @@
           Trở về giỏ hàng
         </a-button>
         <a-button
+          v-if="paymentMethod === 'cod'"
           class="w-1/3"
           type="primary"
           @click="placeOrder"
         >
           Đặt hàng</a-button
         >
+        <div v-if="paymentMethod === 'paypal'">
+          <PayPalButton
+            :payAmount="convertVNDToUSD(cartStore.totalSelectedPrice)"
+            @approve="(detail) => handlePayPalApprove(detail)"
+            @cancel="(detail) => handlePayPalCancel(detail)"
+            @error="(error) => handlePayPalError(error)"
+          />
+        </div>
+
       </div>
     </div>
   </div>
@@ -149,13 +159,15 @@
 <script setup>
   // Imports
   import { createOrder } from "@/api/orderService"
-  import { useAuthStore } from "@/stores/auth"
-  import { SmileOutlined, WalletOutlined } from "@ant-design/icons-vue"
-  import { message } from "ant-design-vue"
-  import { reactive, ref } from "vue"
-  import { useRouter } from "vue-router"
-  import { useCartStore } from "../stores/cart"
-  import { priceToNumber } from "../utils/currency"
+import { useAuthStore } from "@/stores/auth"
+import { SmileOutlined, WalletOutlined } from "@ant-design/icons-vue"
+import { message } from "ant-design-vue"
+import { reactive, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useCartStore } from "../stores/cart"
+import { convertVNDToUSD } from "../utils/currency"
+import PayPalButton from "../views/components/PayPalButton.vue"
+
   // Router
   const router = useRouter()
 
@@ -168,28 +180,30 @@
     phone: "",
     address: "",
   })
-  const paymentMethod = ref("")
+  const paymentMethod = ref("cod")
 
-  // const orderStatus = ref("INCOMPLETE")
-  // const paymentStatus = ref("INCOMPLETE")
-  // const handlePayPalApprove = (detail) => {
-  //   console.log(`🚀 ~ handlePayPalApprove ~ detail:`, detail)
-  //   orderStatus.value = "COMPLETED"
-  //   paymentStatus.value = "COMPLETED"
-  //   message.success("Thanh toán thành công")
-  //   message.info("Đang tự động tạo đơn hàng")
-  // }
 
-  // const handlePayPalCancel = (detail) => {
-  //   message.warning("Đã dừng thanh toán")
-  // }
+  const handlePayPalApprove = (detail) => {
+    console.log(`🚀 ~ handlePayPalApprove ~ detail:`, detail)
+    message.success("Thanh toán thành công")
+    message.info("Đang tự cập nhật đơn hàng")
+    placeOrder(true)
+  }
 
-  // const handlePayPalError = (error) => {
-  //   console.log(`🚀 ~ handlePayPalError ~ error:`, error)
-  //   message.error("Có lỗi xảy ra, vui lòng kiểm tra số dư, hoặc thử lại sau")
-  // }
+  const handlePayPalCancel = (detail) => {
+    message.warning("Đã dừng thanh toán")
+  }
+
+  const handlePayPalError = (error) => {
+    console.log(`🚀 ~ handlePayPalError ~ error:`, error)
+    message.error("Có lỗi xảy ra, vui lòng kiểm tra số dư, hoặc thử lại sau")
+  }
   // Methods
-  const placeOrder = () => {
+  const placeOrder = (isPaid = false) => {
+    if (!authStore.user) {
+      router.push({ name: "login" })
+      return
+    }
     if (paymentMethod.value === "") {
       message.warning("Vui lý chọn phương thức thanh toán")
       return
@@ -237,7 +251,6 @@
 
     if (orderRes) {
       message.success("Đặt hàng thành công")
-      // cartStore.clearCart()
       router.push({ name: "cart" })
     } else {
       message.error("Đặt hàng thất bại")

@@ -41,7 +41,7 @@
     </nav>
     <div class="p-6">
       <button
-        @click="logout"
+        @click="handleLogout"
         class="flex justify-center w-4/5 mx-auto bg-red-500 text-white py-3 rounded"
       >
         <LogoutOutlined class="mr-2" />
@@ -66,7 +66,6 @@ import { useAuthStore } from "../../stores/auth";
   const authStore = useAuthStore()
   const dashboardStore = useDashboardStore()
   const handleLogout = () => {
-    authStore.logout()
     router.push({ path: "/login" })
   }
 </script>

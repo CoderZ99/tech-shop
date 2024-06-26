@@ -20,6 +20,7 @@
                 statusString(order.status)
               }}</span>
             </p>
+            <p class="font-semibold">Thanh toán: {{ order.isPaid === true ? "Đã thanh toán" : "Chưa thanh toán" }}</p>
           </div>
           <div class="col-span-4">
             <p class="font-semibold">Sản phẩm:</p>
@@ -50,25 +51,22 @@
       <p>Bạn chưa có đơn hàng nào.</p>
     </div>
   </div>
-  <OrderDetails
-    :order="selectedOrder"
-    :visible="isModalVisible"
-    @close="handleModalClose"
-  />
 </template>
 
 <script setup>
-  import { fetchOrders } from "@/api/orderService"
-  import { useAuthStore } from "@/stores/auth"
-  import { message } from "ant-design-vue"
-  import { onBeforeMount, reactive, ref } from "vue"
-  import OrderDetails from "../views/components/OrderDetails.vue"
+  import { fetchOrders } from "@/api/orderService";
+import { useAuthStore } from "@/stores/auth";
+import { useOrderStore } from "@/stores/order";
+import { message } from "ant-design-vue";
+import { onBeforeMount, reactive } from "vue";
+import { useRouter } from "vue-router";
+
+  const router = useRouter()
   // Store
   const authStore = useAuthStore()
+  const orderStore = useOrderStore()
   const orders = reactive([])
-
   const selectedOrder = reactive({})
-  const isModalVisible = ref(false)
   const statusClass = (status) => {
     switch (status) {
       case "placed":
@@ -101,12 +99,11 @@
   const viewOrderDetail = (order) => {
     selectedOrder.value = order
     console.log(`🚀 ~ viewOrderDetail ~ selectedOrder.value:`, selectedOrder)
-    isModalVisible.value = true
+    orderStore.setDetails(order)
+    router.push({ path: `/order-details/${selectedOrder.value._id}` })
+    // isModalVisible.value = true
   }
 
-  const handleModalClose = () => {
-    isModalVisible.value = false
-  }
   const getOrders = async () => {
     try {
       console.log(

@@ -5,10 +5,14 @@ const orderController = require("../controllers/order")
 
 router.get("/", orderController.getAll)
 
-router.get("/:username", orderController.getAllByUsername)
+router.get("/:id", orderController.getById)
+
+router.get("/user/:username", orderController.getAllByUsername)
 
 router.put("/create", orderController.createOrder)
 
 router.put("/update", orderController.updateOrderStatus)
+
+router.put("/payment", orderController.updatePayment)
 
 module.exports = router

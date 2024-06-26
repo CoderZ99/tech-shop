@@ -18,12 +18,37 @@ export const createOrder = async (order) => {
 export const fetchOrders = async (username) => {
   try {
     console.log(`🚀 ~ fetchOrders ~ username:`, username)
-    const endpoint = `${path}/${username}`
+    const endpoint = `${path}/user/${username}`
     const response = await api.get(endpoint)
     console.log(`🚀 ~ fetchOrders ~ response:`, response)
     return response
   } catch (error) {
     console.log(`🚀 ~ fetchOrders ~ error:`, error.response.data)
+    throw error.response.data
+  }
+}
+
+export const getOrders = async (id) => {
+  try {
+    console.log(`🚀 ~ getOrders ~ orderId:`, id)
+    const endpoint = `${path}/${id}`
+    const response = await api.get(endpoint)
+    console.log(`🚀 ~ getOrders ~ response:`, response)
+    return response
+  } catch (error) {
+    console.log(`🚀 ~ getOrders ~ error:`, error)
+    throw error.response.data
+  }
+}
+
+export const updateOrder = async (order) => {
+  try {
+    const endpoint = `${path}/payment`
+    const response = await api.put(endpoint, { id: order._id, isPaid: true })
+    console.log(`🚀 ~ updateOrder ~ response:`, response)
+    return response
+  } catch (error) {
+    console.log(`🚀 ~ updateOrder ~ error:`, error.response.data)
     throw error.response.data
   }
 }

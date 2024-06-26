@@ -5,6 +5,7 @@
 
       <a-button
         class="ml-auto mr-4"
+        :disabled="loading"
         @click="showAddProductModal"
         >Thêm sản phẩm</a-button
       >
@@ -86,35 +87,32 @@
     </a-table>
 
     <ProductModal
+      :isEditMode="isEditMode"
       :visible="isModalVisible"
       :productData="selectedProduct"
-      @update:visible="isModalVisible = $event"
+      @update:visible="handleModalClose"
       @updateDetails="handleUpdateProduct"
-    />
-
-    <AddProductModal
-      :visible="isAddProductModalVisible"
-      @update:visible="isAddProductModalVisible = $event"
       @addProduct="handleAddProduct"
     />
   </div>
 </template>
 <script setup>
   import {
+  createProduct,
   deleteProduct,
   fetchProducts,
   updateProduct,
-} from "@/api/productService"
-import { Modal, message } from "ant-design-vue"
-import { onMounted, ref } from "vue"
-import AddProductModal from "./components/AddProductModal.vue"
-import ProductModal from "./components/ProductModal.vue"
+} from "@/api/productService";
+import { Modal, message } from "ant-design-vue";
+import { onMounted, ref } from "vue";
+import ProductModal from "./components/ProductModal.vue";
 
+  // Data
+  const isEditMode = ref(false)
   const products = ref([])
   const pagedProducts = ref([])
   const loading = ref(false)
   const isModalVisible = ref(false)
-  const isAddProductModalVisible = ref(false)
   const selectedProduct = ref({})
 
   const paginationConfig = ref({
@@ -124,22 +122,29 @@ import ProductModal from "./components/ProductModal.vue"
     showSizeChanger: false,
   })
 
+  // Methods
   const getAllProducts = async () => {
     loading.value = true
     try {
       const response = await fetchProducts()
       products.value = response.data.products
       paginationConfig.value.total = products.value.length
-      setPagedProducts()
+      paginationConfig.value.current = 1
       message.success("Danh sách sản phẩm đã được tải")
     } catch (error) {
       console.log(`🚀 ~ getAllProducts ~ error:`, error)
       message.error("Không thể tải danh sách sản phẩm")
     } finally {
       loading.value = false
+      setPagedProducts()
     }
   }
 
+  /**
+   * Sets the paged products based on the current page and page size.
+   *
+   * @return {void}
+   */
   const setPagedProducts = () => {
     const start =
       (paginationConfig.value.current - 1) * paginationConfig.value.pageSize
@@ -147,28 +152,54 @@ import ProductModal from "./components/ProductModal.vue"
     pagedProducts.value = products.value.slice(start, end)
   }
 
+  /**
+   * Updates the pagination configuration and sets the paged products based on the current page and page size.
+   *
+   * @param {Object} pagination - The new pagination configuration object.
+   * @return {void}
+   */
   const handleTableChange = (pagination) => {
     paginationConfig.value = pagination
     setPagedProducts()
   }
 
+  /**
+   * Updates the product edit mode, selected product, and modal visibility.
+   *
+   * @param {Object} product - The product to be edited.
+   * @return {void}
+   */
   const editProduct = (product) => {
-    console.log(`🚀 ~ editProduct ~ product:`, product)
+    isEditMode.value = true
     selectedProduct.value = { ...product }
     isModalVisible.value = true
   }
 
+  /**
+   * Updates a product and handles the success or error cases.
+   *
+   * @param {Object} prod - The product to be updated.
+   * @return {Promise<void>} A promise that resolves when the update is complete.
+   */
   const handleUpdateProduct = async (prod) => {
     console.log(`🚀 ~ handleUpdateProduct ~ updatedProduct:`, prod)
     try {
       await updateProduct(prod._id, prod)
       message.success("Cập nhật sản phẩm thành công")
-      getAllProducts()
+      selectedProduct.value = {}
     } catch (error) {
       message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
+    } finally {
+      getAllProducts()
     }
   }
 
+  /**
+   * Handles the deletion of a product. Displays a confirmation modal to the user and deletes the product if confirmed.
+   *
+   * @param {Object} product - The product to be deleted.
+   * @return {void}
+   */
   const handleDeleteProduct = (product) => {
     Modal.confirm({
       title: "Xóa sản phẩm",
@@ -187,20 +218,50 @@ import ProductModal from "./components/ProductModal.vue"
     })
   }
 
+  /**
+   * A function that shows the add product modal by resetting selected product, setting edit mode to false, and making the modal visible.
+   *
+   * @return {void} No return value
+   */
   const showAddProductModal = () => {
-    isAddProductModalVisible.value = true
+    selectedProduct.value = {}
+    isEditMode.value = false
+    isModalVisible.value = true
   }
 
+  /**
+   * A description of the entire function.
+   *
+   * @param {type} newProduct - description of parameter
+   * @return {Promise<void>} A promise that resolves when the product is successfully added.
+   */
   const handleAddProduct = async (newProduct) => {
     console.log(`🚀 ~ handleAddProduct ~ newProduct:`, newProduct)
     try {
       await createProduct(newProduct)
       message.success("Thêm sản phẩm thành công")
+      selectedProduct.value = {}
       getAllProducts()
     } catch (error) {
       message.error("Có lỗi xảy ra khi thêm sản phẩm")
     }
   }
 
-  onMounted(getAllProducts)
+  /**
+   * A description of the entire function.
+   *
+   * @param {type} newProduct - description of parameter
+   * @return {Promise<void>} A promise that resolves when the product is successfully added.
+   */
+  const handleModalClose = (visible) => {
+    isModalVisible.value = visible
+    if (!visible) {
+      selectedProduct.value = {}
+    }
+  }
+
+  // Lifecycle hooks
+  onMounted(() => {
+    getAllProducts()
+  })
 </script>

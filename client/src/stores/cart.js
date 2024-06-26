@@ -1,5 +1,4 @@
 // stores/cartStore.js
-import { priceToNumber } from "@/utils/currency"
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 
@@ -16,7 +15,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const totalSelectedPrice = computed(() => {
     return selectedItems.value.reduce(
-      (total, item) => total + priceToNumber(item.price) * item.quantity,
+      (total, item) => total + (item.price) * item.quantity,
       0
     )
   })

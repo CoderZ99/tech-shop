@@ -13,4 +13,6 @@ router.put("/:id", productsController.update)
 
 router.put("/delete/:id", productsController.deleteProduct)
 
+router.post("/create", productsController.add)
+
 module.exports = router

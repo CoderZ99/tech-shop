@@ -5,27 +5,28 @@
         <h1 class="text-2xl font-semibold">
           {{ product.category }} {{ product.name }}
         </h1>
-        <div class="ml-4">
+        <!-- <div class="ml-4">
           <a-rate
             :value="product.rating"
             allow-half
             disabled
           />
-        </div>
-        <h2 class="ml-2">({{ product.numReviews }} đánh giá)</h2>
+        </div> -->
+        <!-- <h2 class="ml-2">({{ product.numReviews }} đánh giá)</h2> -->
       </div>
       <div class="flex flex-wrap items-center mt-8">
         <div class="w-full md:w-2/5">
           <img
-            :src="`${'/src/assets/products/' + product.imageUrl}`"
+            :src="product.image"
             :alt="product.name"
             class="w-full"
           />
         </div>
         <div class="w-full md:w-1/2 md:pl-8">
-          <p class="text-lg font-semibold mb-2">Chi tiết:</p>
-          <p>{{ product.description }}</p>
-          <p class="text-lg font-semibold mt-4">{{ product.price }} ₫</p>
+          <!-- <p class="text-lg font-semibold mb-2">Chi tiết:</p>
+          <p>{{ product.description }}</p> -->
+          <p class="text-lg font-semibold mt-4">Giá bán:</p>
+          <p class="text-red-500 text-lg font-semibold mt-4">{{ product.price }}₫</p>
 
           <div class="flex items-center mt-2 text-gray-500">
             <p>
@@ -34,8 +35,8 @@
                 product.stock
               }}</span>
             </p>
-            <span class="mx-2">|</span>
-            <p>Đã bán: {{ product.sold }}</p>
+            <!-- <span class="mx-2">|</span> -->
+            <!-- <p>Đã bán: {{ product.sold }}</p> -->
           </div>
           <div class="flex items-center mt-4">
             <p class="mr-4">Số lượng:</p>
@@ -68,8 +69,13 @@
           </div>
         </div>
       </div>
+      <div class="w-3/5 bg-white p-4 mt-8 rounded shadow-md">
+        <a-descriptions title="Thông tin sản phẩm">
+        <a-descriptions-item label="Mô tả">{{ product.description }}</a-descriptions-item>
+      </a-descriptions>
+      </div>
       <ShoppingAssurance />
-      <h2 class="text-xl font-semibold my-4">Customer Reviews</h2>
+      <!-- <h2 class="text-xl font-semibold my-4">Customer Reviews</h2>
       <div v-if="product && product?.reviews?.length > 0">
         <CustomerReviews :reviews="product.reviews" />
       </div>
@@ -78,7 +84,7 @@
           class="mb-4 p-4 border rounded w-3/4"
           description="Chưa có đánh giá nào"
         />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -92,12 +98,11 @@
   // import CustomerReviews from "./components/CustomerReviews.vue";
   // import ShoppingAssurance from "./components/ShoppingAssurance.vue";
   import { useCartStore } from "@/stores/cart"
-  import { message } from "ant-design-vue"
-  import { onMounted, ref } from "vue"
-  import { useRouter } from "vue-router"
-  import { getProductByDetailUrl } from "../api/productService"
-  import CustomerReviews from "./components/CustomerReviews.vue"
-  import ShoppingAssurance from "./components/ShoppingAssurance.vue"
+import { message } from "ant-design-vue"
+import { onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+import { getProductByDetailUrl } from "../api/productService"
+import ShoppingAssurance from "./components/ShoppingAssurance.vue"
 
   // Store
   const cartStore = useCartStore()

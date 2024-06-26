@@ -33,17 +33,17 @@
         <div class="flex justify-center">
           <a-image
             :width="200"
-            :src="`${'/src/assets/products/' + product.imageUrl}`"
+            :src="product.image"
             :alt="product.name"
             class="object-cover mb-4 rounded"
           />
         </div>
         <h2 class="text-base font-semibold mb-2">{{ product.name }}</h2>
-        <p class="text-sm text-gray-700">{{ product.description }}</p>
+        <!-- <p class="text-sm text-gray-700 truncate">{{ product.description }}</p> -->
         <div class="mb-0 mt-auto flex justify-between items-center self-end">
           <span class="text-base font-bold text-red-500">{{
             product.price
-          }}</span>
+          }}₫</span>
         </div>
         <!-- Button -->
         <div class="flex justify-between items-center mt-4 self-end">
@@ -91,12 +91,12 @@
 <script setup>
   // Imports
   import { useCartStore } from "@/stores/cart"
-  import { EyeOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue"
-  import { message } from "ant-design-vue"
-  import { computed, onMounted, reactive, ref } from "vue"
-  import { useRouter } from "vue-router"
-  import { fetchProducts } from "../api/productService"
-  import CommonPagination from "../views/components/CommonPagination.vue"
+import { EyeOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue"
+import { message } from "ant-design-vue"
+import { computed, onMounted, reactive, ref } from "vue"
+import { useRouter } from "vue-router"
+import { fetchProducts } from "../api/productService"
+import CommonPagination from "../views/components/CommonPagination.vue"
 
   // Data
   const router = useRouter()

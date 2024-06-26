@@ -55,14 +55,17 @@
 <script setup>
   // Imports
   import { updateUserProfile } from "@/api/userService"
-  import { useAuthStore } from "@/stores/auth"
-  import {
-    IdcardOutlined,
-    PhoneOutlined,
-    UserOutlined,
-  } from "@ant-design/icons-vue"
-  import { message } from "ant-design-vue"
-  import { onMounted, ref } from "vue"
+import { useAuthStore } from "@/stores/auth"
+import {
+  IdcardOutlined,
+  PhoneOutlined,
+  UserOutlined,
+} from "@ant-design/icons-vue"
+import { message } from "ant-design-vue"
+import { onMounted, ref } from "vue"
+import { useRouter } from "vue-router"
+  // Router
+  const router = useRouter()
 
   // Store
   const authStore = useAuthStore()
@@ -104,15 +107,17 @@
 
   const cancelChanges = () => {
     // Update store
-    user.value.name = currentName
-    user.value.phone = currentPhone
+    // authStore.user = localStorage.getItem("user")
+    console.log(`🚀 ~ cancelChanges ~ authStore.user:`, authStore.user)
+    user.value.name = authStore?.user?.name
+    user.value.phone = authStore?.user?.phone
   }
 
   // Lifecycle
   // Mounted
   onMounted(() => {
     // Get user data from store
-    user.value = authStore.user
+    user.value = { ...authStore.user }
     currentName = user.value.name
     currentPhone = user.value.phone
     console.log(`🚀 ~ onBeforeMount ~ authStore.user:`, authStore.user)

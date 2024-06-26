@@ -1,12 +1,12 @@
 <template>
   <a-modal
-    okText="Lưu"
-    cancelText="Huỷ"
+    :okText="isEditMode ? 'Sửa' : 'Thêm'"
+    cancelText="Hủy"
     style="top: 10px"
     :visible="visible"
     @ok="handleOk"
     @cancel="handleCancel"
-    title="Chỉnh sửa sản phẩm"
+    :title="isEditMode ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'"
   >
     <a-form :form="form">
       <a-form-item
@@ -36,6 +36,7 @@
           ref="fileInput"
           id="file"
           type="file"
+          accept="image/*"
           @change="handleFileChange"
         />
       </a-form-item>
@@ -47,11 +48,21 @@
         <a-input v-model:value="product.name" />
       </a-form-item>
       <a-form-item
+        label="Đường dẫn chi tiết"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 18 }"
+      >
+        <a-input v-model:value="product.detailUrl" />
+      </a-form-item>
+      <a-form-item
         label="Giá"
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.price" />
+        <a-input
+          type="number"
+          v-model:value="product.price"
+        />
       </a-form-item>
       <a-form-item
         label="Danh mục"
@@ -65,7 +76,10 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.stock" />
+        <a-input
+          type="number"
+          v-model:value="product.stock"
+        />
       </a-form-item>
       <a-form-item
         label="Mô tả"
@@ -84,17 +98,20 @@
     </a-form>
   </a-modal>
 </template>
+
 <script setup>
   import { failImg } from "@/assets/co";
 import { message } from "ant-design-vue";
 import { reactive, ref, watch } from "vue";
-  const tmp = ref(1)
-    const form = reactive({})
+
+  const fileInput = ref(null)
+  const form = reactive({})
   const props = defineProps({
     visible: Boolean,
     productData: Object,
+    isEditMode: Boolean,
   })
-  const emits = defineEmits(["update:visible", "updateDetails"])
+  const emits = defineEmits(["update:visible", "updateDetails", "addProduct"])
 
   const product = reactive({ ...props.productData })
 
@@ -104,6 +121,15 @@ import { reactive, ref, watch } from "vue";
       Object.assign(product, newData)
     },
     { deep: true, immediate: true }
+  )
+
+  watch(
+    () => props.visible,
+    (newVal) => {
+      if (!newVal) {
+        resetForm();
+      }
+    }
   )
 
   const handleFileChange = async (event) => {
@@ -120,13 +146,34 @@ import { reactive, ref, watch } from "vue";
     }
   }
 
+  const resetForm = () => {
+    Object.assign(product, {
+      name: "",
+      price: "",
+      category: "",
+      detailUrl: "",
+      stock: "",
+      description: "",
+      brand: "",
+      image: "",
+    })
+
+    // reset file input text
+    console.log(fileInput.value.value)
+    if (fileInput.value.value) {
+      fileInput.value.value = ""
+    }
+  }
+
   const handleOk = async () => {
     try {
-      emits("updateDetails", product)
+      if (props.isEditMode) {
+        emits("updateDetails", product)
+      } else {
+        emits("addProduct", product)
+      }
       emits("update:visible", false)
-      // product.image = null
-      // ref.fileInput.value = null
-      // ref.fileInput.value = ""
+      resetForm()
     } catch (error) {
       console.log(error)
     }
@@ -134,9 +181,8 @@ import { reactive, ref, watch } from "vue";
 
   const handleCancel = () => {
     emits("update:visible", false)
-    // product.image = null
-    // ref.fileInput.value = null
-    // ref.fileInput.value = ""
+    resetForm()
   }
 </script>
+
 <style scoped></style>

@@ -39,3 +39,15 @@ export const deleteProduct = async (id, product) => {
         throw error.response.data
     }
 };
+
+export const createProduct = async (product) => {
+    try {
+        const endpoint = `${path}/create`
+        const response = await api.post(endpoint, product)
+        console.log(`🚀 ~ createProduct ~ response:`, response)
+        return response
+    } catch (error) {
+        console.log(error.response.data)
+        throw error.response.data
+    }
+}
