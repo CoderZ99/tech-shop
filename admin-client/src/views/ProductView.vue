@@ -29,6 +29,8 @@
         key="name"
         title="Tên sản phẩm"
         dataIndex="name"
+        ellipsis
+        :maxWidth="500"
       />
       <a-table-column
         align="center"
@@ -98,14 +100,14 @@
 </template>
 <script setup>
   import {
-  createProduct,
-  deleteProduct,
-  fetchProducts,
-  updateProduct,
-} from "@/api/productService";
-import { Modal, message } from "ant-design-vue";
-import { onMounted, ref } from "vue";
-import ProductModal from "./components/ProductModal.vue";
+    createProduct,
+    deleteProduct,
+    fetchProducts,
+    updateProduct,
+  } from "@/api/productService"
+  import { Modal, message } from "ant-design-vue"
+  import { onMounted, ref } from "vue"
+  import ProductModal from "./components/ProductModal.vue"
 
   // Data
   const isEditMode = ref(false)

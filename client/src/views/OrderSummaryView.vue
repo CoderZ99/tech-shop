@@ -150,7 +150,6 @@
             @error="(error) => handlePayPalError(error)"
           />
         </div>
-
       </div>
     </div>
   </div>
@@ -159,14 +158,14 @@
 <script setup>
   // Imports
   import { createOrder } from "@/api/orderService"
-import { useAuthStore } from "@/stores/auth"
-import { SmileOutlined, WalletOutlined } from "@ant-design/icons-vue"
-import { message } from "ant-design-vue"
-import { reactive, ref } from "vue"
-import { useRouter } from "vue-router"
-import { useCartStore } from "../stores/cart"
-import { convertVNDToUSD } from "../utils/currency"
-import PayPalButton from "../views/components/PayPalButton.vue"
+  import { useAuthStore } from "@/stores/auth"
+  import { SmileOutlined, WalletOutlined } from "@ant-design/icons-vue"
+  import { message } from "ant-design-vue"
+  import { onMounted, reactive, ref } from "vue"
+  import { useRouter } from "vue-router"
+  import { useCartStore } from "../stores/cart"
+  import { convertVNDToUSD } from "../utils/currency"
+  import PayPalButton from "../views/components/PayPalButton.vue"
 
   // Router
   const router = useRouter()
@@ -181,7 +180,6 @@ import PayPalButton from "../views/components/PayPalButton.vue"
     address: "",
   })
   const paymentMethod = ref("cod")
-
 
   const handlePayPalApprove = (detail) => {
     console.log(`🚀 ~ handlePayPalApprove ~ detail:`, detail)
@@ -251,11 +249,18 @@ import PayPalButton from "../views/components/PayPalButton.vue"
 
     if (orderRes) {
       message.success("Đặt hàng thành công")
+      cartStore.clearSelectedItems()
       router.push({ name: "cart" })
     } else {
       message.error("Đặt hàng thất bại")
     }
   }
+
+  onMounted(() => {
+    if (cartStore.selectedItems.length === 0) {
+      router.push({ name: "cart" })
+    }
+  })
 </script>
 
 <style scoped></style>

@@ -3,7 +3,7 @@
     <h2 class="text-2xl font-semibold mb-4">Lịch sử đơn hàng</h2>
     <div v-if="orders.length">
       <div
-        v-for="order in orders"
+        v-for="order in currentOrders"
         :key="order._id"
         class="bg-white p-6 rounded shadow-md mb-4"
       >
@@ -20,7 +20,10 @@
                 statusString(order.status)
               }}</span>
             </p>
-            <p class="font-semibold">Thanh toán: {{ order.isPaid === true ? "Đã thanh toán" : "Chưa thanh toán" }}</p>
+            <p class="font-semibold">
+              Thanh toán:
+              {{ order.isPaid === true ? "Đã thanh toán" : "Chưa thanh toán" }}
+            </p>
           </div>
           <div class="col-span-4">
             <p class="font-semibold">Sản phẩm:</p>
@@ -46,6 +49,14 @@
           </div>
         </div>
       </div>
+      <CommonPagination
+        v-if="orders.length > 0"
+        :current="currentPage"
+        :total="totalOrders"
+        :page-size="pageSize"
+        @change="handlePageChange"
+        show-less-items
+      />
     </div>
     <div v-else>
       <p>Bạn chưa có đơn hàng nào.</p>
@@ -54,12 +65,13 @@
 </template>
 
 <script setup>
-  import { fetchOrders } from "@/api/orderService";
-import { useAuthStore } from "@/stores/auth";
-import { useOrderStore } from "@/stores/order";
-import { message } from "ant-design-vue";
-import { onBeforeMount, reactive } from "vue";
-import { useRouter } from "vue-router";
+  import { fetchOrders } from "@/api/orderService"
+  import { useAuthStore } from "@/stores/auth"
+  import { useOrderStore } from "@/stores/order"
+  import { message } from "ant-design-vue"
+  import { computed, onBeforeMount, reactive, ref } from "vue"
+  import { useRouter } from "vue-router"
+  import CommonPagination from "../views/components/CommonPagination.vue"
 
   const router = useRouter()
   // Store
@@ -67,6 +79,23 @@ import { useRouter } from "vue-router";
   const orderStore = useOrderStore()
   const orders = reactive([])
   const selectedOrder = reactive({})
+
+  // Các biến cho phân trang
+  const currentPage = ref(1) // Trang hiện tại
+  const pageSize = 3 // Số đơn hàng trên mỗi trang
+  const totalOrders = computed(() => orders.length) // Tổng số đơn hàng
+
+  const currentOrders = computed(() => {
+    // Logic to paginate products
+    const startIndex = (currentPage.value - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    return orders.slice(startIndex, endIndex)
+  })
+
+  const handlePageChange = (page) => {
+    currentPage.value = page
+  }
+
   const statusClass = (status) => {
     switch (status) {
       case "placed":

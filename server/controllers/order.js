@@ -1,12 +1,15 @@
+const product = require("../models/product")
 const orderService = require("../services/order")
-const { update } = require("./product")
-
+const { updateStock } = require("../services/product")
 const orderController = {
   createOrder: async (req, res) => {
     try {
       const order = req.body
       console.log(`🚀 ~ createOrder: ~ order:`, order)
       const newOrder = await orderService.createOrder(order)
+      order.orderItems.forEach((product) => {
+        updateStock(product.product, product.quantity)
+      })
       console.log(`🚀 ~ createOrder: ~ newOrder:`, newOrder)
       res.status(201).json(newOrder)
     } catch (error) {

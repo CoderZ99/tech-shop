@@ -15,7 +15,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const totalSelectedPrice = computed(() => {
     return selectedItems.value.reduce(
-      (total, item) => total + (item.price) * item.quantity,
+      (total, item) => total + item.price * item.quantity,
       0
     )
   })
@@ -59,7 +59,9 @@ export const useCartStore = defineStore("cart", () => {
   }
 
   const clearSelectedItems = () => {
-    items.value = items.value.filter((item) => item.selected === true)
+    console.log(`🚀 ~ clearSelectedItems ~ items:`, items.value)
+    items.value = items.value.filter((item) => !item.selected)
+    console.log(`🚀 ~ clearSelectedItems ~ items:`, items.value)
   }
 
   const clearCart = () => {
@@ -74,6 +76,7 @@ export const useCartStore = defineStore("cart", () => {
     selectItem,
     selectAllItems,
     clearCart,
+    clearSelectedItems,
     totalItems,
     selectedItems,
     totalSelectedPrice,

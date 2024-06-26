@@ -111,6 +111,7 @@ import { reactive, ref, watch } from "vue";
     productData: Object,
     isEditMode: Boolean,
   })
+
   const emits = defineEmits(["update:visible", "updateDetails", "addProduct"])
 
   const product = reactive({ ...props.productData })
@@ -127,11 +128,17 @@ import { reactive, ref, watch } from "vue";
     () => props.visible,
     (newVal) => {
       if (!newVal) {
-        resetForm();
+        resetForm()
       }
     }
   )
 
+  /**
+   * Handles the change event of the file input element and reads the selected file as a data URL.
+   *
+   * @param {Event} event - The change event object.
+   * @return {Promise<void>} A promise that resolves when the file is successfully read and the image URL is assigned to the product.image property.
+   */
   const handleFileChange = async (event) => {
     const file = event.target.files[0]
     if (file) {
@@ -146,6 +153,11 @@ import { reactive, ref, watch } from "vue";
     }
   }
 
+  /**
+   * Resets the form by clearing all the fields and resetting the file input text.
+   *
+   * @return {void} This function does not return anything.
+   */
   const resetForm = () => {
     Object.assign(product, {
       name: "",
