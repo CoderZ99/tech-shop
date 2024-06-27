@@ -33,7 +33,7 @@ const productsController = {
       const product = await productService.getByDetailUrl(detailUrl)
       console.log(`🚀 ~ getByDetailUrl: ~ product:`, product)
       if (!product) {
-        return res.status(404).json({ message: "Products not found" })
+        return res.status(404).json({ message: "Không tìm thấy sản phẩm" })
       }
       res.status(200).json(product)
     } catch (error) {

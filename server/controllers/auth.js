@@ -67,16 +67,16 @@ const authController = {
       // Check if the username exists
       const user = await userService.getByUsername(username)
       if (!user) {
-        return res.status(404).json({ message: "The username does not exist!" })
+        return res.status(404).json({ message: "Tên đăng nhập chưa tồn tại!" })
       }
       // Check if the user is active
       if (user.status === "disable") {
-        return res.status(401).json({ message: "The user is disabled!" })
+        return res.status(401).json({ message: "Người dùng bị vô hiệu hóa!" })
       }
       // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password)
       if (!isMatch) {
-        return res.status(401).json({ message: "The password is incorrect!" })
+        return res.status(401).json({ message: "Mật khẩu không đúng!" })
       }
 
       // Payload
@@ -105,7 +105,7 @@ const authController = {
 
       if (!saveToken) {
         return res.status(500).json({
-          message: "Error while saving refresh token to database!",
+          message: "Lỗi khi tạo token!",
         })
       }
 
@@ -223,11 +223,11 @@ const authController = {
       )
       if (!clearToken) {
         return res.status(500).json({
-          message: "Error while saving refresh token to database!",
+          message: "Lỗi khi tạo token!",
         })
       }
       res.status(200).json({
-        message: "Logout successfully!",
+        message: "Đăng xuất thành công",
       })
       console.log("Logout successfully!")
     } catch (error) {

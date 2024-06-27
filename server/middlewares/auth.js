@@ -5,7 +5,7 @@ const authMiddleware = {
     // Get token from header
     const bearerToken = req.headers["authorization"]
     if (!bearerToken) {
-      return res.status(401).json({ message: "Unauthorized" })
+      return res.status(401).json({ message: "Không được phép truy cập" })
     }
     // Split token
     const token = bearerToken.split(" ")[1]

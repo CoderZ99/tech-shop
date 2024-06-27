@@ -19,13 +19,12 @@ const usersController = {
       if (!data) {
         // If the user is not found, return a 404 error
         return res.status(404).json({
-          message: "not found user!",
-          error: 1,
+          message: "Không tìm thấy người dùng!",
           data,
         })
       }
       return res.status(200).json({
-        message: "success",
+        message: "Thành công",
         error: 0,
         data,
       })
@@ -33,7 +32,6 @@ const usersController = {
       // Catch any error that occurs and return it to the client
       res.json({
         message: `error! ${error.message}`,
-        error: 1,
       })
     }
   },
@@ -58,10 +56,10 @@ const usersController = {
       const { username } = req.params
       const data = await userService.unblockUser(username)
       if (!data) {
-        return res.status(404).json({ message: "user not found!" })
+        return res.status(404).json({ message: "Không tìm thấy người dùng" })
       }
       res.status(200).json({
-        message: "success",
+        message: "Thành công",
         error: 0,
       })
     } catch (error) {
@@ -86,10 +84,10 @@ const usersController = {
       const result = await userService.updateUser(username, data)
       console.log(`🚀 ~ updateUser: ~ result:`, result)
       if (!result) {
-        return res.status(404).json({ message: "user not found!" })
+        return res.status(404).json({ message: "Không tìm thấy người dùng" })
       }
       res.status(200).json({
-        message: "Update user successfully!",
+        message: "Cập nhật người dùng thành công",
         user: data,
       })
     } catch (error) {
@@ -101,7 +99,7 @@ const usersController = {
   getAllUsers: async (req, res) => {
     try {
       const data = await userService.getAllUsers()
-      res.status(200).json({data})
+      res.status(200).json({ data })
     } catch (error) {
       res.json({
         message: `error! ${error.message}`,
