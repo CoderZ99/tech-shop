@@ -75,12 +75,12 @@
 
 <script setup>
   import { getOrders, updateOrder } from "@/api/orderService"
-import { useOrderStore } from "@/stores/order"
-import { convertVNDToUSD } from "@/utils/currency"
-import PayPalButton from "@/views/components/PayPalButton.vue"
-import { message } from "ant-design-vue"
-import { onMounted, ref } from "vue"
-import { useRouter } from "vue-router"
+  import { useOrderStore } from "@/stores/order"
+  import { convertVNDToUSD } from "@/utils/currency"
+  import PayPalButton from "@/views/components/PayPalButton.vue"
+  import { message } from "ant-design-vue"
+  import { onMounted, ref } from "vue"
+  import { useRouter } from "vue-router"
   const orderStore = useOrderStore()
   const router = useRouter()
   const order = ref({})
@@ -91,15 +91,15 @@ import { useRouter } from "vue-router"
     const response = await getOrders(id.toString())
     order.value = response.data
     console.log(`🚀 ~ loadData ~ response:`, response)
-}
+  }
 
-const handlePayPalApprove = async (detail) => {
-  const id = orderStore.details._id
-  order.value.isPaid = true
-  const response = await updateOrder(order.value)
-  console.log(`🚀 ~ handlePayPalApprove ~ response:`, response)
-  message.success("Thanh toán thành công")
-}
+  const handlePayPalApprove = async (detail) => {
+    const id = orderStore.details._id
+    order.value.isPaid = true
+    const response = await updateOrder(order.value)
+    console.log(`🚀 ~ handlePayPalApprove ~ response:`, response)
+    message.success("Thanh toán thành công")
+  }
 
   const statusString = (status) => {
     switch (status) {

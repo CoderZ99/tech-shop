@@ -7,6 +7,7 @@
     @ok="handleOk"
     @cancel="handleCancel"
     :title="isEditMode ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'"
+    @afterClose="resetForm"
   >
     <a-form :form="form">
       <a-form-item
@@ -45,14 +46,20 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.name" />
+        <a-input
+          v-model:value="product.name"
+          placeholder="Nhập tên sản phẩm"
+        />
       </a-form-item>
       <a-form-item
         label="Đường dẫn chi tiết"
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.detailUrl" />
+        <a-input
+          v-model:value="product.detailUrl"
+          placeholder="Nhập đường dẫn chi tiết sản phẩm"
+        />
       </a-form-item>
       <a-form-item
         label="Giá"
@@ -62,6 +69,7 @@
         <a-input
           type="number"
           v-model:value="product.price"
+          placeholder="Nhập giá sản phẩm"
         />
       </a-form-item>
       <a-form-item
@@ -69,7 +77,10 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.category" />
+        <a-input
+          v-model:value="product.category"
+          placeholder="Nhập loại sản phẩm"
+        />
       </a-form-item>
       <a-form-item
         label="Số lượng"
@@ -79,6 +90,7 @@
         <a-input
           type="number"
           v-model:value="product.stock"
+          placeholder="Nhập số lượng trong kho"
         />
       </a-form-item>
       <a-form-item
@@ -86,23 +98,29 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.description" />
+        <a-input
+          v-model:value="product.description"
+          placeholder="Nhập mô tả sản phẩm"
+        />
       </a-form-item>
       <a-form-item
         label="Hãng"
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-input v-model:value="product.brand" />
+        <a-input
+          v-model:value="product.brand"
+          placeholder="Nhập hãng sản phẩm"
+        />
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script setup>
-  import { failImg } from "@/assets/co";
-import { message } from "ant-design-vue";
-import { reactive, ref, watch } from "vue";
+  import { failImg } from "@/assets/co"
+  import { message } from "ant-design-vue"
+  import { reactive, ref, watch } from "vue"
 
   const fileInput = ref(null)
   const form = reactive({})

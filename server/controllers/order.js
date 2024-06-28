@@ -1,6 +1,11 @@
 const product = require("../models/product")
 const orderService = require("../services/order")
-const { updateStock } = require("../services/product")
+const {
+  updateStock,
+  updateSold,
+  cancelSold,
+  cancelStock,
+} = require("../services/product")
 const orderController = {
   createOrder: async (req, res) => {
     try {
@@ -9,6 +14,7 @@ const orderController = {
       const newOrder = await orderService.createOrder(order)
       order.orderItems.forEach((product) => {
         updateStock(product.product, product.quantity)
+        updateSold(product.product, product.quantity)
       })
       console.log(`🚀 ~ createOrder: ~ newOrder:`, newOrder)
       res.status(201).json(newOrder)
@@ -32,11 +38,19 @@ const orderController = {
   updateOrderStatus: async (req, res) => {
     try {
       const order = req.body
+      console.log(`🚀 ~ updateOrderStatus: ~ req.body:`, req.body)
       console.log(`🚀 ~ updateOrderStatus: ~ order:`, order)
       const updatedOrder = await orderService.updateStatus(
         order.id,
         order.status
       )
+      if (order.status === "cancelled") {
+        order?.orderItems.forEach((product) => {
+          console.log(`🚀 ~ updateOrderStatus: ~ product:`, product)
+          cancelStock(product.product, product.quantity)
+          cancelSold(product.product, product.quantity)
+        })
+      }
       console.log(`🚀 ~ updateOrderStatus: ~ updatedOrder:`, updatedOrder)
       res.status(200).json(updatedOrder)
     } catch (error) {

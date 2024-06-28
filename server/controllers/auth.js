@@ -12,7 +12,7 @@ const authController = {
       // Check if the username already exists
       let checkUsername = await userService.getByUsername(username)
       if (checkUsername) {
-        return res.status(400).json({ message: "The username already exists!" })
+        return res.status(400).json({ message: "Tên tài khoản đã tồn tại!" })
       }
 
       // Hash the password
@@ -42,14 +42,13 @@ const authController = {
       // Check result register
       if (!createResult) {
         return res.status(400).json({
-          message:
-            "There was an error creating the account, please try again.!",
+          message: "Có lỗi xảy ra, thử lại sau đó.!",
         })
       }
 
       // Return the response
       res.status(201).json({
-        message: "Account successfully created!",
+        message: "Tạo tài khoản thành công!",
       })
     } catch (error) {
       res.json({

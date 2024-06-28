@@ -12,12 +12,6 @@ export function convertVNDToUSD(amountVND) {
   return amountUSD.toFixed(2)
 }
 
-/**
- * Converts a price string to a number.
- *
- * @param {string} price - The price string to convert to a number.
- * @return {number} The converted price as a number.
- */
-export function priceToNumber(price) {
-  return Number(price.replace(/\./g, ""))
+export const formatCurrency = (amount) => {
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 }

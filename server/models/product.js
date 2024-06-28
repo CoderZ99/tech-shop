@@ -1,7 +1,5 @@
 const mongoose = require("mongoose")
 
-const reviewSchema = require("./review")
-
 const Schema = mongoose.Schema
 
 const productSchema = new Schema(
@@ -22,15 +20,6 @@ const productSchema = new Schema(
     },
     sold: { type: Number, default: 0 },
     stock: { type: Number, default: 0 },
-    // rating: { type: Number, default: 0 },
-    // reviews: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     required: true,
-    //     ref: "Review",
-    //   },
-    // ],
-    // numReviews: { type: Number, default: 0 },
   },
   { timestamps: true }
 )

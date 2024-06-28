@@ -128,10 +128,10 @@
   />
 </template>
 <script setup>
-  import { cancelOrder, fetchOrders } from "@/api/orderService";
-import { message } from "ant-design-vue";
-import { onMounted, reactive, ref } from "vue";
-import OrderDetails from "../views/components/OrderDetails.vue";
+  import { cancelOrder, fetchOrders } from "@/api/orderService"
+  import { message } from "ant-design-vue"
+  import { onMounted, reactive, ref } from "vue"
+  import OrderDetails from "../views/components/OrderDetails.vue"
   const orders = ref([])
   const pagedOrders = ref([])
   const loading = ref(false)
@@ -149,8 +149,8 @@ import OrderDetails from "../views/components/OrderDetails.vue";
       console.log(`🚀 ~ getAllOrders ~ response:`, response)
       orders.value = []
       orders.value = response?.data
-        paginationConfig.value.total = orders.value.length
-      message.success('Danh sách đơn hàng đã được tải')
+      paginationConfig.value.total = orders.value.length
+      message.success("Danh sách đơn hàng đã được tải")
       setPagedOrders()
     } catch (error) {
       console.log(`🚀 ~ getAllOrders ~ error:`, error)
@@ -172,13 +172,13 @@ import OrderDetails from "../views/components/OrderDetails.vue";
   }
 
   const toggleOrderStatus = async (order) => {
+    console.log(`🚀 ~ toggleOrderStatus ~ order.orderItems:`, order.orderItems)
     try {
-      const response = await cancelOrder(order._id)
+      const response = await cancelOrder(order._id, order.orderItems)
       if (!response) {
         message.error("Có lỗi xảy ra")
       } else {
         message.success(`Đơn hàng ${order._id} đã bị hủy`)
-        order.status = "cancelled"
       }
       getAllOrders()
       setPagedOrders()

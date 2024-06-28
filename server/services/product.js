@@ -60,6 +60,33 @@ const productService = {
     )
     return updatedProduct
   },
+
+  updateSold: async (id, quantity) => {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $inc: { sold: quantity } },
+      { new: true }
+    )
+    return updatedProduct
+  },
+
+  cancelStock: async (id, quantity) => {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $inc: { stock: quantity } },
+      { new: true }
+    )
+    return updatedProduct
+  },
+
+  cancelSold: async (id, quantity) => {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $inc: { sold: -quantity } },
+      { new: true }
+    )
+    return updatedProduct
+  },
 }
 
 module.exports = productService

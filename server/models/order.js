@@ -45,6 +45,7 @@ const orderSchema = new Schema(
     },
     paidAt: {
       type: Date,
+      default: null,
     },
     orderAt: {
       type: Date,
@@ -53,6 +54,14 @@ const orderSchema = new Schema(
   },
   { timestamps: true }
 )
+
+// Middleware trước khi lưu tài liệu
+orderSchema.pre("save", function (next) {
+  if (this.isPaid && !this.paidAt) {
+    this.paidAt = Date.now()
+  }
+  next()
+})
 
 // Export model
 module.exports = mongoose.model("Order", orderSchema)

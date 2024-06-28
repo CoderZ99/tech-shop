@@ -138,7 +138,7 @@
           v-if="paymentMethod === 'cod'"
           class="w-1/3"
           type="primary"
-          @click="placeOrder"
+          @click="placeOrder(false)"
         >
           Đặt hàng</a-button
         >
@@ -183,9 +183,9 @@
 
   const handlePayPalApprove = (detail) => {
     console.log(`🚀 ~ handlePayPalApprove ~ detail:`, detail)
+    placeOrder(true, detail)
     message.success("Thanh toán thành công")
-    message.info("Đang tự cập nhật đơn hàng")
-    placeOrder(true)
+    message.info("Đang tự tạo đơn hàng")
   }
 
   const handlePayPalCancel = (detail) => {
@@ -197,7 +197,7 @@
     message.error("Có lỗi xảy ra, vui lòng kiểm tra số dư, hoặc thử lại sau")
   }
   // Methods
-  const placeOrder = (isPaid = false) => {
+  const placeOrder = async (isPaid = false, detail = {}) => {
     if (!authStore.user) {
       router.push({ name: "login" })
       return
@@ -231,6 +231,8 @@
         quantity: item.quantity,
       }
     })
+
+    // Create order
     const orderDetails = {
       username: authStore.user.username,
       orderItems: orderItems,
@@ -241,13 +243,14 @@
       },
       paymentMethod: paymentMethod.value,
       totalPrice: cartStore.totalSelectedPrice,
-      isPaid: false,
+      isPaid: !!isPaid,
       paidAt: null,
     }
 
-    const orderRes = createOrder(orderDetails)
+    const orderRes = await createOrder(orderDetails)
+    console.log(`🚀 ~ placeOrder ~ orderRes:`, orderRes)
 
-    if (orderRes) {
+    if (orderRes.status === 201) {
       message.success("Đặt hàng thành công")
       cartStore.clearSelectedItems()
       router.push({ name: "cart" })

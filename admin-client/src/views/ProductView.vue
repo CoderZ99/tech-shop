@@ -129,16 +129,22 @@
     loading.value = true
     try {
       const response = await fetchProducts()
-      products.value = response.data.products
-      paginationConfig.value.total = products.value.length
-      paginationConfig.value.current = 1
-      message.success("Danh sách sản phẩm đã được tải")
+      console.log(`🚀 ~ getAllProducts ~ response:`, response)
+      if (response?.data?.products) {
+        products.value = []
+        products.value = [...response.data.products]
+        paginationConfig.value.total = products.value.length
+        paginationConfig.value.current = 1
+        message.success("Danh sách sản phẩm đã được tải")
+        setPagedProducts()
+      } else {
+        throw new Error("Không thể tải danh sách sản phẩm")
+      }
     } catch (error) {
       console.log(`🚀 ~ getAllProducts ~ error:`, error)
       message.error("Không thể tải danh sách sản phẩm")
     } finally {
       loading.value = false
-      setPagedProducts()
     }
   }
 
@@ -186,13 +192,14 @@
   const handleUpdateProduct = async (prod) => {
     console.log(`🚀 ~ handleUpdateProduct ~ updatedProduct:`, prod)
     try {
-      await updateProduct(prod._id, prod)
+      let response = await updateProduct(prod._id, prod)
+      console.log(`🚀 ~ handleUpdateProduct ~ response:`, response)
       message.success("Cập nhật sản phẩm thành công")
       selectedProduct.value = {}
     } catch (error) {
       message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
     } finally {
-      getAllProducts()
+      await getAllProducts()
     }
   }
 
@@ -212,9 +219,10 @@
           product.isDeleted = true
           await deleteProduct(product._id, product)
           message.success("Sản phẩm đã được xóa")
-          getAllProducts()
         } catch (error) {
           message.error("Có lỗi xảy ra khi xóa sản phẩm")
+        } finally {
+          await getAllProducts()
         }
       },
     })
@@ -243,9 +251,10 @@
       await createProduct(newProduct)
       message.success("Thêm sản phẩm thành công")
       selectedProduct.value = {}
-      getAllProducts()
     } catch (error) {
       message.error("Có lỗi xảy ra khi thêm sản phẩm")
+    } finally {
+      await getAllProducts()
     }
   }
 

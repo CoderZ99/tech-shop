@@ -46,6 +46,10 @@ const productsController = {
   add: async (req, res) => {
     try {
       const product = req.body
+      console.log(`🚀 ~ add: ~ product:`, product)
+      if (product?._id) {
+        delete product._id
+      }
       const newProduct = productService.add(product)
       res.status(201).json(newProduct)
     } catch (error) {
@@ -56,6 +60,9 @@ const productsController = {
   // Update product
   update: async (req, res) => {
     try {
+      // Debug
+      console.log(`🚀 ~ update: ~ req.params:`, req.params.id)
+      console.log(`🚀 ~ update: ~ req.body:`, req.body)
       // Get product id
       const productId = req.params.id
       const product = req.body

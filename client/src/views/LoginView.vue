@@ -68,9 +68,9 @@
 <script setup>
   // Imports
   import { LockOutlined, UserOutlined } from "@ant-design/icons-vue"
-import { Form, message } from "ant-design-vue"
-import { onMounted, reactive } from "vue"
-import { useRouter } from "vue-router"
+  import { Form, message } from "ant-design-vue"
+  import { onMounted, reactive } from "vue"
+  import { useRouter } from "vue-router"
   // import { login } from "../api/authService.js"
   import { useAuthStore } from "../stores/auth"
 
@@ -137,10 +137,14 @@ import { useRouter } from "vue-router"
         const response = await authStore.login(loginData)
 
         if (!response) {
-          throw new Error("Login failed")
+          throw new Error("Không kết nối được, thử lại sau")
         }
 
-        message.success("Login successfully!", 1, () => {
+        if (authStore.user.role === "admin") {
+          throw new Error("Phải sử dụng tài khoản người dùng đăng nhập")
+        }
+
+        message.success("Đăng nhập thành công", 1, () => {
           // Redirect to home page
           router.push({ path: "/" })
         })
