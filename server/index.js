@@ -32,7 +32,7 @@ const dotenv = require("dotenv")
 dotenv.config({ path: "./.env" })
 
 // Connect db
-const connectMongoDB = require("./db")
+const connectMongoDB = require("./configs/db")
 connectMongoDB()
 
 // Logger for HTTP request
