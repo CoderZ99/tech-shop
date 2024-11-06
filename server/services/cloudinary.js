@@ -10,7 +10,7 @@ const cloudinary = require("cloudinary")
  *   the timestamp and signature for the Cloudinary upload request.
  */
 const cloudinaryService = {
-  createSignedRequest: async () => {
+  createSignature: async () => {
     // Get the current timestamp
     const timestamp = new Date().getTime()
 
@@ -18,6 +18,7 @@ const cloudinaryService = {
     const signature = await cloudinary.utils.api_sign_request(
       {
         timestamp,
+        upload_preset: "upload_image_preset",
       },
       process.env.CLOUDINARY_SECRET
     )

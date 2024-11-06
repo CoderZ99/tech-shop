@@ -119,7 +119,6 @@
 
 <script setup>
   import { failImg } from "@/assets/co"
-  import { message } from "ant-design-vue"
   import { reactive, ref, watch } from "vue"
 
   const fileInput = ref(null)
@@ -142,15 +141,6 @@
     { deep: true, immediate: true }
   )
 
-  watch(
-    () => props.visible,
-    (newVal) => {
-      if (!newVal) {
-        resetForm()
-      }
-    }
-  )
-
   /**
    * Handles the change event of the file input element and reads the selected file as a data URL.
    *
@@ -169,6 +159,9 @@
         message.error("Có lỗi xảy ra khi tải hình ảnh")
       }
     }
+    console.log(`🚀 ~ handleFileChange ~ product:`, product.image)
+
+    console.log(`🚀 ~ handleFileChange ~ product:`, product)
   }
 
   /**
@@ -196,16 +189,18 @@
   }
 
   const handleOk = async () => {
+    console.log(`🚀 ~ handleOk ~ product:`, product)
     try {
       if (props.isEditMode) {
         emits("updateDetails", product)
       } else {
         emits("addProduct", product)
       }
-      emits("update:visible", false)
-      resetForm()
     } catch (error) {
       console.log(error)
+    } finally {
+      emits("update:visible", false)
+      // resetForm()
     }
   }
 
@@ -213,6 +208,10 @@
     emits("update:visible", false)
     resetForm()
   }
+
+  defineExpose({
+    resetForm,
+  })
 </script>
 
 <style scoped></style>

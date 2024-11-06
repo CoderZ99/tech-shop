@@ -1,10 +1,9 @@
 const cloudinaryService = require("../services/cloudinary")
 
 const cloudinaryController = {
-  createSignature: async (req, res) => {
+  createSignatureUploadImage: async (req, res) => {
     try {
-      const { timestamp, signature } =
-        await cloudinaryService.createSignedRequest()
+      const { timestamp, signature } = await cloudinaryService.createSignature()
 
       console.log({ timestamp, signature })
 

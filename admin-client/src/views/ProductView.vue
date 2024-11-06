@@ -89,6 +89,7 @@
     </a-table>
 
     <ProductModal
+      ref="productModalRef"
       :isEditMode="isEditMode"
       :visible="isModalVisible"
       :productData="selectedProduct"
@@ -105,6 +106,8 @@
     fetchProducts,
     updateProduct,
   } from "@/api/productService"
+
+  import { getSignature } from "@/api/cloudinaryService"
   import { Modal, message } from "ant-design-vue"
   import { onMounted, ref } from "vue"
   import ProductModal from "./components/ProductModal.vue"
@@ -116,7 +119,7 @@
   const loading = ref(false)
   const isModalVisible = ref(false)
   const selectedProduct = ref({})
-
+  const productModalRef = ref(null)
   const paginationConfig = ref({
     current: 1,
     pageSize: 5,
@@ -178,9 +181,46 @@
    * @return {void}
    */
   const editProduct = (product) => {
+    console.log(`🚀 ~ editProduct ~ product:`, product)
     isEditMode.value = true
     selectedProduct.value = { ...product }
     isModalVisible.value = true
+  }
+
+  /**
+   * Handles the image upload to Cloudinary.
+   *
+   * @param {File} image - The image to be uploaded.
+   * @return {Promise<void>} A promise that resolves when the upload is complete.
+   */
+  const handleUploadProductImage = async (image) => {
+    try {
+      // Get signature from backend
+      const signatureResponse = await getSignature()
+      const { signature, timestamp } = signatureResponse.data
+
+      // Send image to cloudinary
+      const cloudName = import.meta.env.VITE_CLOUDINARY_NAME
+      const cloudApiKey = import.meta.env.VITE_CLOUDINARY_API_KEY
+      // Create form data to upload image
+      const formData = new FormData()
+      formData.append("file", image)
+      formData.append("signature", signature)
+      formData.append("api_key", cloudApiKey)
+      formData.append("timestamp", timestamp)
+      formData.append("upload_preset", "upload_image_preset")
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      )
+      console.log(`🚀 ~ handleUploadProductImage ~ res:`, res)
+      return await res.json()
+    } catch (error) {
+      console.log(`🚀 ~ handleUploadImage ~ error:`, error)
+    }
   }
 
   /**
@@ -190,14 +230,22 @@
    * @return {Promise<void>} A promise that resolves when the update is complete.
    */
   const handleUpdateProduct = async (prod) => {
-    console.log(`🚀 ~ handleUpdateProduct ~ updatedProduct:`, prod)
     try {
+      console.log(`product return after click ok`, prod)
+      // Upload image to Cloudinary
+      const uploadResult = await handleUploadProductImage(prod.image)
+      if (uploadResult?.secure_url) {
+        prod.image = uploadResult?.secure_url
+      }
+      // Update product in database
       let response = await updateProduct(prod._id, prod)
       console.log(`🚀 ~ handleUpdateProduct ~ response:`, response)
       message.success("Cập nhật sản phẩm thành công")
+      productModalRef.value.resetForm()
       selectedProduct.value = {}
     } catch (error) {
       message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
+      productModalRef.value.resetForm()
     } finally {
       await getAllProducts()
     }
