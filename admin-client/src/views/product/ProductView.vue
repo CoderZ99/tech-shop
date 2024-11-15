@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="router.currentRoute.value.name === 'product'">
     <div class="w-full flex mb-4">
       <div class="text-2xl font-semibold">Quản lý sản phẩm</div>
 
@@ -98,6 +98,7 @@
       @addProduct="handleAddProduct"
     />
   </div>
+  <router-view />
 </template>
 <script setup>
   import {
@@ -107,11 +108,13 @@
     updateProduct,
   } from "@/api/productService"
 
-  import { getSignature } from "@/api/cloudinaryService"
+  import { uploadProductImage } from "@/api/cloudinaryService"
   import { Modal, message } from "ant-design-vue"
   import { onMounted, ref } from "vue"
-  import ProductModal from "./components/ProductModal.vue"
+  import { useRouter } from "vue-router"
+  import ProductModal from "../components/ProductModal.vue"
 
+  const router = useRouter()
   // Data
   const isEditMode = ref(false)
   const products = ref([])
@@ -188,42 +191,6 @@
   }
 
   /**
-   * Handles the image upload to Cloudinary.
-   *
-   * @param {File} image - The image to be uploaded.
-   * @return {Promise<void>} A promise that resolves when the upload is complete.
-   */
-  const handleUploadProductImage = async (image) => {
-    try {
-      // Get signature from backend
-      const signatureResponse = await getSignature()
-      const { signature, timestamp } = signatureResponse.data
-
-      // Send image to cloudinary
-      const cloudName = import.meta.env.VITE_CLOUDINARY_NAME
-      const cloudApiKey = import.meta.env.VITE_CLOUDINARY_API_KEY
-      // Create form data to upload image
-      const formData = new FormData()
-      formData.append("file", image)
-      formData.append("signature", signature)
-      formData.append("api_key", cloudApiKey)
-      formData.append("timestamp", timestamp)
-      formData.append("upload_preset", "upload_image_preset")
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      )
-      console.log(`🚀 ~ handleUploadProductImage ~ res:`, res)
-      return await res.json()
-    } catch (error) {
-      console.log(`🚀 ~ handleUploadImage ~ error:`, error)
-    }
-  }
-
-  /**
    * Updates a product and handles the success or error cases.
    *
    * @param {Object} prod - The product to be updated.
@@ -231,9 +198,10 @@
    */
   const handleUpdateProduct = async (prod) => {
     try {
-      console.log(`product return after click ok`, prod)
       // Upload image to Cloudinary
-      const uploadResult = await handleUploadProductImage(prod.image)
+      const uploadResult = await uploadProductImage(prod.image)
+      console.log(`🚀 ~ handleUpdateProduct ~ uploadResult:`, uploadResult)
+
       if (uploadResult?.secure_url) {
         prod.image = uploadResult?.secure_url
       }
@@ -282,9 +250,10 @@
    * @return {void} No return value
    */
   const showAddProductModal = () => {
-    selectedProduct.value = {}
-    isEditMode.value = false
-    isModalVisible.value = true
+    // selectedProduct.value = {}
+    // isEditMode.value = false
+    // isModalVisible.value = true
+    router.push({ name: "add-product" })
   }
 
   /**
@@ -294,6 +263,12 @@
    * @return {Promise<void>} A promise that resolves when the product is successfully added.
    */
   const handleAddProduct = async (newProduct) => {
+    console.log(`product return after click ok`, newProduct)
+    // Upload image to Cloudinary
+    const uploadResult = await handleUploadProductImage(newProduct.image)
+    if (uploadResult?.secure_url) {
+      newProduct.image = uploadResult?.secure_url
+    }
     console.log(`🚀 ~ handleAddProduct ~ newProduct:`, newProduct)
     try {
       await createProduct(newProduct)

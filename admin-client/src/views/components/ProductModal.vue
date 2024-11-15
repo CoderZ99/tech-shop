@@ -149,19 +149,8 @@
    */
   const handleFileChange = async (event) => {
     const file = event.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        product.image = reader.result
-      }
-      reader.onerror = (error) => {
-        message.error("Có lỗi xảy ra khi tải hình ảnh")
-      }
-    }
-    console.log(`🚀 ~ handleFileChange ~ product:`, product.image)
-
-    console.log(`🚀 ~ handleFileChange ~ product:`, product)
+    console.log(`🚀 ~ handleFileChange ~ file:`, file)
+    product.image = file
   }
 
   /**

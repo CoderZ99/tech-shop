@@ -8,9 +8,14 @@ const productSchema = new Schema(
       type: String,
       required: [true, "Please provide product name"],
     },
-    image: { type: String, default: "" },
+    images: [
+      {
+        publicId: { type: String, default: "" },
+        url: { type: String, default: "" },
+      },
+    ],
     isDeleted: { type: Boolean, default: false },
-    detailUrl: { type: String, default: "" },
+    slug: { type: String, default: "" },
     brand: { type: String, default: "" },
     category: { type: String, default: "" },
     description: { type: String, default: "" },

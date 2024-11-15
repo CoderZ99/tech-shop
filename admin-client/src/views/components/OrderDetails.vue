@@ -10,9 +10,16 @@
       <strong>Ngày đặt:</strong>
       {{ new Date(props.order.value.orderAt).toLocaleDateString("vi-VN") }}
     </p>
-    <p><strong>Hình thức thanh toán: </strong>{{ props.order.value.paymentMethod }}</p>
-    <p v-if="props.order.value.isPaid === true"><strong>Đã thanh toán</strong></p>
-    <p v-if="props.order.value.isPaid === false"><strong>Chưa thanh toán</strong></p>
+    <p>
+      <strong>Hình thức thanh toán: </strong
+      >{{ props.order.value.paymentMethod }}
+    </p>
+    <p v-if="props.order.value.isPaid === true">
+      <strong>Đã thanh toán</strong>
+    </p>
+    <p v-if="props.order.value.isPaid === false">
+      <strong>Chưa thanh toán</strong>
+    </p>
     <a-divider />
     <p>
       <strong>Tên người nhận:</strong> {{ props.order.value.receiver.name }}
@@ -43,7 +50,7 @@
 </template>
 
 <script setup>
-  import { defineEmits, defineProps, onMounted } from "vue";
+  import { onMounted } from "vue"
   //   import { Modal } from "ant-design-vue"
 
   const props = defineProps({

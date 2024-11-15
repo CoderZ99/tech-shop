@@ -2,7 +2,10 @@ import { createRouter, createWebHistory } from "vue-router"
 
 import DashboardView from "../views/DashboardView.vue"
 import LoginView from "../views/LoginView.vue"
-
+import OrderView from "../views/OrderView.vue"
+import AddProductView from "../views/product/AddProductView.vue"
+import ProductView from "../views/product/ProductView.vue"
+import UserView from "../views/UserView.vue"
 // router
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +17,31 @@ const router = createRouter({
       name: "dashboard",
       component: DashboardView,
       meta: { requiresAuth: true },
-    }
+      children: [
+        {
+          path: "user",
+          name: "user",
+          component: UserView,
+        },
+        {
+          path: "order",
+          name: "order",
+          component: OrderView,
+        },
+        {
+          path: "product",
+          name: "product",
+          component: ProductView,
+          children: [
+            {
+              path: "add-product",
+              name: "add-product",
+              component: AddProductView,
+            },
+          ],
+        },
+      ],
+    },
   ],
 })
 

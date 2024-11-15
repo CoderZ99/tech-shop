@@ -43,10 +43,10 @@
 </template>
 
 <script setup>
-  import { message } from "ant-design-vue";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
+  import { message } from "ant-design-vue"
+  import { onMounted, ref } from "vue"
+  import { useRouter } from "vue-router"
+  import { useAuthStore } from "../stores/auth"
   const username = ref("")
   const password = ref("")
   const router = useRouter()
@@ -77,7 +77,7 @@ import { useAuthStore } from "../stores/auth";
   }
 
   onMounted(() => {
-  authStore.logout()
+    authStore.logout()
   })
 </script>
 
