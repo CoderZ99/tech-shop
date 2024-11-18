@@ -1,185 +1,188 @@
 <template>
-  <div>
-    <div class="w-full flex mb-4">
-      <div class="text-2xl font-semibold">Thêm sản phẩm mới</div>
-    </div>
+  <a-spin
+    :spinning="spinning"
+    :delay="delayTime"
+    size="large"
+  >
     <div>
-      <a-divider
-        style="height: 3px"
-        class="my-4 text-center text-xl font-semibold"
-      >
-        Thông tin sản phẩm
-      </a-divider>
-
-      <a-form
-        ref="formRef"
-        :rules="rules"
-        layout="vertical"
-        :model="product"
-      >
-        <a-form-item
-          label="Tên sản phẩm"
-          name="name"
+      <div class="w-full flex mb-4">
+        <div class="text-2xl font-semibold">Thêm sản phẩm mới</div>
+      </div>
+      <div>
+        <a-divider
+          style="height: 3px"
+          class="my-4 text-center text-xl font-semibold"
         >
-          <a-input
-            v-model:value="product.name"
-            placeholder="Nhập tên sản phẩm"
-          />
-        </a-form-item>
-
-        <div class="grid grid-cols-2 gap-4">
-          <a-form-item
-            label="Giá (VND)"
-            name="price"
-          >
-            <a-input-number
-              v-model:value="product.price"
-              :min="0"
-              class="w-full"
-            />
-          </a-form-item>
-
-          <a-form-item
-            label="Loại sản phẩm"
-            name="category"
-          >
-            <a-select v-model:value="product.category">
-              <a-select-option
-                v-for="category in PRODUCT_CATEGORY"
-                :value="category"
-                >{{ category }}</a-select-option
-              >
-            </a-select>
-          </a-form-item>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <a-form-item
-            label="Số lượng còn lại"
-            name="stock"
-          >
-            <a-input-number
-              v-model:value="product.stock"
-              :min="0"
-              class="w-full"
-            />
-          </a-form-item>
-          <a-form-item
-            label="Đã bán"
-            name="sold"
-          >
-            <a-input-number
-              v-model:value="product.sold"
-              :min="0"
-              class="w-full"
-            />
-          </a-form-item>
-        </div>
-        <a-form-item
-          label="Slug"
-          name="slug"
+          Thông tin sản phẩm
+        </a-divider>
+        <a-form
+          ref="formRef"
+          :rules="rules"
+          layout="vertical"
+          :model="product"
         >
-          <div class="flex gap-3">
+          <a-form-item
+            label="Tên sản phẩm"
+            name="name"
+          >
             <a-input
-              v-model:value="product.slug"
-              placeholder="Nhập đường dẫn tĩnh"
+              v-model:value="product.name"
+              placeholder="Nhập tên sản phẩm"
             />
-            <a-tooltip
-              placement="right"
-              color="skyblue"
+          </a-form-item>
+          <div class="grid grid-cols-2 gap-4">
+            <a-form-item
+              label="Giá (VND)"
+              name="price"
             >
-              <template #title>
-                <p>Đường dẫn khớp với các chuỗi như:</p>
-                <p>abc</p>
-                <p>a-b-c</p>
-                <p>xyz-uvw</p>
-                <p>Nhưng nó sẽ không khớp với:</p>
-                <p>Abc (chứa chữ hoa)</p>
-                <p>a-b-c- (kết thúc bằng dấu gạch nối)</p>
-                <p>-abc (bắt đầu bằng dấu gạch nối)</p>
-                <p>a b (chứa khoảng trắng)</p>
-                <p>a.b (chứa dấu chấm)</p>
-              </template>
-              <QuestionCircleTwoTone />
-            </a-tooltip>
+              <a-input-number
+                v-model:value="product.price"
+                :min="0"
+                class="w-full"
+              />
+            </a-form-item>
+            <a-form-item
+              label="Loại sản phẩm"
+              name="category"
+            >
+              <a-select v-model:value="product.category">
+                <a-select-option
+                  v-for="category in PRODUCT_CATEGORY"
+                  :value="category"
+                  >{{ category }}</a-select-option
+                >
+              </a-select>
+            </a-form-item>
           </div>
-        </a-form-item>
-        <a-form-item
-          label="Thương hiệu"
-          name="brand"
-        >
-          <a-input
-            v-model:value="product.brand"
-            placeholder="Nhập thương hiệu"
-          />
-        </a-form-item>
-        <a-form-item
-          label="Thêm hình cho sản phẩm (chọn tối đa 4 ảnh)"
-          name="images"
-          class="flex flex-row gap-4"
-        >
-          <a-upload
-            v-model:fileList="selectedImages"
-            list-type="picture-card"
-            :max-count="maxImages"
-            :multiple="true"
-            :before-upload="() => false"
-            @preview="handlePreview"
-            @remove="handleRemove"
+          <div class="grid grid-cols-2 gap-4">
+            <a-form-item
+              label="Số lượng còn lại"
+              name="stock"
+            >
+              <a-input-number
+                v-model:value="product.stock"
+                :min="0"
+                class="w-full"
+              />
+            </a-form-item>
+            <a-form-item
+              label="Đã bán"
+              name="sold"
+            >
+              <a-input-number
+                v-model:value="product.sold"
+                :min="0"
+                class="w-full"
+              />
+            </a-form-item>
+          </div>
+          <a-form-item
+            label="Slug"
+            name="slug"
           >
-            <div v-if="selectedImages.length < maxImages">
-              <plus-outlined />
-              <div class="mt-2">Thêm ảnh</div>
+            <div class="flex gap-3">
+              <a-input
+                v-model:value="product.slug"
+                placeholder="Nhập đường dẫn tĩnh"
+              />
+              <a-tooltip
+                placement="right"
+                color="skyblue"
+              >
+                <template #title>
+                  <p>Đường dẫn khớp với các chuỗi như:</p>
+                  <p>abc</p>
+                  <p>a-b-c</p>
+                  <p>xyz-uvw</p>
+                  <p>Nhưng nó sẽ không khớp với:</p>
+                  <p>Abc (chứa chữ hoa)</p>
+                  <p>a-b-c- (kết thúc bằng dấu gạch nối)</p>
+                  <p>-abc (bắt đầu bằng dấu gạch nối)</p>
+                  <p>a b (chứa khoảng trắng)</p>
+                  <p>a.b (chứa dấu chấm)</p>
+                </template>
+                <QuestionCircleTwoTone />
+              </a-tooltip>
             </div>
-          </a-upload>
-          <div class="flex gap-6">
-            <a-button
-              :disabled="selectedImages.length === 0"
-              @click="selectedImages = []"
-              :size="'large'"
-              class="flex items-center mt-4"
-            >
-              <ClearOutlined /> Xoá ảnh đã chọn
-            </a-button>
-          </div>
-          <a-modal
-            :open="previewVisible"
-            :title="previewTitle"
-            :footer="null"
-            @cancel="cancelPreview"
+          </a-form-item>
+          <a-form-item
+            label="Thương hiệu"
+            name="brand"
           >
-            <img
-              alt="example"
-              style="width: 100%"
-              :src="previewImage"
+            <a-input
+              v-model:value="product.brand"
+              placeholder="Nhập thương hiệu"
             />
-          </a-modal>
-        </a-form-item>
-        <a-form-item
-          label="Mô tả"
-          name="description"
-        >
-          <a-textarea
-            v-model:value="product.description"
-            :rows="displayRowDescription"
-          />
-        </a-form-item>
-        <a-divider class="my-4" />
-        <div class="flex gap-6 justify-end mt-6">
-          <a-button
-            :size="'large'"
-            @click="$router.push({ name: 'product' })"
-            >Huỷ thao tác</a-button
+          </a-form-item>
+          <a-form-item
+            label="Thêm hình cho sản phẩm (chọn tối đa 4 ảnh)"
+            name="images"
+            class="flex flex-row gap-4"
           >
-          <a-button
-            type="primary"
-            :size="'large'"
-            @click="handleSubmit"
-            >Lưu thao tác</a-button
+            <a-upload
+              v-model:fileList="selectedImages"
+              list-type="picture-card"
+              :max-count="maxImages"
+              :multiple="true"
+              :before-upload="() => false"
+              @preview="handlePreview"
+              @remove="handleRemove"
+            >
+              <div v-if="selectedImages.length < maxImages">
+                <plus-outlined />
+                <div class="mt-2">Thêm ảnh</div>
+              </div>
+            </a-upload>
+            <div class="flex gap-6">
+              <a-button
+                :disabled="selectedImages.length === 0"
+                @click="selectedImages = []"
+                :size="'large'"
+                class="flex items-center mt-4"
+              >
+                <ClearOutlined /> Xoá ảnh đã chọn
+              </a-button>
+            </div>
+            <a-modal
+              :open="previewVisible"
+              :title="previewTitle"
+              :footer="null"
+              @cancel="cancelPreview"
+            >
+              <img
+                alt="example"
+                style="width: 100%"
+                :src="previewImage"
+              />
+            </a-modal>
+          </a-form-item>
+          <a-form-item
+            label="Mô tả"
+            name="description"
           >
-        </div>
-      </a-form>
+            <a-textarea
+              v-model:value="product.description"
+              :rows="displayRowDescription"
+            />
+          </a-form-item>
+          <a-divider class="my-4" />
+          <div class="flex gap-6 justify-end mt-6">
+            <a-button
+              :size="'large'"
+              @click="$router.push({ name: 'product' })"
+              >Huỷ thao tác</a-button
+            >
+            <a-button
+              type="primary"
+              :size="'large'"
+              @click="onSubmit"
+              >Lưu thao tác</a-button
+            >
+          </div>
+        </a-form>
+      </div>
     </div>
-  </div>
+  </a-spin>
 </template>
 
 <script setup>
@@ -199,10 +202,11 @@
   //define constant
   const maxImages = 4
   const displayRowDescription = 6
-
+  const delayTime = 500
   //define props, emits, refs
   const formRef = ref()
   const router = useRouter()
+  const spinning = ref(false)
   const selectedImages = ref([])
   const previewVisible = ref(false)
   const previewImage = ref("")
@@ -219,7 +223,7 @@
     stock: 0,
   })
 
-  //define form rule
+  //define form validate rules
   const rules = {
     name: [
       {
@@ -245,6 +249,42 @@
         required: true,
         message: "Thương hiệu không để trống",
         trigger: "blur",
+      },
+    ],
+    sold: [
+      {
+        required: true,
+        message: "Số lượng đã bán không để trống",
+        trigger: "blur",
+      },
+      {
+        type: "integer",
+        min: 0,
+        message: "Phải nhập số nguyên lớn hơn 0",
+      },
+    ],
+    stock: [
+      {
+        required: true,
+        message: "Số lượng đã bán không để trống",
+        trigger: "blur",
+      },
+      {
+        type: "integer",
+        min: 0,
+        message: "Phải nhập số nguyên lớn hơn 0",
+      },
+    ],
+    price: [
+      {
+        required: true,
+        message: "Số lượng đã bán không để trống",
+        trigger: "blur",
+      },
+      {
+        type: "integer",
+        min: 0,
+        message: "Phải nhập số nguyên lớn hơn 0",
       },
     ],
   }
@@ -350,6 +390,22 @@
       },
       centered: true,
     })
+  }
+
+  const onSubmit = async () => {
+    spinning.value = true
+    formRef.value
+      .validate()
+      .then(async () => {
+        await handleSubmit()
+      })
+      .catch((error) => {
+        console.log(`🚀 ~ onSubmit ~ error:`, error)
+        message.error("Thông tin đã nhập không hợp lệ, kiểm tra lại!!!")
+      })
+      .finally(async () => {
+        spinning.value = false
+      })
   }
 
   // Handle add new product form submission

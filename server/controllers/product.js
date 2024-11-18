@@ -77,8 +77,7 @@ const productsController = {
   deleteProduct: async (req, res) => {
     try {
       const productId = req.params.id
-      const product = req.body
-      const deletedProduct = productService.delete(productId, product)
+      const deletedProduct = productService.delete(productId)
       res.status(200).json(deletedProduct)
     } catch (error) {
       res.status(500).json({ message: error.message })

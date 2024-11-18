@@ -43,7 +43,7 @@ const productService = {
     return updatedProduct
   },
 
-  delete: async (id, product) => {
+  delete: async (id) => {
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       { $set: { isDeleted: true } },

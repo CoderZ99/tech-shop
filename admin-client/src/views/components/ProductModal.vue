@@ -14,14 +14,20 @@
         label="Hình ảnh sản phẩm"
         class="flex"
       >
-        <a-image
-          v-if="product.image"
-          :width="128"
-          :height="128"
-          :src="product.image"
-          alt="productImage"
-          class="object-cover mr-4"
-        />
+        <div
+          v-if="product.images.length > 0"
+          class="flex gap-4"
+        >
+          <a-image
+            v-for="image in product.images"
+            :key="image.publicId"
+            :width="128"
+            :height="128"
+            :src="image.url"
+            alt="productImage"
+            class="object-cover mr-4"
+          />
+        </div>
         <img
           v-else
           class="w-32 h-32 object-cover mr-4"

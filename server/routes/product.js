@@ -11,7 +11,7 @@ router.get("/detail/:detailUrl", productsController.getByDetailUrl)
 
 router.put("/:id", productsController.update)
 
-router.put("/delete/:id", productsController.deleteProduct)
+router.delete("/:id", productsController.deleteProduct)
 
 router.post("/create", productsController.add)
 

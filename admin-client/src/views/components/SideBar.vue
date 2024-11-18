@@ -6,7 +6,7 @@
       <div class="flex items-center justify-center h-16 bg-gray-900">
         <div class="flex items-center text-xl font-semibold">
           <SettingOutlined
-            spin="true"
+            :spin="true"
             class="mr-2"
           />Admin Dashboard
         </div>
