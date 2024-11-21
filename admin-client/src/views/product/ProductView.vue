@@ -6,7 +6,7 @@
       <a-button
         class="ml-auto mr-4"
         :disabled="loading"
-        @click="goToAddProductPage"
+        @click="router.push({ name: 'add-product' })"
         >Thêm sản phẩm</a-button
       >
       <a-button
@@ -77,16 +77,31 @@
       >
         <template #default="{ record }">
           <a-space>
+            <!-- View product button -->
             <a-button
               type="primary"
-              @click="() => viewProduct(record)"
+              @click="
+                () => {
+                  console.log(`🚀 ~ viewProduct ~ product:`, record)
+                }
+              "
               >Chi tiết</a-button
             >
+            <!-- Edit product button -->
             <a-button
               type="primary"
-              @click="editProduct(record)"
+              @click="
+                () => {
+                  productStore.setSelectedProduct(record)
+                  router.push({
+                    name: 'edit-product',
+                    params: { id: record._id },
+                  })
+                }
+              "
               >Sửa</a-button
             >
+            <!-- Delete product button -->
             <a-button
               class="ml-2"
               type="primary"
@@ -98,40 +113,22 @@
         </template>
       </a-table-column>
     </a-table>
-
-    <ProductModal
-      ref="productModalRef"
-      :isEditMode="isEditMode"
-      :visible="isModalVisible"
-      :productData="selectedProduct"
-      @update:visible="handleModalClose"
-      @updateDetails="handleUpdateProduct"
-    />
   </div>
   <router-view />
 </template>
 <script setup>
-  import {
-    deleteProduct,
-    fetchProducts,
-    updateProduct,
-  } from "@/api/productService"
-
-  import { uploadProductImage } from "@/api/cloudinaryService"
+  import { deleteProduct, fetchProducts } from "@/api/productService"
   import { Modal, message } from "ant-design-vue"
-  import { onMounted, ref } from "vue"
+  import { onMounted, ref, watch, computed } from "vue"
   import { useRouter } from "vue-router"
-  import ProductModal from "../components/ProductModal.vue"
+  import { useProductStore } from "../../stores/productStore"
 
   const router = useRouter()
+  const productStore = useProductStore()
   // Data
-  const isEditMode = ref(false)
   const products = ref([])
   const pagedProducts = ref([])
   const loading = ref(false)
-  const isModalVisible = ref(false)
-  const selectedProduct = ref({})
-  const productModalRef = ref(null)
   const paginationConfig = ref({
     current: 1,
     pageSize: 5,
@@ -187,58 +184,22 @@
     setPagedProducts()
   }
 
-  /**
-   * Views a product. Currently only logs the product to the console.
-   *
-   * @param {Object} product - The product to be viewed.
-   * @return {void}
-   */
-
-  const viewProduct = (product) => {
-    console.log(`🚀 ~ viewProduct ~ product:`, product)
-  }
-
-  /**
-   * Updates the product edit mode, selected product, and modal visibility.
-   *
-   * @param {Object} product - The product to be edited.
-   * @return {void}
-   */
-  const editProduct = (product) => {
-    console.log(`🚀 ~ editProduct ~ product:`, product)
-    isEditMode.value = true
-    selectedProduct.value = { ...product }
-    isModalVisible.value = true
-  }
-
-  /**
-   * Updates a product and handles the success or error cases.
-   *
-   * @param {Object} prod - The product to be updated.
-   * @return {Promise<void>} A promise that resolves when the update is complete.
-   */
-  const handleUpdateProduct = async (prod) => {
-    try {
-      // Upload image to Cloudinary
-      const uploadResult = await uploadProductImage(prod.image)
-      console.log(`🚀 ~ handleUpdateProduct ~ uploadResult:`, uploadResult)
-
-      if (uploadResult?.secure_url) {
-        prod.image = uploadResult?.secure_url
-      }
-      // Update product in database
-      let response = await updateProduct(prod._id, prod)
-      console.log(`🚀 ~ handleUpdateProduct ~ response:`, response)
-      message.success("Cập nhật sản phẩm thành công")
-      productModalRef.value.resetForm()
-      selectedProduct.value = {}
-    } catch (error) {
-      message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
-      productModalRef.value.resetForm()
-    } finally {
-      await getAllProducts()
-    }
-  }
+  // const handleUpdateProduct = async (prod) => {
+  //   try {
+  //     // Upload image to Cloudinary
+  //     const uploadResult = await uploadProductImage(prod.image)
+  //     if (uploadResult?.secure_url) {
+  //       prod.image = uploadResult?.secure_url
+  //     }
+  //     // Update product in database
+  //     let response = await updateProduct(prod._id, prod)
+  //     message.success("Cập nhật sản phẩm thành công")
+  //   } catch (error) {
+  //     message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
+  //   } finally {
+  //     await getAllProducts()
+  //   }
+  // }
 
   /**
    * Handles the deletion of a product. Displays a confirmation modal to the user and deletes the product if confirmed.
@@ -264,30 +225,17 @@
     })
   }
 
-  /**
-   * A function that shows the add product modal by resetting selected product, setting edit mode to false, and making the modal visible.
-   *
-   * @return {void} No return value
-   */
-  const goToAddProductPage = () => {
-    router.push({ name: "add-product" })
-  }
-
-  /**
-   * A description of the entire function.
-   *
-   * @param {type} newProduct - description of parameter
-   * @return {Promise<void>} A promise that resolves when the product is successfully added.
-   */
-  const handleModalClose = (visible) => {
-    isModalVisible.value = visible
-    if (!visible) {
-      selectedProduct.value = {}
-    }
-  }
-
   // Lifecycle hooks
+
+  // Get data when init
   onMounted(() => {
     getAllProducts()
   })
+
+  // When from child component page back
+  const computedRouteName = computed(() => router.currentRoute.value.name)
+  watch(
+    () => computedRouteName.value === "product",
+    () => getAllProducts()
+  )
 </script>

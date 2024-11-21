@@ -1,11 +1,11 @@
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import { loginUser } from "../api/authService"; // Giả sử bạn có các hàm này
+import { defineStore } from "pinia"
+import { computed, ref } from "vue"
+import { loginUser, logoutAdmin } from "../api/authService" // Giả sử bạn có các hàm này
 
 export const useAuthStore = defineStore("auth", () => {
   const user = ref(localStorage.getItem("user") || null)
   const accessToken = ref(localStorage.getItem("accessToken") || null)
-  const refreshToken = ref(localStorage.getItem("user") || null)
+  const refreshToken = ref(localStorage.getItem("refreshToken") || null)
   const isAuthenticated = computed(() => !!accessToken.value)
 
   /**
@@ -55,13 +55,14 @@ export const useAuthStore = defineStore("auth", () => {
    *
    * @return {boolean} true if the token is removed successfully, false otherwise
    */
-  const logout = () => {
+  const logout = async () => {
     user.value = null
     accessToken.value = null
     refreshToken.value = null
     localStorage.removeItem("accessToken")
     localStorage.removeItem("refreshToken")
     localStorage.removeItem("user")
+
     console.log("Logout method called")
     return true
   }
@@ -77,6 +78,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (!accessTokenData || !refreshTokenData) {
       logout()
+      // logoutAdmin()
       return false
     }
 

@@ -51,9 +51,7 @@ const authController = {
         message: "Tạo tài khoản thành công!",
       })
     } catch (error) {
-      res.json({
-        message: `Error: ${error.message}`,
-      })
+      next(error)
     }
   },
   // Login
@@ -70,7 +68,7 @@ const authController = {
       }
       // Check if the user is active
       if (user.status === "disable") {
-        return res.status(401).json({ message: "Người dùng bị vô hiệu hóa!" })
+        return res.status(403).json({ message: "Người dùng bị vô hiệu hóa!" })
       }
       // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password)
@@ -108,6 +106,19 @@ const authController = {
         })
       }
 
+      // // Set token to cookies
+      // res.cookie("accessToken", accessToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
+
+      // res.cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
+
       // Return the response
       res.status(200).json({
         user: {
@@ -121,22 +132,30 @@ const authController = {
         refreshToken,
       })
     } catch (error) {
-      res.json({
-        message: `Error: ${error.message}`,
-      })
+      next(error)
     }
   },
   // Refresh access token
   refreshAccessToken: async (req, res) => {
     try {
-      console.log(`refresh access token process`)
-      // Get refresh token from cookies
-      const refreshToken = req?.cookies?.refreshToken
-      console.log(`refreshToken: ${refreshToken}`)
+      // // Get refresh token
+      // if (req?.cookies?.refreshToken) {
+      //   console.log(`refreshTokenFromCookie: ${req.cookies.refreshToken}`)
+      //   return res
+      //     .status(200)
+      //     .json({ refreshTokenFromCookie: req?.cookies?.refreshToken })
+      // }
+      // if (req?.body?.refreshToken) {
+      //   console.log(`refreshTokenFromBody: ${req?.body?.refreshToken}`)
+      //   return res
+      //     .status(200)
+      //     .json({ refreshTokenFromBody: req.body.refreshToken })
+      // }
+
+      const refreshToken = req?.body?.refreshToken
       if (!refreshToken) {
         return res.status(401).json({
-          message:
-            "The refresh token does not exist because you are not logged in!",
+          message: "You not have refresh token! Please log in again!",
         })
       }
 
@@ -145,6 +164,7 @@ const authController = {
         refreshToken,
         process.env.JWT_REFRESH_KEY
       )
+
       if (!payloadDecoded) {
         return res
           .status(401)
@@ -154,20 +174,13 @@ const authController = {
       // Verify refresh token exits in database
       const user = await tokenService.checkRefreshToken(refreshToken)
       console.log(`user: ${JSON.stringify(user, null, 2)}`)
-      if (!user) {
+      if (!user || user?.refreshToken !== refreshToken) {
         return res
           .status(401)
-          .json({ message: "The refresh token is not exits in database!" })
+          .json({ message: "The refresh token is not valid!" })
       }
 
-      // Verify refresh token is yours
-      if (user.refresh_token !== refreshToken) {
-        return res
-          .status(401)
-          .json({ message: "The refresh token is not yours!" })
-      }
-
-      // Payload
+      // generate new payload
       const newPayload = {
         username: user.username,
         role: user.role,
@@ -188,26 +201,26 @@ const authController = {
         })
       }
 
-      // Set token to cookies
-      res.cookie("accessToken", newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-      })
-      res.cookie("refreshToken", newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-      })
+      // // Set token to cookies
+      // res.cookie("accessToken", newAccessToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
+      // res.cookie("refreshToken", newRefreshToken, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "none",
+      // })
 
       // Return the response
       res.status(200).json({
         message: "Refresh access token successfully!",
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       })
     } catch (error) {
-      res.json({
-        message: `Error: ${error.message}`,
-      })
+      next(error)
     }
   },
   // Logout
@@ -230,9 +243,7 @@ const authController = {
       })
       console.log("Logout successfully!")
     } catch (error) {
-      res.json({
-        message: `Error: ${error.message}`,
-      })
+      next(error)
     }
   },
 }

@@ -57,7 +57,7 @@ async function checkRefreshToken(token) {
 async function updateUserRefreshToken(username, refreshToken) {
   return await User.findOneAndUpdate(
     { username },
-    { refresh_token: refreshToken },
+    { refreshToken: refreshToken },
     { new: true }
   )
 }

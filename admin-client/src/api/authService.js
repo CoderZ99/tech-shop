@@ -35,8 +35,20 @@ export const register = async (userData) => {
   }
 }
 
-// export const logout = async () => {
-//   const endpoint = `${path}/logout`
-//   const response = await api.post(endpoint)
-//   console.log(`🚀 ~ logout ~ response:`, response)
-// }
+export const logoutAdmin = async () => {
+  const endpoint = `${path}/logout`
+  const response = await api.post(endpoint)
+  console.log(`🚀 ~ logout ~ response:`, response)
+}
+
+export const refreshToken = async () => {
+  try {
+    const endpoint = `${path}/refresh`
+    const response = await api.post(endpoint)
+    console.log(`🚀 ~ refreshToken ~ response:`, response)
+    return response
+  } catch (error) {
+    console.log(`🚀 ~ refreshToken ~ error:`, error.response.data)
+    throw error(error.response.data)
+  }
+}

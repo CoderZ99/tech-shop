@@ -1,5 +1,11 @@
 const cloudinary = require("cloudinary")
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+})
+
 /**
  * Generates a signed request for uploading an image to Cloudinary.
  *
@@ -25,6 +31,10 @@ const cloudinaryService = {
 
     // Return the generated timestamp and signature
     return { timestamp, signature }
+  },
+  deleteImage: async (publicId) => {
+    console.log(`🚀 ~ cloudinaryService.deleteImage ~ publicId:`, publicId)
+    return await cloudinary.v2.uploader.destroy(publicId)
   },
 }
 

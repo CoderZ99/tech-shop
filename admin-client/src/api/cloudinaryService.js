@@ -11,7 +11,6 @@ const getSignature = async () => {
     // Call API
     const response = await api.post(endpoint)
     console.table(`🚀 ~ getSignature ~ response:`, response)
-
     return response
   } catch (error) {
     console.log(`🚀 ~ getSignature ~ error:`, error)
@@ -55,35 +54,14 @@ export const uploadProductImage = async (images) => {
   }
 }
 
-export const destroyProductImage = async (imageIds) => {
-  console.log(`🚀 ~ destroyProductImage ~ imageIds:`, imageIds)
+export const destroyImage = async (publicId) => {
   try {
-    // Get signature from backend
-    const signatureResponse = await getSignature()
-    const { signature, timestamp } = signatureResponse.data
-    // Send image to cloudinary
-    const cloudName = import.meta.env.VITE_CLOUDINARY_NAME
-    const cloudApiKey = import.meta.env.VITE_CLOUDINARY_API_KEY
-    // Create form data to upload image
-    const destroyedIds = await Promise.all(
-      imageIds.map(async (id) => {
-        const formData = new FormData()
-        formData.append("public_id", id)
-        formData.append("signature", signature)
-        formData.append("api_key", cloudApiKey)
-        formData.append("timestamp", timestamp)
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        )
-        return await res.json()
-      })
-    )
-    return destroyedIds
+    const endpoint = `${path}/delete`
+    const response = await api.post(endpoint, { publicId: publicId })
+    console.log("🚀 ~ destroyProductImage ~ response:", response)
+    return response
   } catch (error) {
+    console.error("Destroy image error:", error)
     throw new Error("Destroy image on cloudinary fail")
   }
 }

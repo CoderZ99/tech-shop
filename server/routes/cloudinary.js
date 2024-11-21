@@ -9,4 +9,6 @@ router.post(
   cloudinaryController.createSignatureUploadImage
 )
 
+router.post("/delete", cloudinaryController.deleteImage)
+
 module.exports = router

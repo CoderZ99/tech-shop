@@ -26,6 +26,18 @@ export const fetchProducts = async () => {
   }
 }
 
+export const getProduct = async (id) => {
+  try {
+    const endpoint = `${path}/${id}`
+    const response = await api.get(endpoint)
+    console.log(`🚀 ~ get 1 product:`, response)
+    return response
+  } catch (error) {
+    console.log(error.response.data)
+    throw error.response.data
+  }
+}
+
 export const updateProduct = async (id, product) => {
   try {
     const endpoint = `${path}/${id}`

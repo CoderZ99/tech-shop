@@ -198,6 +198,7 @@
   import { useRouter } from "vue-router"
   import { uploadProductImage } from "../../api/cloudinaryService"
   import { PRODUCT_CATEGORY } from "../../constant"
+  import { validateImageType } from "../../utils/utils"
 
   //define constant
   const maxImages = 4
@@ -289,7 +290,7 @@
     ],
   }
 
-  function getBase64(file) {
+  const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(file)
@@ -297,10 +298,12 @@
       reader.onerror = (error) => reject(error)
     })
   }
+
   const cancelPreview = () => {
     previewVisible.value = false
     previewTitle.value = ""
   }
+
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj)
@@ -316,37 +319,6 @@
     const newSelectedImages = selectedImages.value.slice()
     newSelectedImages.splice(index, 1)
     selectedImages.value = newSelectedImages
-  }
-
-  const beforeUpload = () => {
-    const files = selectedImages.value.map((file) => file.originFileObj)
-    files.forEach((file) => {
-      // Allowed file types
-      const allowedTypes = ["image/jpeg", "image/png"]
-      const isValidFileType = allowedTypes.includes(file.type)
-
-      // File size limit (2MB)
-      const maxSize = 2 * 1024 * 1024 // 2MB in bytes
-      const isValidFileSize = file.size <= maxSize
-
-      // Validate file type
-      if (!isValidFileType) {
-        message.error("Bạn chỉ có thể tải lên tệp JPG/PNG!")
-        throw new Error("Bạn chỉ có thể tải lên tệp JPG/PNG!")
-      }
-
-      // Validate file size
-      if (!isValidFileSize) {
-        message.error(
-          `Hình ảnh phải nhỏ hơn 2MB! Kích thước hiện tại: ${(
-            file.size /
-            1024 /
-            1024
-          ).toFixed(2)}MB`
-        )
-        throw new Error("Kích thước tập tin không hợp lệ")
-      }
-    })
   }
 
   const handleUpload = async () => {
@@ -367,7 +339,6 @@
           url: item.secure_url,
         })
       )
-      console.log(`🚀 ~ handleSubmit ~ product.value:`, product.value)
       message.success("Tải ảnh lên cloudinary thành công")
     }
   }
@@ -412,7 +383,8 @@
   const handleSubmit = async () => {
     try {
       // Check file valid
-      beforeUpload()
+      // beforeUpload();
+      validateImageType(selectedImages.value)
       // Upload images
       await handleUpload()
       // Create new product
@@ -424,7 +396,6 @@
       message.success("Tạo sản phẩm mới thành công")
       showContinueConfirm()
     } catch (error) {
-      console.log(`🚀 ~ handleSubmit ~ error:`, error?.message)
       message.error("Có lỗi xảy ra khi tạo sản phẩm mới")
     }
   }

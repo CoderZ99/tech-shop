@@ -4,6 +4,7 @@ import DashboardView from "../views/DashboardView.vue"
 import LoginView from "../views/LoginView.vue"
 import OrderView from "../views/OrderView.vue"
 import AddProductView from "../views/product/AddProductView.vue"
+import EditProductView from "../views/product/EditProductView.vue"
 import ProductView from "../views/product/ProductView.vue"
 import UserView from "../views/UserView.vue"
 // router
@@ -34,9 +35,14 @@ const router = createRouter({
           component: ProductView,
           children: [
             {
-              path: "add-product",
+              path: "add",
               name: "add-product",
               component: AddProductView,
+            },
+            {
+              path: "edit/:id",
+              name: "edit-product",
+              component: EditProductView,
             },
           ],
         },
