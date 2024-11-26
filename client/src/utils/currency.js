@@ -12,6 +12,15 @@ export function convertVNDToUSD(amountVND) {
   return amountUSD.toFixed(2)
 }
 
-export const formatCurrency = (amount) => {
-  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+/**
+ * Formats a number by adding dots as thousand separators.
+ *
+ * @param {number} amount - The amount to be formatted.
+ * @return {string} The formatted amount as a string with dots as thousand separators.
+ */
+export const formatCurrency = (value) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value)
 }

@@ -1,52 +1,34 @@
 <template>
-  <!-- Dropdown -->
-  <!-- <div class="container mx-auto p-4">
-    Brand:
-    <a-select
-      v-model:value="value1"
-      style="width: 120px"
-      :options="options1"
-      @change="handleChange"
-      class="filter-list"
-    >
-      <template #suffixIcon><CaretDownOutlined /></template>
-    </a-select>
-    Category:
-    <a-select
-      v-model:value="value2"
-      style="width: 120px"
-      :options="options2"
-      class="filter-list"
-    >
-      <template #suffixIcon><CaretDownOutlined /></template>
-    </a-select>
-  </div> -->
-  <!-- Product List -->
+  <!-- Container -->
   <div class="container mx-auto p-4">
+    <!-- Page title -->
     <h1 class="text-3xl font-bold mb-4">Danh sách sản phẩm</h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Product Card list -->
       <div
         v-for="product in currentProducts"
         :key="product.id"
         class="bg-white rounded shadow p-4 grid"
       >
-        <div class="flex place-items-center min-h-56">
+        <div class="flex justify-center min-h-56">
           <a-image
+            v-if="product?.images[0]?.url.length > 0"
             :width="200"
-            :src="product.image"
+            :src="product.images[0].url"
             :alt="product.name"
             class="object-cover mb-4 rounded"
           />
         </div>
-        <h2 class="text-base font-semibold mb-2">{{ product.name }}</h2>
-        <!-- <p class="text-sm text-gray-700 truncate">{{ product.description }}</p> -->
+        <h2 class="text-lg font-semibold leading-5 mb-2">{{ product.name }}</h2>
+        <!-- Price -->
         <div class="mb-0 mt-auto flex justify-between items-center self-end">
-          <span class="text-base font-bold text-red-500"
-            >{{ product.price }}₫</span
-          >
+          <span class="text-base font-bold text-red-500">{{
+            formatCurrency(product.price)
+          }}</span>
         </div>
-        <!-- Button -->
+        <!-- Button group -->
         <div class="flex justify-between items-center mt-4 self-end">
+          <!-- View details -->
           <a-tooltip placement="bottomLeft">
             <template #title>
               <span>Xem chi tiết</span>
@@ -60,6 +42,7 @@
               ><EyeOutlined
             /></a-button>
           </a-tooltip>
+          <!-- Add to cart -->
           <a-tooltip placement="bottomRight">
             <template #title>
               <span>Thêm vào giỏ hàng</span>
@@ -74,8 +57,10 @@
             /></a-button>
           </a-tooltip>
         </div>
+        <!-- End button group -->
       </div>
     </div>
+    <!-- Pagination -->
     <div class="w-full flex justify-center mt-4">
       <CommonPagination
         v-if="currentProducts.length > 0"
@@ -95,8 +80,9 @@
   import { message } from "ant-design-vue"
   import { computed, onMounted, reactive, ref } from "vue"
   import { useRouter } from "vue-router"
-  import { fetchProducts } from "../api/productService"
-  import CommonPagination from "../views/components/CommonPagination.vue"
+  import { fetchProducts } from "../../api/productService"
+  import CommonPagination from "../components/CommonPagination.vue"
+  import { formatCurrency } from "@/utils/currency"
 
   // Data
   const router = useRouter()
@@ -190,7 +176,7 @@
   }
   const viewDetails = (product) => {
     // Logic to view product details
-    router.push({ path: `products/${product.detailUrl}` })
+    router.push({ path: `products/${product.slug}` })
   }
 </script>
 

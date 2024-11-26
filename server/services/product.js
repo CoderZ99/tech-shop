@@ -22,8 +22,8 @@ const productService = {
     return product
   },
   //
-  getByDetailUrl: async (detailUrl) => {
-    const product = await Product.findOne({ detailUrl })
+  getBySlug: async (slug) => {
+    const product = await Product.findOne({ slug })
     return product
   },
   /**

@@ -1,30 +1,23 @@
 <template>
   <a-layout-header class="bg-white shadow">
     <div
-      class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex justify-between items-center h-16"
+      class="mx-auto flex h-16 max-w-7xl items-center justify-between px-2 sm:px-6 lg:px-8"
     >
-      <div class="flex items-center flex-shrink-0">
+      <div class="flex flex-shrink-0 items-center">
         <!-- Thêm flex-shrink-0 để ngăn không bị co lại -->
-        <a
-          href="/"
-          class="flex items-center"
-        >
-          <img
-            class="h-8 w-auto"
-            src="/src/assets/logo.svg"
-            alt="Workflow"
-          />
+        <a href="/" class="flex items-center">
+          <img class="h-8 w-auto" src="/src/assets/logo.svg" alt="Workflow" />
           <span class="ml-3 text-xl font-bold text-gray-900">iTech</span>
         </a>
       </div>
-      <div class="flex items-center flex-1 justify-center">
+      <div class="flex flex-1 items-center justify-center">
         <!-- Thêm flex-1 để căn giữa -->
-        <div class="hidden sm:flex space-x-4 ml-6">
+        <div class="ml-6 hidden space-x-4 sm:flex">
           <a-button
             type="text"
-            class="text-gray-700 hover:bg-gray-200 hover:text-black"
+            class="flex items-center bg-white text-xl text-blue-700 hover:bg-gray-200 hover:text-blue-700"
           >
-            <RouterLink to="/">Trang chủ</RouterLink>
+            <HomeFilled class="mr-2" /><RouterLink to="/">Trang chủ</RouterLink>
           </a-button>
           <!-- <a-button
             type="text"
@@ -37,11 +30,11 @@
       <div class="flex items-center">
         <a-button
           type="text"
-          shape="circle"
-          class="text-gray-400 hover:text-black"
-          @click="() => $router.push('/cart')"
+          class="flex items-center text-xl text-gray-400 hover:text-black"
+          @click="() => $router.push({ name: 'cart' })"
         >
           <ShoppingCartOutlined style="font-size: 25px" />
+          <div class="ml-2">Giỏ hàng</div>
         </a-button>
 
         <a-dropdown>
@@ -55,9 +48,7 @@
                   <RouterLink to="/order-history">Đơn hàng</RouterLink>
                 </a-menu-item>
                 <a-menu-divider />
-                <a-menu-item
-                  @click="handleLogout"
-                  key="3"
+                <a-menu-item @click="handleLogout" key="3"
                   >Đăng xuất
                 </a-menu-item>
               </a-menu>
@@ -72,10 +63,10 @@
             </template>
             <a-button
               type="text"
-              shape="circle"
-              class="ml-4 text-gray-400 hover:text-black"
+              class="ml-4 flex items-center text-gray-400 hover:text-black"
             >
               <UserOutlined style="font-size: 25px" />
+              <div class="ml-2 text-xl">Tài khoản</div>
             </a-button>
           </a-dropdown>
         </a-dropdown>
@@ -85,22 +76,22 @@
 </template>
 
 <script setup>
-  import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { HomeFilled } from "@ant-design/icons-vue";
+const router = useRouter();
+const authStore = useAuthStore();
 
-  const router = useRouter()
-  const authStore = useAuthStore()
-
-  const handleLogout = async () => {
-    if (authStore.logout()) {
-      message.success("Đăng xuất thành công")
-      router.push({ path: "/products" })
-    }
+const handleLogout = async () => {
+  if (authStore.logout()) {
+    message.success("Đăng xuất thành công");
+    router.push({ path: "/products" });
   }
+};
 </script>
 
 <style scoped>
-  /* Custom styles */
+/* Custom styles */
 </style>

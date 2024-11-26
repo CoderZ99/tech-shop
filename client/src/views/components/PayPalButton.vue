@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-  import { defineEmits, onMounted } from "vue";
+  import { onMounted } from "vue"
 
   const emit = defineEmits(["approve", "cancel", "error"])
 

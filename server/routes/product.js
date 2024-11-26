@@ -7,7 +7,7 @@ router.get("/", productsController.getAll)
 
 router.get("/:id", productsController.getOne)
 
-router.get("/detail/:detailUrl", productsController.getByDetailUrl)
+router.get("/detail/:slug", productsController.getBySlug)
 
 router.put("/:id", productsController.update)
 

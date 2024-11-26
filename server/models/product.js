@@ -25,6 +25,16 @@ const productSchema = new Schema(
     },
     sold: { type: Number, default: 0 },
     stock: { type: Number, default: 0 },
+    rating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
+    reviews: [
+      {
+        name: { type: String, default: "" },
+        rating: { type: Number, default: 0 },
+        comment: { type: String, default: "" },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      },
+    ],
   },
   { timestamps: true }
 )

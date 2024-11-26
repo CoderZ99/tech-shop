@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <h2 class="text-center text-2xl font-semibold mb-4">Giỏ Hàng</h2>
+    <h2 class="mb-4 text-center text-2xl font-semibold">Giỏ Hàng</h2>
     <div class="flex flex-col items-center">
-      <div class="w-4/5 bg-white p-6 rounded shadow-md mr-4">
+      <div class="mr-4 w-4/5 rounded bg-white p-6 shadow-md">
         <!-- Grid Header -->
         <div class="grid grid-cols-11 gap-0 border-b pb-4 text-gray-700">
           <div class="col-start-1 col-end-2 mx-auto my-auto">
@@ -18,11 +18,11 @@
           </div>
           <div class="col-start-6 col-end-7">Đơn giá</div>
           <div class="col-start-8 col-end-9">Số lượng</div>
-          <div class="col-start-10 col-end-11 col-span-2">Thành tiền</div>
+          <div class="col-span-2 col-start-10 col-end-11">Thành tiền</div>
           <div class="col-start-12 col-end-13">
             <button
               @click="cartStore.clearCart"
-              class="px-4 py-2 bg-red-500 text-white rounded"
+              class="rounded bg-red-500 px-4 py-2 text-white"
             >
               <ClearOutlined class="inline-flex" />
             </button>
@@ -33,7 +33,7 @@
         <div
           v-for="(item, index) in cartStore.items"
           :key="item._id"
-          class="grid grid-cols-11 gap-0 items-center border-b py-4"
+          class="grid grid-cols-11 items-center gap-0 border-b py-4"
         >
           <div class="col-start-1 col-end-2 mx-auto my-0">
             <a-checkbox v-model:checked="item.selected" />
@@ -43,7 +43,7 @@
               :width="50"
               :src="item.image"
               alt="product"
-              class="w-16 h-16 object-cover mr-4"
+              class="mr-4 h-16 w-16 object-cover"
               :preview="false"
             />
             <div>
@@ -61,33 +61,35 @@
                     cartStore.updateItemQuantity(item._id, item.quantity - 1)
                   "
                   :disabled="item.quantity === 1"
-                  class="px-2 py-0 bg-gray-200 rounded"
+                  class="rounded bg-gray-200 px-2 py-0"
                 >
                   &#x2D;
                 </a-button>
-                <span class="min-w-5 mx-2">{{ item.quantity }}</span>
+                <span class="mx-2 min-w-5 text-center">{{
+                  item.quantity
+                }}</span>
                 <a-button
                   @click="
                     cartStore.updateItemQuantity(item._id, item.quantity + 1)
                   "
                   :disabled="item.quantity === item.stock"
-                  class="px-2 py-0 bg-gray-200 rounded"
+                  class="rounded bg-gray-200 px-2 py-0"
                 >
                   &#x2B;
                 </a-button>
               </div>
-              <div class="text-xs text-orange-500 mt-2">
+              <div class="mt-2 text-xs text-orange-500">
                 Tối đa {{ item.stock }}
               </div>
             </div>
           </div>
-          <div class="col-end-11 col-span-2 text-red-500 text-end">
-            {{ (item.price) * item.quantity }}₫
+          <div class="col-span-2 col-end-11 text-end text-red-500">
+            {{ item.price * item.quantity }}₫
           </div>
           <div class="col-start-12 col-end-13">
             <button
               @click="cartStore.removeItem(item._id)"
-              class="px-4 py-2 bg-red-500 text-white rounded"
+              class="rounded bg-red-500 px-4 py-2 text-white"
             >
               <!-- <button
               @click="removeItem(item)"
@@ -109,11 +111,11 @@
             Tổng tiền: {{ cartStore.totalSelectedPrice }} ₫
           </p>
           <button
-            class="mt-4 w-1/3 px-6 py-2 bg-blue-700 text-white rounded"
+            class="mt-4 w-1/3 rounded bg-blue-700 px-6 py-2 text-white"
             :disabled="!cartStore.selectedItems.length"
             @click="
               () => {
-                goToOrderSummary()
+                goToOrderSummary();
                 // router.push({ path: '/order-summary' })
               }
             "
@@ -127,29 +129,29 @@
 </template>
 
 <script setup>
-  // Imports
-  import { useCartStore } from "@/stores/cart";
+// Imports
+import { useCartStore } from "@/stores/cart";
 import { ClearOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-  // Router
-  const router = useRouter()
+// Router
+const router = useRouter();
 
-  // Store
-  const cartStore = useCartStore()
+// Store
+const cartStore = useCartStore();
 
-  // Data
-  const allSelected = ref(false)
+// Data
+const allSelected = ref(false);
 
-  // Methods
-  const goToOrderSummary = () => {
-    router.push({ path: "/order-summary" })
-  }
+// Methods
+const goToOrderSummary = () => {
+  router.push({ path: "/order-summary" });
+};
 </script>
 
 <style scoped>
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>

@@ -26,11 +26,11 @@ const productsController = {
   },
 
   // Get one by detail url
-  getByDetailUrl: async (req, res) => {
+  getBySlug: async (req, res) => {
     try {
       // Get product by detail url
-      const detailUrl = req.params.detailUrl
-      const product = await productService.getByDetailUrl(detailUrl)
+      const slug = req?.params?.slug
+      const product = await productService.getBySlug(slug)
       console.log(`🚀 ~ getByDetailUrl: ~ product:`, product)
       if (!product) {
         return res.status(404).json({ message: "Không tìm thấy sản phẩm" })
