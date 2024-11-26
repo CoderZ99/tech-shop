@@ -5,6 +5,7 @@ const orderRouter = require("./order")
 const cloudinaryRouter = require("./cloudinary")
 // Require user login middleware
 const { loginRequired } = require("../middlewares/auth")
+const errorHandler = require("../middlewares/errorHandler")
 
 function routes(app) {
   app.use("/api/v1/auth", authRouter)
@@ -16,6 +17,9 @@ function routes(app) {
   app.use("/api/v1/order", orderRouter)
 
   app.use("/api/v1/cloudinary", cloudinaryRouter)
+
+  // Error handler middleware should be last
+  app.use(errorHandler)
 }
 
 module.exports = routes

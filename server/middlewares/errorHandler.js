@@ -1,8 +1,19 @@
 const { logger } = require("../logger")
 
-// middlewares/errorHandler.js
-module.exports = (err, req, res, next) => {
-  logger.error(`System error: ${err.stack}`)
-  // Default error code is 500
-  res.status(500).json({ message: err.message })
+module.exports = errorHandler = (err, req, res, next) => {
+  logger.error(`Error: ${err}`)
+  logger.error(`Error stack: ${err.stack}`)
+
+  const messageError = err.messageObject || err.message
+
+  // create format error response
+  const statusCode = err.status || 400
+
+  const error = {
+    statusCode,
+    status: "Error",
+    error: messageError,
+  }
+
+  return res.status(statusCode).json(error)
 }

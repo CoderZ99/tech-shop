@@ -1,4 +1,5 @@
 const express = require("express")
+require("express-async-errors")
 const app = express()
 const { logger, requestLogger } = require("./logger")
 
@@ -42,10 +43,6 @@ connectMongoDB()
 // Route
 const routes = require("./routes")
 routes(app)
-
-// Error handling middleware
-const errorHandler = require("./middlewares/errorHandler")
-app.use(errorHandler)
 
 // Set port
 const PORT = process.env.PORT || 3000
