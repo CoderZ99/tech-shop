@@ -1,3 +1,4 @@
+const { logger } = require("../logger")
 const product = require("../models/product")
 const orderService = require("../services/order")
 const {
@@ -10,51 +11,54 @@ const orderController = {
   createOrder: async (req, res) => {
     try {
       const order = req.body
-      console.log(`🚀 ~ createOrder: ~ order:`, order)
+      logger.debug(`orderController.createOrder: ~ order:`, order)
       const newOrder = await orderService.createOrder(order)
       order.orderItems.forEach((product) => {
         updateStock(product.product, product.quantity)
         updateSold(product.product, product.quantity)
       })
-      console.log(`🚀 ~ createOrder: ~ newOrder:`, newOrder)
+      logger.info(`orderController.createOrder: ~ newOrder:`, newOrder)
       res.status(201).json(newOrder)
     } catch (error) {
-      console.log(`🚀 ~ createOrder: ~ error:`, error)
+      logger.info(`orderController.createOrder: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
   getAllByUsername: async (req, res) => {
     try {
       const username = req.params.username
-      console.log(`🚀 ~ getAllByUserName: ~ username:`, username)
+      logger.info(`orderController.getAllByUserName: ~ username:`, username)
       const orders = await orderService.getAllByUsername(username)
-      console.log(`🚀 ~ getAllByUserName: ~ orders:`, orders)
+      logger.info(`orderController.getAllByUserName: ~ orders:`, orders)
       res.status(200).json(orders)
     } catch (error) {
-      console.log(`🚀 ~ getAllByUserName: ~ error:`, error)
+      logger.info(`orderController.getAllByUserName: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
   updateOrderStatus: async (req, res) => {
     try {
       const order = req.body
-      console.log(`🚀 ~ updateOrderStatus: ~ req.body:`, req.body)
-      console.log(`🚀 ~ updateOrderStatus: ~ order:`, order)
+      logger.debug(`orderController.updateOrderStatus: ~ req.body:`, req.body)
+      logger.debug(`orderController.updateOrderStatus: ~ order:`, order)
       const updatedOrder = await orderService.updateStatus(
         order.id,
         order.status
       )
       if (order.status === "cancelled") {
         order?.orderItems.forEach((product) => {
-          console.log(`🚀 ~ updateOrderStatus: ~ product:`, product)
+          logger.info(`orderController.updateOrderStatus: ~ product:`, product)
           cancelStock(product.product, product.quantity)
           cancelSold(product.product, product.quantity)
         })
       }
-      console.log(`🚀 ~ updateOrderStatus: ~ updatedOrder:`, updatedOrder)
+      logger.info(
+        `orderController.updateOrderStatus: ~ updatedOrder:`,
+        updatedOrder
+      )
       res.status(200).json(updatedOrder)
     } catch (error) {
-      console.log(`🚀 ~ updateOrderStatus: ~ error:`, error)
+      logger.info(`orderController.updateOrderStatus: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
@@ -62,15 +66,15 @@ const orderController = {
   updatePayment: async (req, res) => {
     try {
       const order = req.body
-      console.log(`🚀 ~ updateOrderPayment: ~ order:`, order)
-      console.log(order.id)
+      logger.debug(`orderController.updateOrderPayment: ~ order:`, order)
+      logger.info(order.id)
       const updatedOrder = await orderService.updatePayment(
         order.id,
         order.isPaid
       )
       res.status(200).json(updatedOrder)
     } catch (error) {
-      console.log(`🚀 ~ updateOrderPayment: ~ error:`, error)
+      logger.info(`orderController.updateOrderPayment: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
@@ -78,10 +82,10 @@ const orderController = {
   getAll: async (req, res) => {
     try {
       const result = await orderService.getAll()
-      console.log(`🚀 ~ fetchOrder: ~ result:`, result)
+      logger.info(`orderController.fetchOrder: ~ result:`, result)
       res.status(200).json(result)
     } catch (error) {
-      console.log(`🚀 ~ fetchOrder: ~ error:`, error)
+      logger.info(`orderController.fetchOrder: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
@@ -89,12 +93,12 @@ const orderController = {
   getById: async (req, res) => {
     try {
       const id = req.params.id
-      console.log(`🚀 ~ fetchOrder: ~ id:`, id)
+      logger.info(`orderController.fetchOrder: ~ id:`, id)
       const result = await orderService.getById(id)
-      console.log(`🚀 ~ fetchOrder: ~ result:`, result)
+      logger.info(`orderController.fetchOrder: ~ result:`, result)
       res.status(200).json(result)
     } catch (error) {
-      console.log(`🚀 ~ fetchOrder: ~ error:`, error)
+      logger.info(`orderController.fetchOrder: ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },

@@ -1,5 +1,5 @@
 const userService = require("../services/user")
-
+const { logger } = require("../logger")
 const usersController = {
   /**
    * Retrieves a user by their username.
@@ -71,18 +71,19 @@ const usersController = {
   },
   updateUser: async (req, res) => {
     try {
-      console.log(`🚀 ~ updateUser: ~ req.body:`, req.body)
-      console.log(`🚀 ~ updateUser: ~ req.params:`, req.params)
+      logger.debug(`updateUser: ~ req.body:`, req.body)
+      logger.debug(`updateUser: ~ req.params:`, req.params)
       const { username } = req.params
-      console.log(`🚀 ~ updateUser: ~ username:`, username)
+      logger.info(`updateUser ~ username:`, username)
       const data = {
         name: req.body.name,
         phone: req.body.phone,
       }
-      console.log(`🚀 ~ updateUser: ~ data:`, data)
+
+      logger.info(`updateUser ~ data:`, data)
 
       const result = await userService.updateUser(username, data)
-      console.log(`🚀 ~ updateUser: ~ result:`, result)
+      logger.info(`updateUser ~ result:`, result)
       if (!result) {
         return res.status(404).json({ message: "Không tìm thấy người dùng" })
       }

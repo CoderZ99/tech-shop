@@ -1,3 +1,4 @@
+const { logger } = require("../logger")
 const tokenService = require("../services/token")
 
 const authMiddleware = {
@@ -14,8 +15,8 @@ const authMiddleware = {
         return res.status(401).json({ message: "Token không hợp lệ" })
       }
       const token = tokenParts[1]
-      console.log(`bearerToken: ${bearerToken}`)
-      console.log(`token: ${token}`)
+      logger.debug(`bearerToken: ${bearerToken}`)
+      logger.debug(`token: ${token}`)
       // Verify token
       const decoded = await tokenService.verifyToken(
         token,

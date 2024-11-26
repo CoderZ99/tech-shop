@@ -1,5 +1,5 @@
 const Product = require("../models/product")
-
+const { logger } = require("../logger")
 const productService = {
   /**
    * Retrieves all products from the database.
@@ -8,7 +8,7 @@ const productService = {
    */
   getAll: async () => {
     const products = await Product.find({ isDeleted: false })
-    console.log(`🚀 ~ getAll: ~ products:`, products)
+    logger.info(`getAll ~ products:`, products)
     return products
   },
   /**

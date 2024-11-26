@@ -4,6 +4,8 @@ const authService = require("../services/auth")
 const userService = require("../services/user")
 const tokenService = require("../services/token")
 
+const { logger } = require("../logger")
+
 const authController = {
   // Register
   register: async (req, res) => {
@@ -20,8 +22,8 @@ const authController = {
       const salt = await bcrypt.genSalt(10)
       const hashedPassword = await bcrypt.hash(password, salt)
 
-      console.log(`register password: ${password}`)
-      console.log(`password-hashed: ${hashedPassword}`)
+      logger.debug(`register password: ${password}`)
+      logger.debug(`password-hashed: ${hashedPassword}`)
 
       // Other user info
       const name = req.body.name
@@ -57,6 +59,7 @@ const authController = {
   // Login
   login: async (req, res) => {
     try {
+      logger.info(`Login process start!`)
       // Get username and password from request body
       const username = req.body.username.toLowerCase()
       const password = req.body.password
@@ -81,18 +84,16 @@ const authController = {
         username: user.username,
         role: user.role,
       }
-      console.table(payload)
+      logger.debug(`payload.username: ${user.username}`)
+      logger.debug(`payload.role: ${user.role}`)
       // Generate JWT
       const accessToken = tokenService.generateAccessToken(payload)
 
-      console.log(`🚀 ~ file: auth.js:88 ~ login: ~ accessToken:`, accessToken)
+      logger.debug(`authController.login ~ accessToken: ${accessToken}`)
 
       const refreshToken = tokenService.generateRefreshToken(payload)
 
-      console.log(
-        `🚀 ~ file: auth.js:94 ~ login: ~ refreshToken:`,
-        refreshToken
-      )
+      logger.debug(`authController.login ~ refreshToken: ${refreshToken}`)
 
       // Save refresh token to database
       const saveToken = await tokenService.updateUserRefreshToken(
@@ -133,6 +134,8 @@ const authController = {
       })
     } catch (error) {
       next(error)
+    } finally {
+      logger.info(`Login process end!`)
     }
   },
   // Refresh access token
@@ -140,13 +143,13 @@ const authController = {
     try {
       // // Get refresh token
       // if (req?.cookies?.refreshToken) {
-      //   console.log(`refreshTokenFromCookie: ${req.cookies.refreshToken}`)
+      //   logger.debug(`refreshTokenFromCookie: ${req.cookies.refreshToken}`)
       //   return res
       //     .status(200)
       //     .json({ refreshTokenFromCookie: req?.cookies?.refreshToken })
       // }
       // if (req?.body?.refreshToken) {
-      //   console.log(`refreshTokenFromBody: ${req?.body?.refreshToken}`)
+      //   logger.debug(`refreshTokenFromBody: ${req?.body?.refreshToken}`)
       //   return res
       //     .status(200)
       //     .json({ refreshTokenFromBody: req.body.refreshToken })
@@ -173,7 +176,7 @@ const authController = {
 
       // Verify refresh token exits in database
       const user = await tokenService.checkRefreshToken(refreshToken)
-      console.log(`user: ${JSON.stringify(user, null, 2)}`)
+      logger.info(`user: ${JSON.stringify(user, null, 2)}`)
       if (!user || user?.refreshToken !== refreshToken) {
         return res
           .status(401)
@@ -226,12 +229,11 @@ const authController = {
   // Logout
   logout: async (req, res) => {
     try {
-      console.log(`logout process`)
+      logger.info(`Logout process start!`)
       // Clear refresh token in database
-      const token = ""
       const clearToken = await tokenService.updateUserRefreshToken(
         req.user.username,
-        token
+        ""
       )
       if (!clearToken) {
         return res.status(500).json({
@@ -241,9 +243,11 @@ const authController = {
       res.status(200).json({
         message: "Đăng xuất thành công",
       })
-      console.log("Logout successfully!")
+      logger.info(`User ${req.user.username} logout success`)
     } catch (error) {
       next(error)
+    } finally {
+      logger.info(`Logout process end!`)
     }
   },
 }

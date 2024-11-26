@@ -1,4 +1,5 @@
 const cloudinary = require("cloudinary")
+const { logger } = require("../logger")
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -33,7 +34,7 @@ const cloudinaryService = {
     return { timestamp, signature }
   },
   deleteImage: async (publicId) => {
-    console.log(`🚀 ~ cloudinaryService.deleteImage ~ publicId:`, publicId)
+    logger.info(`cloudinaryService.deleteImage ~ publicId:`, publicId)
     return await cloudinary.v2.uploader.destroy(publicId)
   },
 }

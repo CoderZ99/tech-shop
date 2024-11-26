@@ -1,11 +1,12 @@
 const productService = require("../services/product")
-
+const { logger } = require("../logger")
+const { log } = require("winston")
 const productsController = {
   // Get all products
   getAll: async (req, res) => {
     try {
       const products = await productService.getAll()
-      console.log(`🚀 ~ getAll: ~ products:`, products)
+      logger.info(`productsController.getAll ~ products:`, products)
 
       res.status(200).json({ products })
     } catch (error) {
@@ -31,13 +32,13 @@ const productsController = {
       // Get product by detail url
       const slug = req?.params?.slug
       const product = await productService.getBySlug(slug)
-      console.log(`🚀 ~ getByDetailUrl: ~ product:`, product)
+      logger.info(`productsController.getBySlug ~ product:`, product)
       if (!product) {
         return res.status(404).json({ message: "Không tìm thấy sản phẩm" })
       }
       res.status(200).json(product)
     } catch (error) {
-      console.log(`🚀 ~ getByDetailUrl: ~ error:`, error)
+      logger.error(`productsController.getBySlug ~ error:`, error)
       res.status(500).json({ message: error.message })
     }
   },
@@ -46,7 +47,7 @@ const productsController = {
   add: async (req, res) => {
     try {
       const product = req.body
-      console.log(`🚀 ~ add: ~ product:`, product)
+      logger.info(`productsController.add ~ product:`, product)
       if (product?._id) {
         delete product._id
       }
@@ -61,8 +62,8 @@ const productsController = {
   update: async (req, res) => {
     try {
       // Debug
-      console.log(`🚀 ~ update: ~ req.params:`, req.params.id)
-      console.log(`🚀 ~ update: ~ req.body:`, req.body)
+      logger.debug(`🚀 ~ update: ~ req.params:`, req.params.id)
+      logger.debug(`🚀 ~ update: ~ req.body:`, req.body)
       // Get product id
       const productId = req.params.id
       const product = req.body

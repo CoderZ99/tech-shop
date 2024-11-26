@@ -1,3 +1,4 @@
+const { logger } = require("../logger")
 const cloudinaryService = require("../services/cloudinary")
 
 const cloudinaryController = {
@@ -5,7 +6,7 @@ const cloudinaryController = {
     try {
       const { timestamp, signature } = await cloudinaryService.createSignature()
 
-      console.log({ timestamp, signature })
+      logger.debug({ timestamp, signature })
 
       res.status(200).json({ timestamp: timestamp, signature: signature })
     } catch (error) {
@@ -16,7 +17,7 @@ const cloudinaryController = {
   deleteImage: async (req, res) => {
     try {
       const publicId = req?.body?.publicId
-      console.log(`🚀 ~ deleteImage: ~ publicId:`, publicId)
+      logger.info(`deleteImage ~ publicId:`, publicId)
       const result = await cloudinaryService.deleteImage(publicId)
       res.status(200).json(result)
     } catch (error) {

@@ -1,5 +1,9 @@
 const express = require("express")
 const app = express()
+const { logger, requestLogger } = require("./logger")
+
+// Use request logger middleware
+app.use(requestLogger)
 
 // Cors
 const cors = require("cors")
@@ -35,12 +39,6 @@ dotenv.config({ path: "./.env" })
 const connectMongoDB = require("./configs/db")
 connectMongoDB()
 
-// Logger for HTTP request
-const setupRequestLogger = require("./request-logger")
-const { requestLoggerConsole, requestLoggerFile } = setupRequestLogger()
-app.use(requestLoggerFile)
-app.use(requestLoggerConsole)
-
 // Route
 const routes = require("./routes")
 routes(app)
@@ -53,5 +51,5 @@ app.use(errorHandler)
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, function () {
-  console.log(`Server run on PORT ${PORT}`)
+  logger.info(`Server run on PORT ${PORT}`)
 })
