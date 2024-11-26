@@ -40,8 +40,9 @@
           </div>
           <div class="col-start-2 col-end-5 flex items-center gap-2">
             <a-image
+              v-if="item.images.length > 0"
               :width="50"
-              :src="item.image"
+              :src="item.images[0]?.url"
               alt="product"
               class="mr-4 h-16 w-16 object-cover"
               :preview="false"
@@ -51,7 +52,7 @@
             </div>
           </div>
           <div class="col-start-5 col-end-7 pr-1 text-end">
-            {{ item.price }} ₫
+            {{ formatCurrency(item.price) }}
           </div>
           <div class="col-start-8 col-end-9 flex items-center">
             <div class="flex flex-col items-center">
@@ -84,7 +85,7 @@
             </div>
           </div>
           <div class="col-span-2 col-end-11 text-end text-red-500">
-            {{ item.price * item.quantity }}₫
+            {{ formatCurrency(item.price * item.quantity) }}
           </div>
           <div class="col-start-12 col-end-13">
             <button
@@ -108,7 +109,7 @@
         <!-- Total -->
         <div class="mt-4 flex flex-col items-center">
           <p class="text-lg font-semibold text-red-500">
-            Tổng tiền: {{ cartStore.totalSelectedPrice }} ₫
+            Tổng tiền: {{ formatCurrency(cartStore.totalSelectedPrice) }}
           </p>
           <button
             class="mt-4 w-1/3 rounded bg-blue-700 px-6 py-2 text-white"
@@ -134,6 +135,7 @@ import { useCartStore } from "@/stores/cart";
 import { ClearOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { formatCurrency } from "@/utils/currency";
 // Router
 const router = useRouter();
 
