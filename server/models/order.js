@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+const mongoosePaginate = require("mongoose-paginate-v2")
 const Schema = mongoose.Schema
 
 const orderSchema = new Schema(
@@ -62,6 +62,9 @@ orderSchema.pre("save", function (next) {
   }
   next()
 })
+
+// Add plugin to paginate
+orderSchema.plugin(mongoosePaginate)
 
 // Export model
 module.exports = mongoose.model("Order", orderSchema)

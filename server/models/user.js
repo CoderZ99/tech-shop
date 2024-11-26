@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+const mongoosePaginate = require("mongoose-paginate-v2")
 const Schema = mongoose.Schema
 
 const userSchema = new Schema(
@@ -25,6 +25,8 @@ const userSchema = new Schema(
   { timestamps: true }
 )
 
+// Add plugin to paginate
+userSchema.plugin(mongoosePaginate)
 // Define index
 userSchema.index({ username: 1 }, { unique: true })
 

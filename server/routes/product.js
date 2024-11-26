@@ -3,9 +3,9 @@ const router = express.Router()
 
 const productsController = require("../controllers/product")
 
-router.get("/", productsController.getAll)
+router.get("/:id", productsController.getProduct)
 
-router.get("/:id", productsController.getOne)
+router.get("/", productsController.getProducts)
 
 router.get("/detail/:slug", productsController.getBySlug)
 

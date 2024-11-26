@@ -3,26 +3,37 @@ const { logger } = require("../logger")
 const { log } = require("winston")
 const productsController = {
   // Get all products
-  getAll: async (req, res) => {
-    try {
-      const products = await productService.getAll()
-      logger.info(`productsController.getAll ~ products:`, products)
+  getProducts: async (req, res) => {
+    // Default page and limit
+    const defaultPage = 1
+    const defaultLimit = 5
 
+    // Get page and limit
+    const page = parseInt(req.query.page) || defaultPage
+    const limit = parseInt(req.query.limit) || defaultLimit
+
+    // Get products
+    try {
+      const products = await productService.getPaginatedProducts(page, limit)
+      logger.info(`productsController.getAll ~ products:`, products)
+      // Send response
       res.status(200).json({ products })
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      logger.error(`productsController.getProducts ~ error: ${error}`)
+      next(error)
     }
   },
 
   // Get one product
-  getOne: async (req, res) => {
+  getProduct: async (req, res) => {
     try {
       // Get product id
       const productId = req.params.id
+      logger.debug(`productsController.getProduct ~ productId: ${productId}`)
       const product = productService.getOne(productId)
       res.status(200).json(product)
     } catch (error) {
-      res.status(500).json({ message: error.message })
+      next(error)
     }
   },
 

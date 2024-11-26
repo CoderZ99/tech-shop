@@ -2,23 +2,28 @@ const Product = require("../models/product")
 const { logger } = require("../logger")
 const productService = {
   /**
-   * Retrieves all products from the database.
+   * Retrieves a paginated list of non-deleted products.
    *
-   * @return {Promise<Array<Product>>} An array of products.
+   * @return {Promise<Array>} A Promise that resolves to an array of product objects.
    */
-  getAll: async () => {
-    const products = await Product.find({ isDeleted: false })
+  getPaginatedProducts: async (page = 1, limit = 5) => {
+    const options = {
+      page,
+      limit,
+    }
+    const products = await Product.paginate({ isDeleted: false }, options)
     logger.info(`getAll ~ products:`, products)
     return products
   },
   /**
-   * Retrieves a single product from the database based on its ID.
+   * Retrieves a product based on ID.
    *
    * @param {string} id - The ID of the product to retrieve.
    * @return {Promise<Object|null>} A Promise that resolves to the retrieved product object, or null if no product is found.
    */
   getOne: async (id) => {
     const product = await Product.findById(id)
+    logger.info(`getOne ~ product: ${product}`)
     return product
   },
   //
