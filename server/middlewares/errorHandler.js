@@ -12,7 +12,7 @@ module.exports = errorHandler = (err, req, res, next) => {
   const error = {
     statusCode,
     status: "Error",
-    error: messageError,
+    message: messageError,
   }
 
   return res.status(statusCode).json(error)

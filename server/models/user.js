@@ -19,8 +19,10 @@ const userSchema = new Schema(
       default: "user",
     },
     phone: { type: String, default: "" },
+    email: { type: String, default: "" },
     status: { type: String, enum: ["active", "disable"], default: "active" },
     refreshToken: { type: String, default: "" },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

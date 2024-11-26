@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router";
 
-import OrderSummaryView from "../views/OrderSummaryView.vue"
-import ProductDetailsView from "../views/product/ProductDetailsView.vue"
-import ProfileView from "../views/ProfileView.vue"
+import OrderSummaryView from "../views/OrderSummaryView.vue";
+import ProductDetailsView from "../views/product/ProductDetailsView.vue";
+import ProfileView from "../views/ProfileView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,12 +15,17 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: () => import("../views/LoginView.vue"),
+      component: () => import("../views/auth/LoginView.vue"),
+    },
+    {
+      path: "/forgot-password",
+      name: "forgot-password",
+      component: () => import("../views/auth/ForgotPasswordView.vue"),
     },
     {
       path: "/register",
       name: "register",
-      component: () => import("../views/RegisterView.vue"),
+      component: () => import("../views/auth/RegisterView.vue"),
     },
     {
       path: "/products/:detailUrl",
@@ -69,27 +74,27 @@ const router = createRouter({
     },
     { path: "/:pathMatch(.*)*", redirect: "/not-found" },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   // Kiểm tra xem route cần đăng nhập hay không
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     // Kiểm tra xem người dùng đã đăng nhập hay chưa
-    const isAuthenticated = checkAuth()
-    console.log(`🚀 ~ router.beforeEach ~ isAuthenticated:`, isAuthenticated)
+    const isAuthenticated = checkAuth();
+    console.log(`🚀 ~ router.beforeEach ~ isAuthenticated:`, isAuthenticated);
     if (isAuthenticated) {
-      next() // Đã đăng nhập, cho phép truy cập
+      next(); // Đã đăng nhập, cho phép truy cập
     } else {
-      next({ path: "/login" }) // Chưa đăng nhập, chuyển hướng đến trang đăng nhập
+      next({ path: "/login" }); // Chưa đăng nhập, chuyển hướng đến trang đăng nhập
     }
   } else {
-    next() // Route không cần đăng nhập, cho phép truy cập
+    next(); // Route không cần đăng nhập, cho phép truy cập
   }
-})
+});
 
 function checkAuth() {
-  const accessToken = localStorage.getItem("accessToken")
-  const user = localStorage.getItem("user")
-  return !!accessToken && !!user
+  const accessToken = localStorage.getItem("accessToken");
+  const user = localStorage.getItem("user");
+  return !!accessToken && !!user;
 }
-export default router
+export default router;

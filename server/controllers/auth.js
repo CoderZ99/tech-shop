@@ -14,7 +14,7 @@ const authController = {
       // Check if the username already exists
       let checkUsername = await userService.getByUsername(username)
       if (checkUsername) {
-        return res.status(400).json({ message: "Tên tài khoản đã tồn tại!" })
+        throw new Error("Tên tài khoản đã tồn tại!")
       }
 
       // Hash the password
@@ -26,26 +26,21 @@ const authController = {
       logger.debug(`password-hashed: ${hashedPassword}`)
 
       // Other user info
-      const name = req.body.name
-      const role = req.body.role
-      const phone = req.body.phone
-      const status = req.body.status
-
       // Create the new user
-      const createResult = await authService.register({
+      logger.debug(`register: ~ req.body:`, req.body)
+      const created = await authService.register({
         username,
         password: hashedPassword,
-        name,
-        role,
-        phone,
-        status,
+        name: req.body?.name,
+        role: req.body?.role,
+        phone: req.body?.phone,
+        status: req.body?.status,
+        email: req.body?.email,
       })
 
       // Check result register
-      if (!createResult) {
-        return res.status(400).json({
-          message: "Có lỗi xảy ra, thử lại sau đó.!",
-        })
+      if (!created) {
+        throw new Error("Có lỗi xảy ra, thử lại sau!!")
       }
 
       // Return the response
@@ -53,7 +48,7 @@ const authController = {
         message: "Tạo tài khoản thành công!",
       })
     } catch (error) {
-      next(error)
+      throw new Error(error)
     }
   },
   // Login

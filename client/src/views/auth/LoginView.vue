@@ -37,14 +37,6 @@
         </a-form-item>
         <a-form-item>
           <a-button
-            type="link"
-            class="w-full"
-            @click="() => $router.push({ name: 'forgot-password' })"
-            >Quên mật khẩu?</a-button
-          >
-        </a-form-item>
-        <a-form-item>
-          <a-button
             type="primary"
             htmlType="submit"
             class="w-full"
@@ -52,16 +44,23 @@
           >
             Đăng nhập
           </a-button>
-          <a-divider class="my-3"></a-divider>
-          <a-divider class="my-3">Hoặc</a-divider>
+
           <p class="mt-4 text-center">
+            Chưa có tài khoản?
             <a-button
               type="link"
-              class="w-full text-sky-500 hover:bg-gray-200 hover:text-blue-700"
+              class="text-sky-500"
               @click="() => $router.push({ name: 'register' })"
               >Đăng ký ngay!</a-button
             >
           </p>
+          <a-divider class="my-3">Hoặc</a-divider>
+          <a-button
+            type="link"
+            class="w-full"
+            @click="() => $router.push({ name: 'forgot-password' })"
+            >Quên mật khẩu?</a-button
+          >
         </a-form-item>
       </a-form>
     </div>
@@ -74,8 +73,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons-vue";
 import { Form, message } from "ant-design-vue";
 import { onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
-// import { login } from "../api/authService.js"
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 
 // Data
 const router = useRouter();
