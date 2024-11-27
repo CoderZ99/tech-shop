@@ -143,12 +143,13 @@
             </a-modal>
           </a-form-item>
           <a-form-item
-            label="Mô tả"
+            label="Mô tả sản phẩm"
             name="description"
           >
-            <a-textarea
-              v-model:value="product.description"
-              :rows="displayRowDescription"
+            <PrimeEditor
+              v-model="formattedDescription"
+              editorStyle="height: 320px"
+              class="custom-editor"
             />
           </a-form-item>
           <a-divider class="my-4" />
@@ -316,6 +317,24 @@
     }
   }
 
+  // Computed property để xử lý description có \n và format URL ảnh
+  const formattedDescription = computed({
+    get: () => {
+      if (!product.value.description) return '';
+      
+      let text = product.value.description.replace(/\\n/g, '\n');
+      
+      // Format lại URL trong thẻ href và src
+      text = text.replace(/href="\\&quot;(.*?)\\&quot;"/g, (match, url) => `href="${url}"`);
+      text = text.replace(/src="\\&quot;(.*?)\\&quot;"/g, (match, url) => `src="${url}"`);
+      
+      return text;
+    },
+    set: (value) => {
+      product.value.description = value;
+    }
+  });
+
   // Validation rules
   const rules = {
     name: [
@@ -399,3 +418,44 @@
     })
   }
 </script>
+
+<style>
+/* Custom styling cho PrimeEditor để phù hợp với giao diện Ant Design */
+.custom-editor .ql-toolbar.ql-snow {
+  border: 1px solid #d9d9d9;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: #fff;
+}
+
+/* Ẩn nút heading */
+.custom-editor .ql-toolbar .ql-header,
+.custom-editor .ql-toolbar .ql-clean,
+.custom-editor .ql-toolbar .ql-image,
+.custom-editor .ql-toolbar .ql-code-block {
+  display: none !important;
+}
+
+.custom-editor .ql-container.ql-snow {
+  border: 1px solid #d9d9d9;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.custom-editor .ql-editor {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  background-color: #fff;
+  min-height: 320px;
+}
+
+.custom-editor .ql-toolbar button:hover,
+.custom-editor .ql-toolbar button:focus {
+  color: #1890ff;
+}
+
+.custom-editor .ql-toolbar button.ql-active {
+  color: #1890ff;
+}
+</style>

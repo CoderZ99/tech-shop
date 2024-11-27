@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-8 w-3/5 rounded bg-white p-4 shadow-md">
+  <div class="mt-8 rounded bg-white p-4 shadow-md">
     <h3 class="mb-4 text-lg font-semibold">An tâm mua sắm</h3>
     <div class="mb-2 flex items-center">
       <CheckCircleOutlined class="mr-2 text-blue-500" />

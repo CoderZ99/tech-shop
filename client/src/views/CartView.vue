@@ -40,7 +40,7 @@
           </div>
           <div class="col-start-2 col-end-5 flex items-center gap-2">
             <a-image
-              v-if="item.images.length > 0"
+              v-if="item.images[0]?.url.length > 0"
               :width="50"
               :src="item.images[0]?.url"
               alt="product"

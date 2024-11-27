@@ -95,7 +95,7 @@
                   type="primary"
                   size="large"
                   :disabled="product.stock === 0"
-                  @click="buyNow"
+                  @click="buyNow(product)"
                 >
                   Mua ngay
                 </a-button>
@@ -116,15 +116,31 @@
           </div>
         </div>
       </div>
-      <ShoppingAssurance />
-      <div class="mt-8 w-3/5 rounded bg-white p-4 shadow-md">
-        <a-descriptions title="Mô tả">
-          <a-descriptions-item>
-            {{ product.description }}
-          </a-descriptions-item>
-        </a-descriptions>
+      <div class="flex gap-4">
+        <!-- Product description -->
+        <div class="mt-8 w-2/3 rounded bg-white p-4 shadow-md">
+          <h2 class="my-4 text-xl font-semibold">Bài viết đánh giá</h2>
+          <div>
+            <div
+              :class="{ 'line-clamp-5': !showFullDescription }"
+              v-html="formattedDescription"
+            ></div>
+            <div class="flex justify-center">
+              <a-button
+                type="link"
+                class="mt-4 text-lg font-medium"
+                @click="showFullDescription = !showFullDescription"
+              >
+                {{ showFullDescription ? "Thu gọn" : "Xem thêm" }}
+              </a-button>
+            </div>
+          </div>
+        </div>
+        <div class="w-1/3">
+          <ShoppingAssurance />
+        </div>
       </div>
-      <h2 class="my-4 text-xl font-semibold">Đánh giá</h2>
+      <h2 class="my-4 text-xl font-semibold">Đánh giá {{ product.name }}</h2>
       <div v-if="product && product?.reviews?.length > 0">
         <CustomerReviews :reviews="product.reviews" />
       </div>
@@ -143,7 +159,7 @@
 import CustomerReviews from "../components/CustomerReviews.vue";
 import { useCartStore } from "@/stores/cart";
 import { message } from "ant-design-vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getProductByDetailUrl } from "../../api/productService";
 import ShoppingAssurance from "../components/ShoppingAssurance.vue";
@@ -166,6 +182,8 @@ const product = ref({});
 
 const selectedImage = ref("");
 
+const showFullDescription = ref(false);
+
 // Method
 const getProductDetail = async () => {
   try {
@@ -187,7 +205,7 @@ const getProductDetail = async () => {
  * @param {number} [addedQuantity=1] - The quantity of the product to be added. Defaults to 1.
  * @return {void} This function does not return anything.
  */
-const addToCart = (product, addedQuantity = 1) => {
+const addToCart = (product, addedQuantity = 1, buyNow = false) => {
   console.log(`🚀 ~ addToCart ~ product:`, product);
   // Logic to add product to cart
   try {
@@ -207,6 +225,9 @@ const addToCart = (product, addedQuantity = 1) => {
         message.success("Sản phẩm đã được thêm vào giỏ hàng");
         break;
     }
+    if (buyNow) {
+      router.push({ name: "cart" });
+    }
   } catch (error) {
     console.log(`🚀 ~ addToCart ~ error:`, error);
     message.error(error);
@@ -219,11 +240,34 @@ const addToCart = (product, addedQuantity = 1) => {
  * @return {void} This function does not return anything.
  */
 
-const buyNow = () => {
+const buyNow = (product) => {
   // Add 1 product to cart and redirect to cart
-  addToCart(product, 1);
-  router.push({ name: "cart" });
+  addToCart(product, 1, true);
 };
+
+// Computed property để xử lý description có \n và format URL ảnh
+const formattedDescription = computed({
+  get: () => {
+    if (!product.value.description) return "";
+
+    let text = product.value.description.replace(/\\n/g, "\n");
+
+    // Format lại URL trong thẻ href và src
+    text = text.replace(
+      /href="\\&quot;(.*?)\\&quot;"/g,
+      (match, url) => `href="${url}"`,
+    );
+    text = text.replace(
+      /src="\\&quot;(.*?)\\&quot;"/g,
+      (match, url) => `src="${url}"`,
+    );
+
+    return text;
+  },
+  set: (value) => {
+    product.value.description = value;
+  },
+});
 
 // Lifecycle
 onMounted(() => {
