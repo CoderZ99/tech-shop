@@ -58,3 +58,12 @@ export const resetPassword = async (token, newPassword) => {
     throw error.response?.data || { message: "Có lỗi xảy ra" };
   }
 };
+
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await api.post(`${path}/change-password`, passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Có lỗi xảy ra" };
+  }
+};

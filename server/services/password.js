@@ -3,6 +3,7 @@ const crypto = require("crypto")
 const bcrypt = require("bcrypt")
 const emailService = require("./email")
 const { logger } = require("../logger")
+const { changePassword } = require("../controllers/password")
 
 const passwordService = {
   forgotPassword: async (email) => {
@@ -38,7 +39,6 @@ const passwordService = {
       throw new Error("Có lỗi khi gửi email đặt lại mật khẩu: " + err.message)
     }
   },
-
   resetPassword: async (token, newPassword) => {
     try {
       // Hash token từ params
@@ -74,6 +74,13 @@ const passwordService = {
     } catch (err) {
       throw new Error("Có lỗi khi đặt lại mật khẩu: " + err.message)
     }
+  },
+  changePassword: async (username, userPassword) => {
+    return await User.findOneAndUpdate(
+      { username },
+      { password: userPassword },
+      { new: true }
+    )
   },
 }
 
