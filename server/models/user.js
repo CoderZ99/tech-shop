@@ -23,6 +23,8 @@ const userSchema = new Schema(
     status: { type: String, enum: ["active", "disable"], default: "active" },
     refreshToken: { type: String, default: "" },
     isDeleted: { type: Boolean, default: false },
+    resetPasswordToken: { type: String, default: "" },
+    resetPasswordExpires: { type: Date, default: null },
   },
   { timestamps: true }
 )

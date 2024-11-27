@@ -18,11 +18,6 @@ const router = createRouter({
       component: () => import("../views/auth/LoginView.vue"),
     },
     {
-      path: "/forgot-password",
-      name: "forgot-password",
-      component: () => import("../views/auth/ForgotPasswordView.vue"),
-    },
-    {
       path: "/register",
       name: "register",
       component: () => import("../views/auth/RegisterView.vue"),
@@ -71,6 +66,16 @@ const router = createRouter({
       path: "/not-found",
       name: "not-found",
       component: () => import("../views/NotFound.vue"),
+    },
+    {
+      path: "/forgot-password",
+      name: "forgot-password",
+      component: () => import("../views/auth/ForgotPasswordView.vue"),
+    },
+    {
+      path: "/reset-password/:token",
+      name: "reset-password",
+      component: () => import("../views/auth/ResetPasswordView.vue"),
     },
     { path: "/:pathMatch(.*)*", redirect: "/not-found" },
   ],
