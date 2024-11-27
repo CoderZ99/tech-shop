@@ -10,7 +10,7 @@
         >Thêm sản phẩm</a-button
       >
       <a-button
-        @click="getAllProducts"
+        @click="getProducts(page, pageSize)"
         :disabled="loading"
         type="primary"
       >
@@ -127,7 +127,6 @@
   const productStore = useProductStore()
   // Data
   const products = ref([])
-  const pagedProducts = ref([])
   const loading = ref(false)
   const paginationConfig = ref({
     current: 1,
@@ -135,71 +134,40 @@
     total: 0,
     showSizeChanger: false,
   })
-
+  const page = computed(() => paginationConfig.value.current || 1)
+  const pageSize = computed(() => paginationConfig.value.pageSize || 5)
+  const pagedProducts = computed(() => products?.value || [])
   // Methods
-  const getAllProducts = async () => {
+  const getProducts = async (page, pageSize) => {
     loading.value = true
     try {
-      const response = await fetchProducts()
-      console.log(`🚀 ~ getAllProducts ~ response:`, response)
-      if (response?.data?.products) {
+      let response = await fetchProducts(page, pageSize)
+      if (response?.data?.products?.docs.length === 0 && page > 1) {
+        // Gọi API tải dữ liệu trang trước
+        console.log(
+          `(1)get products again ~ page: ${page}, pageSize: ${pageSize}`
+        )
+        paginationConfig.value.current -= 1
+        response = await fetchProducts(paginationConfig.value.current, pageSize)
         products.value = []
-        products.value = [...response.data.products]
-        paginationConfig.value.total = products.value.length
-        paginationConfig.value.current = 1
-        message.success("Danh sách sản phẩm đã được tải")
-        setPagedProducts()
-        console.log(`pagedProducts: `, pagedProducts.value)
+        products.value = [...response?.data?.products?.docs]
       } else {
-        throw new Error("Không thể tải danh sách sản phẩm")
+        products.value = []
+        products.value = [...response?.data?.products?.docs]
+        message.success("Danh sách sản phẩm đã được tải")
       }
+      paginationConfig.value.total = response.data.products.totalDocs
     } catch (error) {
-      console.log(`🚀 ~ getAllProducts ~ error:`, error)
-      message.error("Không thể tải danh sách sản phẩm")
+      message.error(error)
     } finally {
       loading.value = false
     }
   }
 
-  /**
-   * Sets the paged products based on the current page and page size.
-   *
-   * @return {void}
-   */
-  const setPagedProducts = () => {
-    const start =
-      (paginationConfig.value.current - 1) * paginationConfig.value.pageSize
-    const end = start + paginationConfig.value.pageSize
-    pagedProducts.value = products.value.slice(start, end)
-  }
-
-  /**
-   * Updates the pagination configuration and sets the paged products based on the current page and page size.
-   *
-   * @param {Object} pagination - The new pagination configuration object.
-   * @return {void}
-   */
   const handleTableChange = (pagination) => {
     paginationConfig.value = pagination
-    setPagedProducts()
+    getProducts(page.value, pageSize.value)
   }
-
-  // const handleUpdateProduct = async (prod) => {
-  //   try {
-  //     // Upload image to Cloudinary
-  //     const uploadResult = await uploadProductImage(prod.image)
-  //     if (uploadResult?.secure_url) {
-  //       prod.image = uploadResult?.secure_url
-  //     }
-  //     // Update product in database
-  //     let response = await updateProduct(prod._id, prod)
-  //     message.success("Cập nhật sản phẩm thành công")
-  //   } catch (error) {
-  //     message.error("Có lỗi xảy ra khi cập nhật sản phẩm")
-  //   } finally {
-  //     await getAllProducts()
-  //   }
-  // }
 
   /**
    * Handles the deletion of a product. Displays a confirmation modal to the user and deletes the product if confirmed.
@@ -219,23 +187,21 @@
         } catch (error) {
           message.error("Có lỗi xảy ra khi xóa sản phẩm")
         } finally {
-          await getAllProducts()
+          await getProducts(page.value, pageSize.value)
         }
       },
     })
   }
 
-  // Lifecycle hooks
-
   // Get data when init
   onMounted(() => {
-    getAllProducts()
+    getProducts(page.value, pageSize.value)
   })
 
   // When from child component page back
   const computedRouteName = computed(() => router.currentRoute.value.name)
   watch(
     () => computedRouteName.value === "product",
-    () => getAllProducts()
+    () => getProducts(page.value, pageSize.value)
   )
 </script>

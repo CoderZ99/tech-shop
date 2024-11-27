@@ -14,10 +14,10 @@ import api from "./api"
 // order endpoint
 const path = "/api/v1/product"
 
-export const fetchProducts = async () => {
+export const fetchProducts = async (page = 1, limit = 5) => {
   try {
     const endpoint = `${path}/`
-    const response = await api.get(endpoint)
+    const response = await api.get(endpoint, { params: { page, limit } })
     console.log(`🚀 ~ fetchProducts ~ response:`, response)
     return response
   } catch (error) {
