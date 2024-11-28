@@ -26,7 +26,6 @@ const authMiddleware = {
       if (!decoded) {
         return res.status(401).json({ message: "Token không hợp lệ" })
       }
-
       // Add user info from token to request
       req.user = decoded
       next()
@@ -39,9 +38,10 @@ const authMiddleware = {
       }
     }
   },
+  // Verify admin role middleware
   verifyAdmin: (req, res, next) => {
     if (req.user.role !== "admin") {
-      return res.status(401).json({ message: "Không được phép" })
+      throw new Error({status: 403, message: "Không được phép truy cập"})
     }
     next()
   },
