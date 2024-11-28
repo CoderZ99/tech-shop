@@ -53,13 +53,13 @@ const router = createRouter({
     {
       path: "/order-history",
       name: "order-history",
-      component: () => import("../views/OrderHistory.vue"),
+      component: () => import("../views/order/OrderHistory.vue"),
       meta: { requiresAuth: true },
     },
     {
       path: "/order-details/:detailId",
       name: "order-details",
-      component: () => import("../views/OrderDetails.vue"),
+      component: () => import("../views/order/OrderDetails.vue"),
       meta: { requiresAuth: true },
     },
     {
