@@ -60,7 +60,7 @@ export const getStatusColor = (status) => {
   return colors[status] || "gray"
 }
 
-const orderStatuses = [
+export const orderStatuses = [
   { value: "placed", label: "Đã đặt hàng" },
   { value: "processing", label: "Đang xử lý" },
   { value: "shipping", label: "Đang giao hàng" },
@@ -68,7 +68,7 @@ const orderStatuses = [
   { value: "cancelled", label: "Đã hủy" },
 ]
 
-const formatDate = (text) => {
+export const formatDate = (text) => {
   const date = new Date(text)
   return date.toLocaleDateString("vi-VN", {
     year: "numeric",

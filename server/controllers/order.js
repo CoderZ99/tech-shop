@@ -41,17 +41,34 @@ const orderController = {
       const order = req.body
       logger.debug(`orderController.updateOrderStatus: ~ req.body:`, req.body)
       logger.debug(`orderController.updateOrderStatus: ~ order:`, order)
-      const updatedOrder = await orderService.updateStatus(
-        order.id,
-        order.status
-      )
-      if (order.status === CO.ORDER_STATUS.CANCELLED) {
+
+      // If order status is cancelled
+      if (order.status === "cancelled") {
         order?.orderItems.forEach((product) => {
           logger.info(`orderController.updateOrderStatus: ~ product:`, product)
           cancelStock(product.product, product.quantity)
           cancelSold(product.product, product.quantity)
         })
       }
+
+      // Get current order status
+      const currentOrder = await orderService.getById(order.id)
+      console.log(
+        `orderController.updateOrderStatus: ~ currentOrder:`,
+        currentOrder
+      )
+      // If current order status is cancelled
+      if (currentOrder.status === "cancelled") {
+        order.orderItems.forEach((product) => {
+          updateStock(product.product, product.quantity)
+          updateSold(product.product, product.quantity)
+        })
+      }
+
+      const updatedOrder = await orderService.updateStatus(
+        order.id,
+        order.status
+      )
       logger.info(
         `orderController.updateOrderStatus: ~ updatedOrder:`,
         updatedOrder

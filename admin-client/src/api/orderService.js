@@ -5,6 +5,9 @@ const path = "/api/v1/order"
 
 export const updateOrderStatus = async (orderId, orderItems, status) => {
   try {
+    console.log(`updateOrderStatus.orderId:`, orderId)
+    console.log(`updateOrderStatus.orderItems:`, orderItems)
+    console.log(`updateOrderStatus.status:`, status)
     const endpoint = `${path}/update`
     const response = await api.put(endpoint, {
       id: orderId,
