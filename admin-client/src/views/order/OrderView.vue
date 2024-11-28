@@ -31,6 +31,7 @@
         key="_id"
         title="Mã đơn"
         dataIndex="_id"
+        align="center"
       >
         <template #default="{ text: _id }">
           <span>{{ _id.toUpperCase() }}</span>
@@ -106,7 +107,7 @@
     fetchOrders,
     deleteOrder,
   } from "@/api/orderService"
-  import { message } from "ant-design-vue"
+  import { Modal, message } from "ant-design-vue"
   import { onMounted, reactive, ref } from "vue"
   import { getStatusLabel, getStatusColor } from "@/utils/utils"
   import OrderDetails from "./OrderDetails.vue"
@@ -173,18 +174,25 @@
   }
 
   const handleDelete = async (order) => {
+    Modal.confirm({
+      title: "Xóa đơn hàng",
+      content: `Bạn có chắc chắn muốn xóa đơn hàng: ${ order._id.toUpperCase() }`,
+      onOk: async () => {
+        try {
+          const response = await deleteOrder(order._id)
+          if (response) {
+            message.success("Xóa đơn hàng thành công!")
+          }
+          getAllOrders()
+          setPagedOrders()
+        } catch (error) {
+          message.error(error)
+        }
+      },
+    })
+
     console.group("deleteOrder")
     console.log(`order:`, order)
-    try {
-      const response = await deleteOrder(order._id)
-      if (response) {
-        message.success("Xóa đơn hàng thành công!")
-      }
-      getAllOrders()
-      setPagedOrders()
-    } catch (error) {
-      message.error(error)
-    }
     console.groupEnd("deleteOrder")
   }
 
