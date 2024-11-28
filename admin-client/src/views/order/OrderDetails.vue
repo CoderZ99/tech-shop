@@ -18,7 +18,7 @@
         label="Ngày đặt"
         :span="3"
       >
-        {{ new Date(props.order.value.orderAt).toLocaleDateString("vi-VN") }}
+        {{ formatDate(props.order.value.orderAt) }}
       </a-descriptions-item>
 
       <a-descriptions-item
@@ -109,7 +109,7 @@
 <script setup>
   import { onMounted, ref } from "vue"
 
-  import { formatCurrency, getStatusLabel, getStatusColor } from "@/utils/utils"
+  import { formatCurrency, getStatusLabel, getStatusColor, formatDate } from "@/utils/utils"
 
   const emit = defineEmits(["cancel", "updateStatus"])
 

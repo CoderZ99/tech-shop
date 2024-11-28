@@ -111,6 +111,7 @@
   import { onMounted, reactive, ref } from "vue"
   import { getStatusLabel, getStatusColor } from "@/utils/utils"
   import OrderDetails from "./OrderDetails.vue"
+  import { formatDate } from "@/utils/utils"
 
   // ref
   const orders = ref([])
@@ -194,15 +195,6 @@
     console.group("deleteOrder")
     console.log(`order:`, order)
     console.groupEnd("deleteOrder")
-  }
-
-  const formatDate = (text) => {
-    const date = new Date(text)
-    return date.toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
   }
 
   const viewOrder = (order) => {

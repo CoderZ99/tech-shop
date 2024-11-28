@@ -44,7 +44,6 @@ export const formatCurrency = (value) => {
   }).format(value)
 }
 
-
 export const getStatusLabel = (status) => {
   const statusObj = orderStatuses.find((s) => s.value === status)
   return statusObj ? statusObj.label : status
@@ -68,3 +67,12 @@ const orderStatuses = [
   { value: "delivered", label: "Đã hoàn thành" },
   { value: "cancelled", label: "Đã hủy" },
 ]
+
+const formatDate = (text) => {
+  const date = new Date(text)
+  return date.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+}
