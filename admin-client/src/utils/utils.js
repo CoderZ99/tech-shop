@@ -30,3 +30,41 @@ export const validateImageType = (images) => {
     return true
   })
 }
+
+/**
+ * Formats a number by adding dots as thousand separators.
+ *
+ * @param {number} amount - The amount to be formatted.
+ * @return {string} The formatted amount as a string with dots as thousand separators.
+ */
+export const formatCurrency = (value) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value)
+}
+
+
+export const getStatusLabel = (status) => {
+  const statusObj = orderStatuses.find((s) => s.value === status)
+  return statusObj ? statusObj.label : status
+}
+
+export const getStatusColor = (status) => {
+  const colors = {
+    placed: "orange",
+    processing: "blue",
+    shipping: "processing",
+    delivered: "green",
+    cancelled: "red",
+  }
+  return colors[status] || "gray"
+}
+
+const orderStatuses = [
+  { value: "placed", label: "Đã đặt hàng" },
+  { value: "processing", label: "Đang xử lý" },
+  { value: "shipping", label: "Đang giao hàng" },
+  { value: "delivered", label: "Đã hoàn thành" },
+  { value: "cancelled", label: "Đã hủy" },
+]

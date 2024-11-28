@@ -2,6 +2,7 @@
   <div>
     <div class="w-full flex mb-4">
       <div class="text-2xl font-semibold">Quản lý đơn hàng</div>
+      <!-- Refresh button -->
       <a-button
         class="ml-auto"
         @click="getAllOrders"
@@ -18,21 +19,24 @@
       :loading="loading"
       :pagination="paginationConfig"
       @change="handleTableChange"
+      :scroll="{ x: 'max-content' }"
     >
-      <a-table-column
+      <!-- <a-table-column
         key="username"
         title="Tài khoản"
         dataIndex="username"
-      />
+      /> -->
+      <!-- Order ID Column -->
       <a-table-column
-        key="totalPrice"
-        title="Tổng tiền"
-        dataIndex="totalPrice"
+        key="_id"
+        title="Mã đơn"
+        dataIndex="_id"
       >
-        <template #default="{ text: totalPrice }">
-          <span>{{ formatCurrency(totalPrice) }}&#8363;</span>
+        <template #default="{ text: _id }">
+          <span>{{ _id.toUpperCase() }}</span>
         </template>
       </a-table-column>
+      <!-- Status Column -->
       <a-table-column
         align="center"
         key="status"
@@ -40,56 +44,30 @@
         dataIndex="status"
       >
         <template #default="{ text: status }">
-          <span v-if="status === 'placed'">
-            <a-tag class="min-w-28 text-center">Đã đặt hàng</a-tag>
-          </span>
-          <span v-if="status === 'shipping'">
-            <a-tag
-              class="min-w-28 text-center"
-              color="processing"
-              >Đang vận chuyển</a-tag
-            >
-          </span>
-          <span v-if="status === 'delivered'">
-            <a-tag
-              class="min-w-28 text-center"
-              color="success"
-              >Đã giao hàng</a-tag
-            >
-          </span>
-          <span v-if="status === 'cancelled'">
-            <a-tag
-              class="min-w-28 text-center"
-              color="error"
-              >Đã hủy đơn</a-tag
-            >
-          </span>
+          <a-tag
+            :color="getStatusColor(status)"
+            class="min-w-28 text-center"
+            >{{ getStatusLabel(status) }}</a-tag
+          >
         </template>
       </a-table-column>
+      <!-- Payment Method Column -->
       <a-table-column
         align="center"
         key="paymentMethod"
-        title="Phương thức thanh toán"
+        title="Thanh toán"
         dataIndex="paymentMethod"
       >
         <template #default="{ text: paymentMethod }">
-          <span v-if="paymentMethod === 'cod'">
-            <a-tag :key="paymentMethod"> Thanh toán khi nhận </a-tag>
-          </span>
-          <span
-            color="#2db7f5"
-            v-else-if="paymentMethod === 'paypal'"
+          <a-tag
+            color="purple"
+            :key="paymentMethod"
           >
-            <a-tag :key="paymentMethod"> Thanh toán PayPal </a-tag>
-          </span>
-          <span
-            color="red"
-            v-else
+            {{ paymentMethod.toUpperCase() }}</a-tag
           >
-            <a-tag :key="paymentMethod"> Khác </a-tag>
-          </span>
         </template>
       </a-table-column>
+      <!-- Date order Column -->
       <a-table-column
         align="center"
         key="orderAt"
@@ -100,38 +78,40 @@
           <span>{{ formatDate(orderAt) }}</span>
         </template>
       </a-table-column>
+      <!-- Action Column -->
       <a-table-column
         key="action"
         title="Hành động"
         align="center"
+        fixed="right"
       >
         <template #default="{ record }">
-          <a-button @click="viewOrder(record)"> Chi tiết </a-button>
-          <a-button
-            class="ml-2"
-            v-if="
-              record.status !== 'cancelled' && record.status !== 'delivered'
-            "
-            type="primary"
-            @click="toggleOrderStatus(record)"
-          >
-            {{ "Hủy đơn" }}
-          </a-button>
+          <a-button class="min-w-20 mr-2" @click="viewOrder(record)">Chi tiết</a-button>
+          <a-button class="min-w-20 mr-2" type="primary" @click="handleUpdate(record)">Cập nhật</a-button>
+          <a-button class="min-w-20" type="primary" danger @click="handleDelete(record)">Xoá</a-button>
         </template>
       </a-table-column>
     </a-table>
   </div>
+  <!-- Order details modal -->
   <OrderDetails
     :order="selectedOrder"
-    :visible="isModalVisible"
-    @close="handleModalClose"
+    :visible="isDetailsVisible"
+    @cancel="isDetailsVisible = false"
   />
 </template>
 <script setup>
-  import { cancelOrder, fetchOrders } from "@/api/orderService"
+  import {
+    updateOrderStatus,
+    fetchOrders,
+    deleteOrder,
+  } from "@/api/orderService"
   import { message } from "ant-design-vue"
   import { onMounted, reactive, ref } from "vue"
-  import OrderDetails from "../views/components/OrderDetails.vue"
+  import { getStatusLabel, getStatusColor } from "@/utils/utils"
+  import OrderDetails from "./OrderDetails.vue"
+
+  // ref
   const orders = ref([])
   const pagedOrders = ref([])
   const loading = ref(false)
@@ -141,7 +121,7 @@
     total: 0,
   })
   const selectedOrder = reactive({})
-  const isModalVisible = ref(false)
+  const isDetailsVisible = ref(false)
   const getAllOrders = async () => {
     loading.value = true
     try {
@@ -171,20 +151,41 @@
     setPagedOrders()
   }
 
-  const toggleOrderStatus = async (order) => {
-    console.log(`🚀 ~ toggleOrderStatus ~ order.orderItems:`, order.orderItems)
+  const handleUpdate = async (status) => {
+    console.group("updateStatus")
+    console.log(`status:`, status)
     try {
-      const response = await cancelOrder(order._id, order.orderItems)
+      const response = await updateOrderStatus(
+        selectedOrder?.value?._id,
+        selectedOrder.orderItems,
+        status
+      )
+      console.log(`response:`, response)
       if (!response) {
-        message.error("Có lỗi xảy ra")
-      } else {
-        message.success(`Đơn hàng ${order._id} đã bị hủy`)
+        throw new Error("Cập nhật trạng thái thất bại!")
       }
       getAllOrders()
       setPagedOrders()
     } catch (error) {
-      message.error("Có lỗi xảy ra")
+      message.error(error?.message)
     }
+    console.groupEnd("updateStatus")
+  }
+
+  const handleDelete = async (order) => {
+    console.group("deleteOrder")
+    console.log(`order:`, order)
+    try {
+      const response = await deleteOrder(order._id)
+      if (response) {
+        message.success("Xóa đơn hàng thành công!")
+      }
+      getAllOrders()
+      setPagedOrders()
+    } catch (error) {
+      message.error(error)
+    }
+    console.groupEnd("deleteOrder")
   }
 
   const formatDate = (text) => {
@@ -196,19 +197,10 @@
     })
   }
 
-  const formatCurrency = (amount) => {
-    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-  }
-
-  const handleModalClose = () => {
-    isModalVisible.value = false
-  }
   const viewOrder = (order) => {
     selectedOrder.value = order
-    isModalVisible.value = true
+    isDetailsVisible.value = true
   }
+
   onMounted(getAllOrders)
 </script>
-<style scoped>
-  /* Add any additional styles here */
-</style>

@@ -3,18 +3,18 @@ import api from "./api"
 // order endpoint
 const path = "/api/v1/order"
 
-export const cancelOrder = async (orderId, orderItems) => {
+export const updateOrderStatus = async (orderId, orderItems, status) => {
   try {
     const endpoint = `${path}/update`
     const response = await api.put(endpoint, {
       id: orderId,
-      status: "cancelled",
+      status: status,
       orderItems: orderItems,
     })
-    console.log(`🚀 ~ cancelOrder ~ response:`, response)
+    console.log(`updateOrderStatus.response:`, response)
     return response
   } catch (error) {
-    console.log(`🚀 ~ cancelOrder ~ error:`, error.response.data)
+    console.log(`updateOrderStatus.error:`, error.response.data)
     throw error.response.data
   }
 }
@@ -31,6 +31,14 @@ export const fetchOrders = async () => {
   }
 }
 
-export const restoreOrder = async (orderId) => {
-  console.log(`🚀 ~ restoreOrder ~ orderId:`, orderId)
+export const deleteOrder = async (orderId) => {
+  try {
+    const endpoint = `${path}/${orderId}`
+    const response = await api.delete(endpoint)
+    console.log(`🚀 ~ deleteOrder ~ response:`, response)
+    return response
+  } catch (error) {
+    console.log(`🚀 ~ deleteOrder ~ error:`, error.response.data)
+    throw error.response.data
+  }
 }
