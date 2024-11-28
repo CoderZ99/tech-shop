@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto min-h-screen w-3/4 bg-gray-100 p-8">
+  <div class="mx-auto min-h-screen w-4/5 bg-gray-100 p-8">
     <h2 class="mb-4 text-2xl font-semibold">Lịch sử đơn hàng</h2>
     <div v-if="orders.length">
       <div
@@ -16,9 +16,9 @@
             </p>
             <p>
               Trạng thái:
-              <span :class="statusClass(order.status)">{{
-                statusString(order.status)
-              }}</span>
+              <a-tag :color="getStatusColor(order.status)">{{
+                getStatusLabel(order.status)
+              }}</a-tag>
             </p>
             <p class="font-semibold">
               Thanh toán:
@@ -37,12 +37,30 @@
             <p class="font-semibold text-red-500">
               Tổng tiền: {{ order.totalPrice }}₫
             </p>
-            <button
-              @click="viewOrderDetail(order)"
-              class="mt-4 rounded bg-blue-500 px-4 py-2 text-white"
-            >
-              Xem chi tiết
-            </button>
+            <div class="mt-10 flex justify-end gap-4">
+              <template v-if="order.status === 'placed'">
+                <a-popconfirm
+                  title="Bạn có chắc chắn muốn hủy đơn hàng này?"
+                  ok-text="Đồng ý"
+                  cancel-text="Hủy"
+                  @confirm="() => handleCancelOrder(order)"
+                >
+                  <button
+                    class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+                    type="primary"
+                    danger
+                  >
+                    Hủy đơn
+                  </button>
+                </a-popconfirm>
+              </template>
+              <button
+                @click="viewOrderDetail(order)"
+                class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+              >
+                Chi tiết
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -62,7 +80,8 @@
 </template>
 
 <script setup>
-import { fetchOrders } from "@/api/orderService";
+import { fetchOrders, cancelOrder } from "@/api/orderService";
+import { getStatusLabel, getStatusColor } from "@/utils/utils";
 import { useAuthStore } from "@/stores/auth";
 import { useOrderStore } from "@/stores/order";
 import { message } from "ant-design-vue";
@@ -93,35 +112,6 @@ const handlePageChange = (page) => {
   currentPage.value = page;
 };
 
-const statusClass = (status) => {
-  switch (status) {
-    case "placed":
-      return "text-green-500";
-    case "shipping":
-      return "text-yellow-500";
-    case "delivered":
-      return "text-blue-500";
-    case "cancelled":
-      return "text-red-500";
-    default:
-      return "";
-  }
-};
-
-const statusString = (status) => {
-  switch (status) {
-    case "placed":
-      return "Đã đặt";
-    case "shipping":
-      return "Đang giao";
-    case "delivered":
-      return "Đã giao";
-    case "cancelled":
-      return "Đã huỷ";
-    default:
-      return "";
-  }
-};
 const viewOrderDetail = (order) => {
   selectedOrder.value = order;
   console.log(`🚀 ~ viewOrderDetail ~ selectedOrder.value:`, selectedOrder);
@@ -140,10 +130,25 @@ const getOrders = async () => {
     const username = authStore.user.username;
     const response = await fetchOrders(username);
     console.log(`🚀 ~ getOrders ~ response:`, response);
+    orders.splice(0, orders.length);
     orders.push(...response.data);
   } catch (error) {
     console.log(`🚀 ~ getOrders ~ error:`, error);
     message.error(error.message);
+  }
+};
+
+const handleCancelOrder = async (order) => {
+  console.log(`🚀 ~ handleCancelOrder ~ order:`, order);
+  try {
+    const response = await cancelOrder(order._id, order.orderItems);
+    if (response) {
+      message.success("Đã hủy đơn hàng thành công");
+      await getOrders(); // Tải lại danh sách đơn hàng
+    }
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    message.error("Có lỗi xảy ra khi hủy đơn hàng");
   }
 };
 
