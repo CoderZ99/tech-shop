@@ -123,6 +123,7 @@ const authController = {
           role: user.role,
           phone: user.phone,
           status: user.status,
+          email: user.email,
         },
         accessToken,
         refreshToken,

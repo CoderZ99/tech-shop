@@ -78,6 +78,7 @@ const usersController = {
       const data = {
         name: req.body.name,
         phone: req.body.phone,
+        email: req.body.email,
       }
 
       logger.info(`updateUser ~ data:`, data)
