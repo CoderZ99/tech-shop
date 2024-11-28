@@ -140,14 +140,78 @@
           <ShoppingAssurance />
         </div>
       </div>
-      <h2 class="my-4 text-xl font-semibold">Đánh giá {{ product.name }}</h2>
-      <div v-if="product && product?.reviews?.length > 0">
-        <CustomerReviews :reviews="product.reviews" />
-      </div>
-      <div v-else>
-        <a-empty
-          class="mb-4 w-1/2 rounded border p-4"
-          description="Chưa có đánh giá nào"
+      <h2 class="mt-12 text-xl font-semibold">Đánh giá {{ product.name }}</h2>
+      <!-- <div v-if="product && product?.reviews?.length > 0"></div>
+      <div v-else></div> -->
+      <!-- Reviews Section -->
+      <div class="mt-6">
+        <!-- Reviews List -->
+        <div class="my-4 space-y-6">
+          <!-- No reviews -->
+          <div
+            v-if="reviews.length === 0"
+            class="w-full bg-white text-center text-gray-500"
+            style="background: #ffffff"
+          >
+            <a-empty
+              class="p-12"
+              imageStyle="background: #FFFFFF"
+              description="Sản phẩm Chưa có đánh giá nào"
+            />
+          </div>
+          <!-- Reviews -->
+          <div v-else>
+            <CustomerReviews :reviews="reviews" />
+          </div>
+        </div>
+        <!-- Review Form -->
+        <h2 class="mb-6 text-2xl font-bold">Đánh giá sản phẩm</h2>
+        <div
+          v-if="authStore.isAuthenticated"
+          class="mb-8 mt-4 rounded-lg border bg-white p-6"
+        >
+          <h3 class="text-lg font-semibold">
+            Viết đánh giá của bạn về {{ product.name }}
+          </h3>
+          <a-form class="mt-6" :model="reviewForm" @finish="submitReview">
+            <a-form-item
+              label="Bạn cảm thấy sản phẩm như thế nào? (chọn sao nhé):"
+            >
+              <a-rate v-model:value="reviewForm.rating" />
+            </a-form-item>
+            <a-form-item label="Họ tên">
+              <a-input
+                class="w-1/2"
+                v-model:value="reviewForm.fullname"
+                placeholder="Nhập họ tên"
+              />
+            </a-form-item>
+            <a-form-item label="Nhận xét">
+              <a-textarea
+                v-model:value="reviewForm.comment"
+                :rows="4"
+                placeholder="Mời bạn chia sẻ thêm một số cảm nhận về sản phẩm..."
+              />
+            </a-form-item>
+            <a-form-item class="flex justify-center">
+              <a-button
+                type="primary"
+                html-type="submit"
+                :loading="isSubmittingReview"
+                size="large"
+                class="min-w-40 px-2 py-2"
+              >
+                Gửi đánh giá ngay
+              </a-button>
+            </a-form-item>
+          </a-form>
+        </div>
+        <a-alert
+          v-else
+          message="Vui lòng đăng nhập để đánh giá sản phẩm"
+          type="info"
+          show-icon
+          class="mb-8"
         />
       </div>
     </div>
@@ -158,17 +222,22 @@
 // Imports
 import CustomerReviews from "../components/CustomerReviews.vue";
 import { useCartStore } from "@/stores/cart";
+import { useAuthStore } from "@/stores/auth";
 import { message } from "ant-design-vue";
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { getProductByDetailUrl } from "../../api/productService";
 import ShoppingAssurance from "../components/ShoppingAssurance.vue";
 import { formatCurrency } from "@/utils/currency";
+import { formatDate } from "@/utils/utils";
 import ProductImageCarousel from "./ProductImageCarousel.vue";
 import { SafetyCertificateTwoTone, PhoneTwoTone } from "@ant-design/icons-vue";
 import { ShoppingCartOutlined } from "@ant-design/icons-vue";
+import { getProductReviews, createProductReview } from "@/api/reviewService";
+
 // Store
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 // Router
 const router = useRouter();
 
@@ -183,6 +252,14 @@ const product = ref({});
 const selectedImage = ref("");
 
 const showFullDescription = ref(false);
+
+const reviews = ref([]);
+const isSubmittingReview = ref(false);
+const reviewForm = ref({
+  fullname: "",
+  rating: 0,
+  comment: "",
+});
 
 // Method
 const getProductDetail = async () => {
@@ -239,10 +316,49 @@ const addToCart = (product, addedQuantity = 1, buyNow = false) => {
  *
  * @return {void} This function does not return anything.
  */
-
 const buyNow = (product) => {
   // Add 1 product to cart and redirect to cart
   addToCart(product, 1, true);
+};
+
+// Submit review
+const submitReview = async () => {
+  if (!reviewForm.value.rating) {
+    message.error("Vui lòng chọn số sao đánh giá");
+    return;
+  }
+  try {
+    isSubmittingReview.value = true;
+    await createProductReview(product.value._id, {
+      fullName: reviewForm.value.fullname,
+      rating: reviewForm.value.rating,
+      comment: reviewForm.value.comment,
+    });
+    // Reset form
+    reviewForm.value = {
+      fullname: "",
+      rating: 0,
+      comment: "",
+    };
+    // Reload reviews
+    await loadReviews();
+    message.success("Đã gửi đánh giá thành công");
+  } catch (error) {
+    message.error("Không thể gửi đánh giá. Vui lòng thử lại");
+  } finally {
+    isSubmittingReview.value = false;
+  }
+};
+
+// Load product reviews
+const loadReviews = async () => {
+  console.log(`🚀 ~ loadReviews ~ product.value._id:`, product.value._id);
+  try {
+    const response = await getProductReviews(product.value._id);
+    reviews.value = response.data;
+  } catch (error) {
+    message.error("Không thể tải đánh giá sản phẩm");
+  }
 };
 
 // Computed property để xử lý description có \n và format URL ảnh
@@ -270,9 +386,12 @@ const formattedDescription = computed({
 });
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
   // Get product detail on mount
-  getProductDetail();
+  await getProductDetail();
+
+  // Load product reviews
+  await loadReviews();
   console.log(product);
 });
 </script>
@@ -293,5 +412,9 @@ onMounted(() => {
 
 #quantity {
   text-align: center !important;
+}
+
+.a-empty-description {
+  background: white;
 }
 </style>

@@ -99,29 +99,8 @@ const currentProducts = computed(() => {
   return products.slice(startIndex, endIndex);
 });
 
-let options1 = reactive([
-  {
-    value: "jack",
-    label: "Jack",
-  },
-  {
-    value: "lucy",
-    label: "Lucy",
-  },
-]);
-let options2 = reactive([
-  {
-    value: "lucy",
-    label: "Lucy",
-  },
-]);
-const value1 = ref("All");
-const value2 = ref("All");
-
 // Lifecycle
 onMounted(() => {
-  options1 = [{ value: "All", label: "Tất cả" }, ...options1];
-  options2 = [{ value: "All", label: "Tất cả" }, ...options2];
   getProducts();
   console.log(`🚀 ~ onMounted ~ products:`, products);
 });
