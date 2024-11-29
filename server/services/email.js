@@ -34,7 +34,6 @@ class EmailService {
         <p>Trân trọng,<br>Tech Shop Team</p>
       `,
     }
-
     try {
       await this.transporter.sendMail(mailOptions)
     } catch (err) {
