@@ -78,7 +78,7 @@
         <template #default="{ record }">
           <a-space>
             <!-- View product button -->
-            <a-button
+            <!-- <a-button
               type="primary"
               @click="
                 () => {
@@ -86,7 +86,7 @@
                 }
               "
               >Chi tiết</a-button
-            >
+            > -->
             <!-- Edit product button -->
             <a-button
               type="primary"

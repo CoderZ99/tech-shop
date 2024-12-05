@@ -3,6 +3,9 @@ const router = express.Router()
 
 const orderController = require("../controllers/order")
 
+// Check role admin middleware
+const { verifyAdmin } = require("../middlewares/auth")
+
 router.get("/", orderController.getAll)
 
 router.get("/:id", orderController.getById)

@@ -30,7 +30,7 @@ const orderSchema = new Schema(
       required: true,
     },
     totalPrice: {
-      type: String,
+      type: Number,
       required: true,
     },
     status: {
@@ -56,7 +56,7 @@ const orderSchema = new Schema(
   { timestamps: true }
 )
 
-// Middleware trước khi lưu tài liệu
+// Middleware
 orderSchema.pre("save", function (next) {
   if (this.isPaid && !this.paidAt) {
     this.paidAt = Date.now()

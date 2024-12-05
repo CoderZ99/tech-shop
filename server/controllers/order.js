@@ -42,6 +42,22 @@ const orderController = {
       logger.debug(`orderController.updateOrderStatus: ~ req.body:`, req.body)
       logger.debug(`orderController.updateOrderStatus: ~ order:`, order)
 
+      // Check order is exist
+      const existingOrder = await orderService.getById(order.id)
+      if (!existingOrder) {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng" })
+      }
+
+      const updatedOrder = await orderService.updateStatus(
+        order.id,
+        order.status
+      )
+
+      logger.info(
+        `orderController.updateOrderStatus: ~ updatedOrder:`,
+        updatedOrder
+      )
+
       // If order status is cancelled
       if (order.status === "cancelled") {
         order?.orderItems.forEach((product) => {
@@ -51,28 +67,6 @@ const orderController = {
         })
       }
 
-      // Get current order status
-      const currentOrder = await orderService.getById(order.id)
-      console.log(
-        `orderController.updateOrderStatus: ~ currentOrder:`,
-        currentOrder
-      )
-      // If current order status is cancelled
-      if (currentOrder.status === "cancelled") {
-        order.orderItems.forEach((product) => {
-          updateStock(product.product, product.quantity)
-          updateSold(product.product, product.quantity)
-        })
-      }
-
-      const updatedOrder = await orderService.updateStatus(
-        order.id,
-        order.status
-      )
-      logger.info(
-        `orderController.updateOrderStatus: ~ updatedOrder:`,
-        updatedOrder
-      )
       res.status(200).json(updatedOrder)
     } catch (error) {
       logger.info(`orderController.updateOrderStatus: ~ error:`, error)
