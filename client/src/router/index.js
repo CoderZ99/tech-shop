@@ -18,11 +18,6 @@ const router = createRouter({
       component: () => import("../views/auth/LoginView.vue"),
     },
     {
-      path: "/forgot-password",
-      name: "forgot-password",
-      component: () => import("../views/auth/ForgotPasswordView.vue"),
-    },
-    {
       path: "/register",
       name: "register",
       component: () => import("../views/auth/RegisterView.vue"),
@@ -58,19 +53,35 @@ const router = createRouter({
     {
       path: "/order-history",
       name: "order-history",
-      component: () => import("../views/OrderHistory.vue"),
+      component: () => import("../views/order/OrderHistory.vue"),
       meta: { requiresAuth: true },
     },
     {
       path: "/order-details/:detailId",
       name: "order-details",
-      component: () => import("../views/OrderDetails.vue"),
+      component: () => import("../views/order/OrderDetails.vue"),
       meta: { requiresAuth: true },
     },
     {
       path: "/not-found",
       name: "not-found",
       component: () => import("../views/NotFound.vue"),
+    },
+    {
+      path: "/forgot-password",
+      name: "forgot-password",
+      component: () => import("../views/auth/ForgotPasswordView.vue"),
+    },
+    {
+      path: "/reset-password/:token",
+      name: "reset-password",
+      component: () => import("../views/auth/ResetPasswordView.vue"),
+    },
+    {
+      path: "/change-password",
+      name: "change-password",
+      component: () => import("../views/auth/ChangePasswordView.vue"),
+      meta: { requiresAuth: true },
     },
     { path: "/:pathMatch(.*)*", redirect: "/not-found" },
   ],

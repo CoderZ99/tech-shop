@@ -40,3 +40,30 @@ export const register = async (userData) => {
 //   const response = await api.post(endpoint)
 //   console.log(`🚀 ~ logout ~ response:`, response)
 // }
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post(`${path}/forgot`, { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Có lỗi xảy ra" };
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await api.post(`${path}/reset`, { token, newPassword });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Có lỗi xảy ra" };
+  }
+};
+
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await api.post(`${path}/change-password`, passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Có lỗi xảy ra" };
+  }
+};

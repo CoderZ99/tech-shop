@@ -30,12 +30,12 @@ const orderSchema = new Schema(
       required: true,
     },
     totalPrice: {
-      type: String,
+      type: Number,
       required: true,
     },
     status: {
       type: String,
-      enum: ["placed", "shipping", "delivered", "cancelled"],
+      enum: ["placed", "processing", "shipping", "delivered", "cancelled"],
       default: "placed",
     },
     isPaid: {
@@ -56,7 +56,7 @@ const orderSchema = new Schema(
   { timestamps: true }
 )
 
-// Middleware trước khi lưu tài liệu
+// Middleware
 orderSchema.pre("save", function (next) {
   if (this.isPaid && !this.paidAt) {
     this.paidAt = Date.now()

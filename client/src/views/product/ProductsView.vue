@@ -6,8 +6,8 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Product Card list -->
       <div
-        v-for="product in currentProducts"
-        :key="product.id"
+        v-for="product in pagedProducts"
+        :key="product._id"
         class="grid rounded bg-white p-4 shadow"
       >
         <div class="flex min-h-56 justify-center">
@@ -62,13 +62,13 @@
     </div>
     <!-- Pagination -->
     <div class="mt-4 flex w-full justify-center">
-      <CommonPagination
-        v-if="currentProducts.length > 0"
-        :current="currentPage"
-        :total="products.length"
-        :page-size="pageSize"
+      <a-pagination
+        v-model:current="current"
+        v-model:total="total"
+        v-model:page-size="pageSize"
         @change="handlePageChange"
         show-less-items
+        :showSizeChanger="false"
       />
     </div>
   </div>
@@ -85,67 +85,51 @@ import CommonPagination from "../components/CommonPagination.vue";
 import { formatCurrency } from "@/utils/currency";
 
 // Data
+const loading = ref(false);
 const router = useRouter();
 const products = reactive([]);
-const pageSize = 16;
 const currentPage = ref(1);
 const cartStore = useCartStore();
 
-// Computed
-const currentProducts = computed(() => {
-  // Logic to paginate products
-  const startIndex = (currentPage.value - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  return products.slice(startIndex, endIndex);
-});
-
-let options1 = reactive([
-  {
-    value: "jack",
-    label: "Jack",
-  },
-  {
-    value: "lucy",
-    label: "Lucy",
-  },
-]);
-let options2 = reactive([
-  {
-    value: "lucy",
-    label: "Lucy",
-  },
-]);
-const value1 = ref("All");
-const value2 = ref("All");
+const pageSize = ref(16); // Default page size is 16;
+const current = ref(1); // Current page
+const total = ref(0);
+const pagedProducts = computed(() => products?.value || []);
 
 // Lifecycle
 onMounted(() => {
-  options1 = [{ value: "All", label: "Tất cả" }, ...options1];
-  options2 = [{ value: "All", label: "Tất cả" }, ...options2];
   getProducts();
   console.log(`🚀 ~ onMounted ~ products:`, products);
 });
 
 // Methods
-const handlePageChange = (page) => {
-  currentPage.value = page;
-};
-
 /**
  * Retrieves products from the server and updates the local state.
  *
  * @return {Promise<void>} A promise that resolves when the products are fetched and added to the local state.
  */
-const getProducts = async () => {
+const getProducts = async (page = 1, pageSize = 16) => {
+  loading.value = true;
   try {
-    const response = await fetchProducts();
-    let data = response?.data?.products?.docs;
-    console.log(`🚀 ~ getProducts ~ data:`, data);
-
-    products.push(...data);
+    let response = await fetchProducts(page, pageSize);
+    products.value = [];
+    products.value = [...response?.data?.products?.docs];
+    message.success("Danh sách sản phẩm đã được tải");
+    total.value = response?.data?.products?.totalDocs;
   } catch (error) {
-    message.error("Failed to fetch products:", error);
+    message.error(error);
+  } finally {
+    loading.value = false;
   }
+};
+
+/**
+ * Handles the page change event.
+ *
+ * @param {number} page - The page number that has been changed.
+ */
+const handlePageChange = async (page) => {
+  await getProducts(page);
 };
 
 const addToCart = (product) => {
@@ -174,15 +158,9 @@ const addToCart = (product) => {
     message.error(error);
   }
 };
+
 const viewDetails = (product) => {
   // Logic to view product details
   router.push({ path: `products/${product.slug}` });
 };
 </script>
-
-<style scoped>
-.filter-list:focus .filter-icon {
-  transform: rotate(180deg);
-}
-/* Custom styles can go here */
-</style>

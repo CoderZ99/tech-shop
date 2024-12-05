@@ -47,6 +47,9 @@
                 <a-menu-item key="1">
                   <RouterLink to="/order-history">Đơn hàng</RouterLink>
                 </a-menu-item>
+                <a-menu-item key="2">
+                  <RouterLink to="/change-password">Đổi mật khẩu</RouterLink>
+                </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="handleLogout" key="3"
                   >Đăng xuất

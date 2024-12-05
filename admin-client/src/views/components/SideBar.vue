@@ -15,7 +15,7 @@
         <ul>
           <li class="px-6 py-4 hover:bg-gray-700">
             <button
-              @click="router.push('/dashboard/user')"
+              @click="router.push({ name: 'user' })"
               class="flex items-center"
             >
               <UserOutlined class="mr-2" />
@@ -24,7 +24,7 @@
           </li>
           <li class="px-6 py-4 hover:bg-gray-700">
             <button
-              @click="router.push('/dashboard/product')"
+              @click="router.push({ name: 'product' })"
               class="flex items-center"
             >
               <AppstoreOutlined class="mr-2" />
@@ -33,7 +33,7 @@
           </li>
           <li class="px-6 py-4 hover:bg-gray-700">
             <button
-              @click="router.push('/dashboard/order')"
+              @click="router.push({ name: 'order' })"
               class="flex items-center"
             >
               <ShoppingCartOutlined class="mr-2" />

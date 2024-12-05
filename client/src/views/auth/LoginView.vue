@@ -8,11 +8,11 @@
             for="username"
             class="mb-2 block text-sm font-medium text-gray-700"
           >
-            Tên người dùng
+            Tên đăng nhập
           </label>
           <a-input
             v-model:value="formState.username"
-            placeholder="Nhập tên người dùng"
+            placeholder="Nhập tên đăng nhập"
           >
             <template #prefix>
               <UserOutlined class="site-form-item-icon" />

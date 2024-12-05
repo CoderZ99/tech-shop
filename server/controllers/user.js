@@ -78,6 +78,7 @@ const usersController = {
       const data = {
         name: req.body.name,
         phone: req.body.phone,
+        email: req.body.email,
       }
 
       logger.info(`updateUser ~ data:`, data)
@@ -105,6 +106,16 @@ const usersController = {
       res.json({
         message: `error! ${error.message}`,
       })
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const { username } = req.params
+      const data = await userService.deleteUser(username)
+      res.status(200).json({ data })
+    } catch (error) {
+      logger.error(`usersController.deleteUser ~ error:`, error)
+      throw new Error(error)
     }
   },
 }

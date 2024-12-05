@@ -1,32 +1,32 @@
-import api from "./api"
+import api from "./api";
 
 // Auth endpoint
-const path = "/api/v1/product"
+const path = "/api/v1/product";
 
 // Get all products
-export const fetchProducts = async () => {
+export const fetchProducts = async (page = 1, limit = 20) => {
   try {
     // Define endpoint
-    const endpoint = `${path}/`
+    const endpoint = `${path}/`;
     // Call API
-    const response = await api.get(endpoint)
-    console.log(`🚀 ~ fetchProducts ~ response:`, response)
+    const response = await api.get(endpoint, { params: { page, limit } });
+    console.log(`🚀 ~ fetchProducts ~ response:`, response);
 
     // Return data
-    return response
+    return response;
   } catch (error) {
-    console.log(`🚀 ~ fetchProducts ~ error:`, error.response.data)
-    throw error.response.data
+    console.log(`🚀 ~ fetchProducts ~ error:`, error.response.data);
+    throw error.response.data;
   }
-}
+};
 
 // Get product by id
 export const getProductById = async (id) => {
-  return api.get(`${path}/${id}`)
-}
+  return api.get(`${path}/${id}`);
+};
 
 // Get product by detail url
 export const getProductByDetailUrl = async (url) => {
-  const endpoint = `${path}/detail/${url}`
-  return api.get(endpoint)
-}
+  const endpoint = `${path}/detail/${url}`;
+  return api.get(endpoint);
+};

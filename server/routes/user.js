@@ -16,4 +16,6 @@ router.put("/unblock/:username", verifyAdmin, userController.unblockUser)
 
 router.put("/update/:username", userController.updateUser)
 
+router.delete("/delete/:username", verifyAdmin, userController.deleteUser)
+
 module.exports = router

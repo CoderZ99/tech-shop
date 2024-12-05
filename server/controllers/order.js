@@ -1,5 +1,4 @@
 const { logger } = require("../logger")
-const product = require("../models/product")
 const orderService = require("../services/order")
 const {
   updateStock,
@@ -7,6 +6,7 @@ const {
   cancelSold,
   cancelStock,
 } = require("../services/product")
+const CO = "../utils/constant"
 const orderController = {
   createOrder: async (req, res) => {
     try {
@@ -21,7 +21,7 @@ const orderController = {
       res.status(201).json(newOrder)
     } catch (error) {
       logger.info(`orderController.createOrder: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
     }
   },
   getAllByUsername: async (req, res) => {
@@ -33,7 +33,7 @@ const orderController = {
       res.status(200).json(orders)
     } catch (error) {
       logger.info(`orderController.getAllByUserName: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
     }
   },
   updateOrderStatus: async (req, res) => {
@@ -41,10 +41,24 @@ const orderController = {
       const order = req.body
       logger.debug(`orderController.updateOrderStatus: ~ req.body:`, req.body)
       logger.debug(`orderController.updateOrderStatus: ~ order:`, order)
+
+      // Check order is exist
+      const existingOrder = await orderService.getById(order.id)
+      if (!existingOrder) {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng" })
+      }
+
       const updatedOrder = await orderService.updateStatus(
         order.id,
         order.status
       )
+
+      logger.info(
+        `orderController.updateOrderStatus: ~ updatedOrder:`,
+        updatedOrder
+      )
+
+      // If order status is cancelled
       if (order.status === "cancelled") {
         order?.orderItems.forEach((product) => {
           logger.info(`orderController.updateOrderStatus: ~ product:`, product)
@@ -52,14 +66,11 @@ const orderController = {
           cancelSold(product.product, product.quantity)
         })
       }
-      logger.info(
-        `orderController.updateOrderStatus: ~ updatedOrder:`,
-        updatedOrder
-      )
+
       res.status(200).json(updatedOrder)
     } catch (error) {
       logger.info(`orderController.updateOrderStatus: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
     }
   },
 
@@ -75,7 +86,7 @@ const orderController = {
       res.status(200).json(updatedOrder)
     } catch (error) {
       logger.info(`orderController.updateOrderPayment: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
     }
   },
 
@@ -86,7 +97,7 @@ const orderController = {
       res.status(200).json(result)
     } catch (error) {
       logger.info(`orderController.fetchOrder: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
     }
   },
 
@@ -99,7 +110,20 @@ const orderController = {
       res.status(200).json(result)
     } catch (error) {
       logger.info(`orderController.fetchOrder: ~ error:`, error)
-      res.status(500).json({ message: error.message })
+      throw new Error(error)
+    }
+  },
+
+  deleteOrder: async (req, res) => {
+    try {
+      const id = req.params.id
+      logger.info(`orderController.deleteOrder: ~ id:`, id)
+      const result = await orderService.deleteOrder(id)
+      logger.info(`orderController.deleteOrder: ~ result:`, result)
+      res.status(200).json(result)
+    } catch (error) {
+      logger.info(`orderController.deleteOrder: ~ error:`, error)
+      throw new Error(error)
     }
   },
 }

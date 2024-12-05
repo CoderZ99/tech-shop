@@ -1,5 +1,4 @@
 const Order = require("../models/order")
-const { update } = require("./product")
 
 const orderService = {
   createOrder: async (order) => {
@@ -10,18 +9,22 @@ const orderService = {
     return await Order.find({ username: username })
   },
   getAll: async () => {
-    return await Order.find()
+    return await Order.find({ isDeleted: false })
   },
   updateStatus: async (id, status) => {
     return await Order.findByIdAndUpdate(id, { status }, { new: true })
   },
 
   updatePayment: async (id, isPaid) => {
-    return await Order.findByIdAndUpdate(id, { isPaid}, { new: true })
+    return await Order.findByIdAndUpdate(id, { isPaid }, { new: true })
   },
 
   getById: async (id) => {
     return await Order.findById(id)
+  },
+
+  deleteOrder: async (id) => {
+    return await Order.findByIdAndUpdate(id, { isDeleted: true }, { new: true })
   },
 }
 

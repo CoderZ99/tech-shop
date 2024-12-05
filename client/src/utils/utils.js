@@ -6,15 +6,15 @@
  * @throws {Error} Throws an error if any image is not of type JPEG/PNG or exceeds 2MB in size.
  */
 export const validateImageType = (images) => {
-  const validTypes = new Set(["image/jpeg", "image/png"])
-  const maxSize = 2 * 1024 * 1024
+  const validTypes = new Set(["image/jpeg", "image/png"]);
+  const maxSize = 2 * 1024 * 1024;
 
   return images.every((file) => {
-    const isValidType = validTypes.has(file.type)
-    const isValidSize = file.size <= maxSize
+    const isValidType = validTypes.has(file.type);
+    const isValidSize = file.size <= maxSize;
 
     if (!isValidType) {
-      throw new Error("Chỉ có thể tải lên tệp JPG/PNG!")
+      throw new Error("Chỉ có thể tải lên tệp JPG/PNG!");
     }
 
     if (!isValidSize) {
@@ -23,13 +23,13 @@ export const validateImageType = (images) => {
           file.size /
           1024 /
           1024
-        ).toFixed(2)}MB`
-      )
+        ).toFixed(2)}MB`,
+      );
     }
 
-    return true
-  })
-}
+    return true;
+  });
+};
 
 /**
  * Formats a number by adding dots as thousand separators.
@@ -41,13 +41,13 @@ export const formatCurrency = (value) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(value)
-}
+  }).format(value);
+};
 
 export const getStatusLabel = (status) => {
-  const statusObj = orderStatuses.find((s) => s.value === status)
-  return statusObj ? statusObj.label : status
-}
+  const statusObj = orderStatuses.find((s) => s.value === status);
+  return statusObj ? statusObj.label : status;
+};
 
 export const getStatusColor = (status) => {
   const colors = {
@@ -56,9 +56,9 @@ export const getStatusColor = (status) => {
     shipping: "processing",
     delivered: "green",
     cancelled: "red",
-  }
-  return colors[status] || "gray"
-}
+  };
+  return colors[status] || "gray";
+};
 
 export const orderStatuses = [
   { value: "placed", label: "Đã đặt hàng" },
@@ -66,13 +66,13 @@ export const orderStatuses = [
   { value: "shipping", label: "Đang giao hàng" },
   { value: "delivered", label: "Đã hoàn thành" },
   { value: "cancelled", label: "Đã hủy" },
-]
+];
 
 export const formatDate = (text) => {
-  const date = new Date(text)
+  const date = new Date(text);
   return date.toLocaleDateString("vi-VN", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  })
-}
+  });
+};

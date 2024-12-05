@@ -1,115 +1,89 @@
 <template>
-  <div
-    class="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-12 sm:px-6 lg:px-8"
-  >
-    <div class="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Quên mật khẩu
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-          Nhập thông tin tài khoản của bạn để nhận liên kết đặt lại mật khẩu
+          Nhập email của bạn để nhận link đặt lại mật khẩu
         </p>
       </div>
-
-      <div class="mt-4">
-        <a-select
-          v-model:value="identityType"
-          class="w-full"
-          :options="[
-            { value: 'username', label: 'Tên đăng nhập' },
-            { value: 'email', label: 'Email' },
-          ]"
-        />
-      </div>
-
+      
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <div>
-          <label for="identity" class="block text-sm font-medium text-gray-700">
-            {{ identityType === "email" ? "Email" : "Tên đăng nhập" }}
-          </label>
-          <div class="mt-1">
+        <div class="rounded-md shadow-sm -space-y-px">
+          <div>
+            <label for="email" class="sr-only">Email</label>
             <input
-              id="identity"
-              v-model="identity"
-              :name="identityType"
-              :type="identityType === 'email' ? 'email' : 'text'"
+              id="email"
+              v-model="email"
+              name="email"
+              type="email"
               required
-              class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-              :placeholder="
-                identityType === 'email'
-                  ? 'example@email.com'
-                  : 'Nhập tên đăng nhập'
-              "
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Địa chỉ email"
             />
           </div>
-          <p v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</p>
         </div>
 
-        <div>
+        <div class="flex items-center justify-center bg-white">
           <button
             type="submit"
             :disabled="loading"
-            class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {{ loading ? "Đang gửi..." : "Gửi yêu cầu" }}
+            <span v-if="loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <!-- Loading spinner -->
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{ loading ? 'Đang gửi...' : 'Gửi link đặt lại mật khẩu' }}
           </button>
         </div>
-      </form>
 
-      <div class="mt-4 text-center">
-        <router-link to="/login" class="text-indigo-600 hover:text-indigo-500">
-          Quay lại đăng nhập
-        </router-link>
-      </div>
+        <div class="text-sm text-center">
+          <router-link to="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
+            Quay lại đăng nhập
+          </router-link>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
+import { ref, computed } from 'vue'
+import { forgotPassword } from '@/api/authService'
+import { emailPattern } from '@/utils/regex'
+import { message } from 'ant-design-vue'
 
-const router = useRouter();
+const email = ref('')
+const loading = ref(false)
 
-const identityType = ref("email"); // Mặc định chọn email
-const identity = ref("");
-const loading = ref(false);
-const error = ref(null);
+const isValidEmail = computed(() => {
+  return emailPattern.test(email.value)
+})
 
 const handleSubmit = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-
-    // Validate input
-    if (!identity.value.trim()) {
-      throw new Error(
-        identityType.value === "email"
-          ? "Vui lòng nhập email"
-          : "Vui lòng nhập tên đăng nhập",
-      );
-    }
-
-    // Validate email format if email type is selected
-    if (identityType.value === "email" && !identity.value.includes("@")) {
-      throw new Error("Email không hợp lệ");
-    }
-
-    // TODO: Thực hiện gọi API để gửi yêu cầu đặt lại mật khẩu
-    // await authStore.forgotPassword({
-    //   type: identityType.value,
-    //   value: identity.value
-    // });
-
-    message.success("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn");
-    router.push("/login");
-  } catch (err) {
-    error.value = err?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
-    message.error(error.value);
-  } finally {
-    loading.value = false;
+  if (!isValidEmail.value) {
+    message.error('Địa chỉ email không hợp lệ')
+    return
   }
-};
+
+  try {
+    loading.value = true
+    
+    const response = await forgotPassword(email.value)
+    message.success(response.message || 'Email đặt lại mật khẩu đã được gửi')
+    
+    // Clear form
+    email.value = ''
+  } catch (error) {
+    message.error(error.message || 'Có lỗi xảy ra, vui lòng thử lại')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
