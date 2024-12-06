@@ -38,7 +38,6 @@
               type="default"
               class="flex items-center justify-center"
               block
-              shape="round"
               ><EyeOutlined
             /></a-button>
           </a-tooltip>
@@ -52,7 +51,6 @@
               type="primary"
               class="ml-4 flex items-center justify-center"
               block
-              shape="round"
               ><ShoppingCartOutlined
             /></a-button>
           </a-tooltip>

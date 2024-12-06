@@ -12,7 +12,7 @@
         <a-input
           id="username"
           class="mt-1 pl-3"
-          v-model:value="authStore.user.username"
+          :placeholder="authStore.user.username"
           disabled
         />
       </div>

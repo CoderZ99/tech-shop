@@ -115,23 +115,24 @@
             />
           </a-form-item>
           <a-form-item
-            label="Thêm hình cho sản phẩm (chọn tối đa 4 ảnh)"
+            label="Thêm hình cho sản phẩm"
             name="images"
             class="flex flex-row gap-4"
           >
             <a-upload
               v-model:fileList="selectedImages"
               list-type="picture-card"
-              :max-count="maxImages"
               :multiple="true"
               :before-upload="() => false"
               @preview="handlePreview"
               @remove="handleRemove"
             >
-              <div v-if="selectedImages.length < maxImages">
+              <!-- <div v-if="selectedImages.length < maxImages"> -->
+              <div>
                 <plus-outlined />
                 <div class="mt-2">Thêm ảnh</div>
               </div>
+              <!-- </div> -->
             </a-upload>
             <div class="flex gap-6">
               <a-button
@@ -157,12 +158,13 @@
             </a-modal>
           </a-form-item>
           <a-form-item
-            label="Mô tả"
+            label="Mô tả sản phẩm"
             name="description"
           >
-            <a-textarea
-              v-model:value="product.description"
-              :rows="displayRowDescription"
+            <PrimeEditor
+              v-model="product.description"
+              editorStyle="height: 320px"
+              class="custom-editor"
             />
           </a-form-item>
           <a-divider class="my-4" />
@@ -194,7 +196,7 @@
     QuestionCircleTwoTone,
   } from "@ant-design/icons-vue"
   import { message, Modal } from "ant-design-vue"
-  import { h, ref } from "vue"
+  import { h, ref, computed } from "vue"
   import { useRouter } from "vue-router"
   import { uploadProductImage } from "../../api/cloudinaryService"
   import { PRODUCT_CATEGORY } from "../../constant"
@@ -289,6 +291,30 @@
       },
     ],
   }
+
+  // // Computed property để xử lý description có \n và format URL ảnh
+  // const formattedDescription = computed({
+  //   get: () => {
+  //     if (!product.value.description) return ""
+
+  //     let text = product.value.description.replace(/\\n/g, "\n")
+
+  //     // Format lại URL trong thẻ href và src
+  //     text = text.replace(
+  //       /href="\\&quot;(.*?)\\&quot;"/g,
+  //       (match, url) => `href="${url}"`
+  //     )
+  //     text = text.replace(
+  //       /src="\\&quot;(.*?)\\&quot;"/g,
+  //       (match, url) => `src="${url}"`
+  //     )
+
+  //     return text
+  //   },
+  //   set: (value) => {
+  //     product.value.description = value
+  //   },
+  // })
 
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -400,3 +426,44 @@
     }
   }
 </script>
+
+<style>
+  /* Custom styling cho PrimeEditor để phù hợp với giao diện Ant Design */
+  .custom-editor .ql-toolbar.ql-snow {
+    border: 1px solid #d9d9d9;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    background-color: #fff;
+  }
+
+  /* Ẩn nút heading */
+  .custom-editor .ql-toolbar .ql-header,
+  .custom-editor .ql-toolbar .ql-clean,
+  .custom-editor .ql-toolbar .ql-image,
+  .custom-editor .ql-toolbar .ql-code-block {
+    display: none !important;
+  }
+
+  .custom-editor .ql-container.ql-snow {
+    border: 1px solid #d9d9d9;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  .custom-editor .ql-editor {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background-color: #fff;
+    min-height: 320px;
+  }
+
+  .custom-editor .ql-toolbar button:hover,
+  .custom-editor .ql-toolbar button:focus {
+    color: #1890ff;
+  }
+
+  .custom-editor .ql-toolbar button.ql-active {
+    color: #1890ff;
+  }
+</style>

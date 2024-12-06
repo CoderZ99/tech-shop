@@ -118,11 +118,13 @@
       </div>
       <div class="flex gap-4">
         <!-- Product description -->
-        <div class="mt-8 w-2/3 rounded bg-white p-4 shadow-md">
+        <div class="mt-8 w-2/3 break-words rounded bg-white p-4 shadow-md">
           <h2 class="my-4 text-xl font-semibold">Bài viết đánh giá</h2>
           <div>
             <div
-              :class="{ 'line-clamp-5': !showFullDescription }"
+              :class="{
+                'line-clamp-5 max-h-32 overflow-hidden': !showFullDescription,
+              }"
               v-html="formattedDescription"
             ></div>
             <div class="flex justify-center">

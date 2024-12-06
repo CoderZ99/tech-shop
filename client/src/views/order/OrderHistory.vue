@@ -9,7 +9,9 @@
       >
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-4">
-            <p class="font-semibold">Mã đơn hàng: {{ order._id }}</p>
+            <p class="font-semibold">
+              Mã đơn hàng: {{ order._id?.toUpperCase() || order._id }}
+            </p>
             <p>
               Ngày đặt:
               {{ new Date(order.orderAt).toLocaleDateString("vi-VN") }}
@@ -35,7 +37,7 @@
           </div>
           <div class="col-span-4 text-right">
             <p class="font-semibold text-red-500">
-              Tổng tiền: {{ order.totalPrice }}₫
+              Tổng tiền: {{ formatPrice(order.totalPrice) }} ₫
             </p>
             <div class="mt-10 flex justify-end gap-4">
               <template v-if="order.status === 'placed'">
@@ -150,6 +152,10 @@ const handleCancelOrder = async (order) => {
     console.error("Error cancelling order:", error);
     message.error("Có lỗi xảy ra khi hủy đơn hàng");
   }
+};
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("vi-VN").format(price);
 };
 
 onBeforeMount(() => {
