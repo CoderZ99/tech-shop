@@ -48,10 +48,13 @@
                   <RouterLink to="/order-history">Đơn hàng</RouterLink>
                 </a-menu-item>
                 <a-menu-item key="2">
+                  <RouterLink to="/my-reviews">Đánh giá của tôi</RouterLink>
+                </a-menu-item>
+                <a-menu-item key="3">
                   <RouterLink to="/change-password">Đổi mật khẩu</RouterLink>
                 </a-menu-item>
                 <a-menu-divider />
-                <a-menu-item @click="handleLogout" key="3"
+                <a-menu-item @click="handleLogout" key="4"
                   >Đăng xuất
                 </a-menu-item>
               </a-menu>

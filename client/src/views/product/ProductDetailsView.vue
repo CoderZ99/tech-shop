@@ -76,7 +76,10 @@
               <p>Đã bán: {{ product.sold }}</p>
             </div>
             <a-divider dotted />
-            <div class="mt-4 flex w-full gap-4">
+            <div
+              v-if="product.isDeleted === false"
+              class="mt-4 flex w-full gap-4"
+            >
               <div class="w-1/2">
                 <a-button
                   block
