@@ -3,23 +3,36 @@ const { logger } = require("../logger")
 const productsController = {
   // Get all products
   getProducts: async (req, res) => {
-    // Default page and limit
-    const defaultPage = 1
-    const defaultLimit = 5
-
-    // Get page and limit
-    const page = parseInt(req.query.page) || defaultPage
-    const limit = parseInt(req.query.limit) || defaultLimit
-
-    // Get products
     try {
-      const products = await productService.getPaginatedProducts(page, limit)
-      logger.info(`productsController.getAll ~ products:`, products)
+      logger.debug(`START - Get all products processing...`)
+      console.table(req.query)
+      // Get query params
+      const {
+        page = 1,
+        limit = 10,
+        sortBy = "createdAt",
+        orderBy = "desc",
+      } = req.query
+
+      // orderBy === 1 => asc
+      // orderBy === -1 => desc
+      logger.info(`productsController.getProducts ~ sortBy:`, sortBy)
+      logger.info(`productsController.getProducts ~ orderBy:`, orderBy)
+      // Configure paging and sorting
+      const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        sort: { [sortBy]: orderBy === "asc" ? 1 : -1 },
+      }
+      logger.info(`productsController.getProducts ~ options:`, options)
+      // Get products
+      const products = await productService.getProducts(options)
       // Send response
+      logger.debug(`END - Get all products processing - SUCCESS`)
       res.status(200).json({ products })
     } catch (error) {
       logger.error(`productsController.getProducts ~ error: ${error}`)
-      throw new Error(error)
+      throw new Error({ status: 500, message: "Lỗi truy xuất sản phẩm" })
     }
   },
 

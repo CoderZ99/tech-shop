@@ -4,13 +4,10 @@ const productService = {
   /**
    * Retrieves a paginated list of non-deleted products.
    *
+   * @param {Object} options - An object containing pagination options.
    * @return {Promise<Array>} A Promise that resolves to an array of product objects.
    */
-  getPaginatedProducts: async (page = 1, limit = 5) => {
-    const options = {
-      page,
-      limit,
-    }
+  getProducts: async (options) => {
     const products = await Product.paginate({ isDeleted: false }, options)
     logger.info(`getAll ~ products:`, products)
     return products

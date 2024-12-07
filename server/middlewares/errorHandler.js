@@ -10,7 +10,7 @@ module.exports = errorHandler = (err, req, res, next) => {
   const statusCode = err.status || 400
 
   const error = {
-    statusCode,
+    code: statusCode,
     status: "Error",
     message: messageError,
   }
