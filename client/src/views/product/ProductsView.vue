@@ -133,9 +133,7 @@ import { useCartStore } from "@/stores/cart";
 import {
   EyeOutlined,
   ShoppingCartOutlined,
-  CheckCircleTwoTone,
   SearchOutlined,
-  CloseOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { computed, onMounted, reactive, ref } from "vue";
