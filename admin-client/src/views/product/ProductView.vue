@@ -17,6 +17,58 @@
         Tải lại dữ liệu
       </a-button>
     </div>
+    <!-- Filter, Search, Sort -->
+    <div class="flex justify-center gap-3">
+      <!-- Search -->
+      <div class="mb-4 flex w-[40%] items-center">
+        <a-input-search
+          class="flex items-center"
+          :allowClear="true"
+          v-model:value="query.search"
+          placeholder="Nhập tên sản phẩm cần tìm..."
+          @search="handleQueryChange"
+        >
+          <template #enterButton>
+            <div class="flex items-center">
+              <SearchOutlined />
+            </div>
+          </template>
+        </a-input-search>
+      </div>
+      <!-- Filter brand -->
+      <div class="mb-4 flex items-center">
+        <div class="mr-2 text-gray-500">Chọn theo hãng</div>
+        <a-select
+          v-model:value="query.brand"
+          placeholder="Hãng"
+          style="width: 130px"
+          @change="handleQueryChange"
+        >
+          <a-select-option value="">Tất cả</a-select-option>
+          <a-select-option value="Apple">Apple</a-select-option>
+          <a-select-option value="Samsung">Samsung</a-select-option>
+          <a-select-option value="Xiaomi">Xiaomi</a-select-option>
+          <a-select-option value="Vivo">Vivo</a-select-option>
+          <a-select-option value="Nokia">Nokia</a-select-option>
+          <a-select-option value="Realme">Realme</a-select-option>
+        </a-select>
+      </div>
+      <!-- Sort -->
+      <div class="mb-4 flex items-center">
+        <div class="mr-2 text-gray-500">Sắp xếp</div>
+        <a-select
+          v-model:value="query.sort"
+          placeholder="Sắp xếp"
+          style="width: 175px"
+          @change="handleQueryChange"
+        >
+          <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
+          <a-select-option value="sold:desc">Bán chạy</a-select-option>
+          <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
+          <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
+        </a-select>
+      </div>
+    </div>
     <!-- Products Table -->
     <a-table
       :data-source="pagedProducts"
@@ -117,6 +169,11 @@
   <router-view />
 </template>
 <script setup>
+  import {
+    EyeOutlined,
+    ShoppingCartOutlined,
+    SearchOutlined,
+  } from "@ant-design/icons-vue"
   import { deleteProduct, fetchProducts } from "@/api/productService"
   import { Modal, message } from "ant-design-vue"
   import { onMounted, ref, watch, computed } from "vue"
@@ -134,14 +191,27 @@
     total: 0,
     showSizeChanger: false,
   })
+
+  // State for query
+  const query = ref({
+    search: "",
+    category: null,
+    minPrice: null,
+    maxPrice: null,
+    rating: null,
+    sort: "createdAt:desc",
+    page: 1,
+    limit: 16,
+  })
+
   const page = computed(() => paginationConfig.value.current || 1)
   const pageSize = computed(() => paginationConfig.value.pageSize || 5)
   const pagedProducts = computed(() => products?.value || [])
   // Methods
-  const getProducts = async (page, pageSize) => {
+  const getProducts = async (query = { page: 1, limit: 16 }) => {
     loading.value = true
     try {
-      let response = await fetchProducts(page, pageSize)
+      let response = await fetchProducts(query)
       if (response?.data?.products?.docs.length === 0 && page > 1) {
         // Gọi API tải dữ liệu trang trước
         console.log(
@@ -154,7 +224,7 @@
       } else {
         products.value = []
         products.value = [...response?.data?.products?.docs]
-        message.success("Danh sách sản phẩm đã được tải")
+        // message.success("Danh sách sản phẩm đã được tải")
       }
       paginationConfig.value.total = response.data.products.totalDocs
     } catch (error) {
@@ -164,9 +234,13 @@
     }
   }
 
-  const handleTableChange = (pagination) => {
+  const handleQueryChange = async () => {
+    await getProducts(query.value)
+  }
+
+  const handleTableChange = async (pagination) => {
     paginationConfig.value = pagination
-    getProducts(page.value, pageSize.value)
+    await getProducts(page.value, pageSize.value)
   }
 
   /**
@@ -195,7 +269,7 @@
 
   // Get data when init
   onMounted(() => {
-    getProducts(page.value, pageSize.value)
+    getProducts()
   })
 
   // When from child component page back
