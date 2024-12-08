@@ -4,21 +4,61 @@
     <!-- Page title -->
     <h1 class="mb-4 text-3xl font-bold">Danh sách sản phẩm</h1>
     <!-- Filter, Search, Sort -->
-    <!-- Sort -->
-    <div class="mb-4 flex items-center">
-      <div class="mr-2 text-gray-500">Sắp xếp</div>
-      <a-select
-        v-model:value="query.sort"
-        placeholder="Sắp xếp"
-        style="width: 175px"
-        @change="handleQueryChange"
-      >
-        <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
-        <a-select-option value="sold:desc">Bán chạy</a-select-option>
-        <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
-        <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
-      </a-select>
+    <div class="flex justify-center gap-3">
+      <!-- Search -->
+      <div class="mb-4 flex w-1/3 items-center">
+        <a-input-search
+          class="flex items-center"
+          :allowClear="true"
+          v-model:value="query.search"
+          placeholder="Nhập tên sản phẩm cần tìm..."
+          @search="handleQueryChange"
+        >
+          <template #enterButton>
+            <div class="flex items-center">
+              <SearchOutlined />
+            </div>
+          </template>
+        </a-input-search>
+      </div>
+      <!-- Filter brand -->
+      <div class="mb-4 flex items-center">
+        <div class="mr-2 text-gray-500">Chọn theo hãng</div>
+        <a-select
+          v-model:value="query.brand"
+          placeholder="Hãng"
+          style="width: 130px"
+          @change="handleQueryChange"
+        >
+          <a-select-option value="">Tất cả</a-select-option>
+          <a-select-option value="Apple">Apple</a-select-option>
+          <a-select-option value="Samsung">Samsung</a-select-option>
+          <a-select-option value="Xiaomi">Xiaomi</a-select-option>
+          <a-select-option value="Vivo">Vivo</a-select-option>
+          <a-select-option value="Nokia">Nokia</a-select-option>
+          <a-select-option value="Realme">Realme</a-select-option>
+        </a-select>
+      </div>
+      <!-- Sort -->
+      <div class="mb-4 flex items-center">
+        <div class="mr-2 text-gray-500">Sắp xếp</div>
+        <a-select
+          v-model:value="query.sort"
+          placeholder="Sắp xếp"
+          style="width: 175px"
+          @change="handleQueryChange"
+        >
+          <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
+          <a-select-option value="sold:desc">Bán chạy</a-select-option>
+          <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
+          <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
+        </a-select>
+      </div>
     </div>
+    <h3 class="mb-4">
+      Tìm thấy <b class="font-bold">{{ total }}</b> sản phẩm
+    </h3>
+    <!-- Product section -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Product Card list -->
       <div
@@ -94,6 +134,8 @@ import {
   EyeOutlined,
   ShoppingCartOutlined,
   CheckCircleTwoTone,
+  SearchOutlined,
+  CloseOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { computed, onMounted, reactive, ref } from "vue";
@@ -144,10 +186,11 @@ const getProducts = async (query = { page: 1, limit: 16 }) => {
     let response = await fetchProducts(query);
     products.value = [];
     products.value = [...response?.data?.products?.docs];
-    message.success("Danh sách sản phẩm đã được tải");
+    // message.success("Danh sách sản phẩm đã được tải");
     total.value = response?.data?.products?.totalDocs;
   } catch (error) {
-    message.error(error);
+    console.log(`🚀 ~ getProducts ~ error:`, error);
+    message.error("Không thể tải danh sách sản phẩm");
   } finally {
     loading.value = false;
   }

@@ -19,12 +19,12 @@
           >
             <HomeFilled class="mr-2" /><RouterLink to="/">Trang chủ</RouterLink>
           </a-button>
-          <!-- <a-button
+          <a-button
             type="text"
-            class="text-gray-700 hover:bg-gray-200 hover:text-black"
+            class="flex items-center bg-white text-xl text-blue-700 hover:bg-gray-200 hover:text-blue-700"
           >
             <RouterLink to="/products">Sản phẩm</RouterLink>
-          </a-button> -->
+          </a-button>
         </div>
       </div>
       <div class="flex items-center">
