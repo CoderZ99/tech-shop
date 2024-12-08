@@ -3,6 +3,22 @@
   <div class="container mx-auto p-4">
     <!-- Page title -->
     <h1 class="mb-4 text-3xl font-bold">Danh sách sản phẩm</h1>
+    <!-- Filter, Search, Sort -->
+    <!-- Sort -->
+    <div class="mb-4 flex items-center">
+      <div class="mr-2 text-gray-500">Sắp xếp</div>
+      <a-select
+        v-model:value="query.sort"
+        placeholder="Sắp xếp"
+        style="width: 175px"
+        @change="handleQueryChange"
+      >
+        <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
+        <a-select-option value="sold:desc">Bán chạy</a-select-option>
+        <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
+        <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
+      </a-select>
+    </div>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Product Card list -->
       <div
@@ -74,30 +90,46 @@
 <script setup>
 // Imports
 import { useCartStore } from "@/stores/cart";
-import { EyeOutlined, ShoppingCartOutlined } from "@ant-design/icons-vue";
+import {
+  EyeOutlined,
+  ShoppingCartOutlined,
+  CheckCircleTwoTone,
+} from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { fetchProducts } from "../../api/productService";
-import CommonPagination from "../components/CommonPagination.vue";
 import { formatCurrency } from "@/utils/currency";
 
 // Data
 const loading = ref(false);
 const router = useRouter();
 const products = reactive([]);
-const currentPage = ref(1);
 const cartStore = useCartStore();
 
-const pageSize = ref(16); // Default page size is 16;
-const current = ref(1); // Current page
+// Default current page is 1
+// Default page size is 16
+const current = ref(1);
+const pageSize = ref(16);
 const total = ref(0);
 const pagedProducts = computed(() => products?.value || []);
 
+// State for query
+const query = ref({
+  search: "",
+  category: null,
+  minPrice: null,
+  maxPrice: null,
+  rating: null,
+  sort: "createdAt:desc",
+  page: 1,
+  limit: 16,
+});
+
 // Lifecycle
-onMounted(() => {
-  getProducts();
-  console.log(`🚀 ~ onMounted ~ products:`, products);
+onMounted(async () => {
+  await getProducts();
+  console.log(`ProductView ~ onMounted ~ products:${products || []}`);
 });
 
 // Methods
@@ -106,10 +138,10 @@ onMounted(() => {
  *
  * @return {Promise<void>} A promise that resolves when the products are fetched and added to the local state.
  */
-const getProducts = async (page = 1, pageSize = 16) => {
+const getProducts = async (query = { page: 1, limit: 16 }) => {
   loading.value = true;
   try {
-    let response = await fetchProducts(page, pageSize);
+    let response = await fetchProducts(query);
     products.value = [];
     products.value = [...response?.data?.products?.docs];
     message.success("Danh sách sản phẩm đã được tải");
@@ -127,7 +159,12 @@ const getProducts = async (page = 1, pageSize = 16) => {
  * @param {number} page - The page number that has been changed.
  */
 const handlePageChange = async (page) => {
-  await getProducts(page);
+  query.value.page = page;
+  await getProducts(query.value);
+};
+
+const handleQueryChange = async () => {
+  await getProducts(query.value);
 };
 
 const addToCart = (product) => {
@@ -162,3 +199,5 @@ const viewDetails = (product) => {
   router.push({ path: `products/${product.slug}` });
 };
 </script>
+
+<style scoped></style>

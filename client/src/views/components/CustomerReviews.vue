@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, ref } from "vue";
+import { computed, ref } from "vue";
 import Review from "./Review.vue";
 import CommonPagination from "./CommonPagination.vue";
 const props = defineProps({

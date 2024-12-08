@@ -5,29 +5,10 @@ const productsController = {
   getProducts: async (req, res) => {
     try {
       logger.debug(`START - Get all products processing...`)
-      console.table(req.query)
-      // Get query params
-      const {
-        page = 1,
-        limit = 10,
-        sortBy = "createdAt",
-        orderBy = "desc",
-      } = req.query
-
-      // orderBy === 1 => asc
-      // orderBy === -1 => desc
-      logger.info(`productsController.getProducts ~ sortBy:`, sortBy)
-      logger.info(`productsController.getProducts ~ orderBy:`, orderBy)
-      // Configure paging and sorting
-      const options = {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        sort: { [sortBy]: orderBy === "asc" ? 1 : -1 },
-      }
-      logger.info(`productsController.getProducts ~ options:`, options)
       // Get products
-      const products = await productService.getProducts(options)
+      const products = await productService.getProducts(req.query)
       // Send response
+      logger.debug(`GET products count: ${products?.docs?.length || 0}`)
       logger.debug(`END - Get all products processing - SUCCESS`)
       res.status(200).json({ products })
     } catch (error) {

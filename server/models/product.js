@@ -34,5 +34,11 @@ const productSchema = new Schema(
 
 // Add plugin to paginate
 productSchema.plugin(mongoosePaginate)
+// Index for search by $regex
+productSchema.index({ name: 1 })
+productSchema.index({ brand: 1 })
+productSchema.index({ category: 1 })
+// Optimize filter on brand and category
+productSchema.index({ brand: 1, category: 1 })
 // Export model
 module.exports = mongoose.model("Product", productSchema)

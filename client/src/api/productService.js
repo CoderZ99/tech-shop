@@ -4,18 +4,18 @@ import api from "./api";
 const path = "/api/v1/product";
 
 // Get all products
-export const fetchProducts = async (page = 1, limit = 20) => {
+export const fetchProducts = async (query) => {
   try {
     // Define endpoint
     const endpoint = `${path}/`;
     // Call API
-    const response = await api.get(endpoint, { params: { page, limit } });
-    console.log(`🚀 ~ fetchProducts ~ response:`, response);
+    const response = await api.get(endpoint, { params: query });
+    console.log(`fetchProducts ~ response:`, response);
 
     // Return data
     return response;
   } catch (error) {
-    console.log(`🚀 ~ fetchProducts ~ error:`, error.response.data);
+    console.log(`fetchProducts ~ error:`, error.response.data);
     throw error.response.data;
   }
 };

@@ -4,13 +4,62 @@ const productService = {
   /**
    * Retrieves a paginated list of non-deleted products.
    *
-   * @param {Object} options - An object containing pagination options.
+   * @param {Object} queryParams - The query parameters for filtering and sorting the products.
    * @return {Promise<Array>} A Promise that resolves to an array of product objects.
    */
-  getProducts: async (options) => {
-    const products = await Product.paginate({ isDeleted: false }, options)
-    logger.info(`getAll ~ products:`, products)
-    return products
+  getProducts: async (queryParams) => {
+    const {
+      page = 1,
+      limit = 5,
+      sort = "",
+      search = "",
+      category = "",
+      minPrice = 0,
+      maxPrice = 0,
+      rating = 0,
+      brand = "",
+    } = queryParams
+
+    // Filter deleted products by default
+    let query = { isDeleted: false }
+
+    // Search: search by name, brand, or category
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ]
+    }
+
+    // Filter
+    if (category) query.category = category
+    if (minPrice || maxPrice) query.price = {}
+    if (minPrice) query.price.$gte = minPrice
+    if (maxPrice) query.price.$lte = maxPrice
+    if (rating) query.rating = { $gte: rating }
+    if (brand) query.brand = brand
+
+    // Pagination
+    // Sort by createdAt in descending order by default
+    // Example: sort=price:asc or sort=rating:desc
+    const sortOptions = {}
+
+    if (sort) {
+      const [field, direction] = sort.split(":")
+      sortOptions[field] = direction === "asc" ? 1 : -1
+    } else {
+      sortOptions["createdAt"] = -1
+    }
+
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: sortOptions,
+    }
+    // Logger
+    const products = await Product.paginate(query, options)
+    return { ...products, query, options }
   },
   /**
    * Retrieves a product based on ID.
