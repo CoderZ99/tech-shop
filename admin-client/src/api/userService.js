@@ -3,10 +3,10 @@ import api from "./api"
 // Auth endpoint
 const path = "/api/v1/user"
 
-export const fetchUsers = async () => {
+export const fetchUsers = async (query) => {
   try {
     const endpoint = `${path}/`
-    const response = await api.get(endpoint)
+    const response = await api.get(endpoint, { params: query })
     console.log(`🚀 ~ fetchUsers ~ response:`, response)
     return response
   } catch (error) {

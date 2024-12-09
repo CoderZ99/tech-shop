@@ -100,8 +100,8 @@ const usersController = {
   },
   getAllUsers: async (req, res) => {
     try {
-      const data = await userService.getAllUsers()
-      res.status(200).json({ data })
+      const users = await userService.getAllUsers(req.query)
+      res.status(200).json({ users })
     } catch (error) {
       res.json({
         message: `error! ${error.message}`,
