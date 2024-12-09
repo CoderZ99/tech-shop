@@ -66,6 +66,7 @@ orderSchema.pre("save", function (next) {
 
 // Add plugin to paginate
 orderSchema.plugin(mongoosePaginate)
-
+// Define index
+orderSchema.index({ username: 1 })
 // Export model
 module.exports = mongoose.model("Order", orderSchema)

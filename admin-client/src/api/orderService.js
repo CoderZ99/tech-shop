@@ -22,10 +22,10 @@ export const updateOrderStatus = async (orderId, orderItems, status) => {
   }
 }
 
-export const fetchOrders = async () => {
+export const fetchOrders = async (query) => {
   try {
     const endpoint = `${path}/`
-    const response = await api.get(endpoint)
+    const response = await api.get(endpoint, { params: query })
     console.log(`🚀 ~ fetchOrders ~ response:`, response)
     return response
   } catch (error) {

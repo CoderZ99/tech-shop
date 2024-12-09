@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-  import { ref } from "vue"
+  import { ref, onMounted } from "vue"
   import { message } from "ant-design-vue"
   import { getStatusLabel, getStatusColor, orderStatuses } from "@/utils/utils"
 
@@ -69,6 +69,7 @@
       return
     } else {
       emit("update", newStatus.value)
+      newStatus.value = ""
       return
     }
   }
@@ -76,6 +77,10 @@
   const handleCancel = () => {
     emit("cancel")
   }
+
+  onMounted(() => {
+    newStatus.value = ""
+  })
 </script>
 
 <style scoped>

@@ -92,9 +92,9 @@ const orderController = {
 
   getAll: async (req, res) => {
     try {
-      const result = await orderService.getAll()
-      logger.info(`orderController.fetchOrder: ~ result:`, result)
-      res.status(200).json(result)
+      const orders = await orderService.getAll(req.query)
+      logger.info(`orderController.fetchOrder: ~ result:${orders}`)
+      res.status(200).json({ orders })
     } catch (error) {
       logger.info(`orderController.fetchOrder: ~ error:`, error)
       throw new Error(error)
