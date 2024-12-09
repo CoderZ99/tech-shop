@@ -48,7 +48,7 @@
           style="width: 175px"
           @change="handleQueryChange"
         >
-          <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
+          <!-- <a-select-option value="createdAt:desc">Hàng mới</a-select-option> -->
           <a-select-option value="sold:desc">Bán chạy</a-select-option>
           <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
           <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
@@ -68,6 +68,7 @@
       >
         <div class="flex min-h-56 justify-center">
           <a-image
+            :preview="false"
             v-if="product?.images[0]?.url.length > 0"
             :width="200"
             :src="product.images[0].url"
@@ -77,10 +78,17 @@
         </div>
         <h2 class="mb-2 text-lg font-semibold leading-5">{{ product.name }}</h2>
         <!-- Price -->
-        <div class="mb-0 mt-auto flex items-center justify-between self-end">
-          <span class="text-base font-bold text-red-500">{{
-            formatCurrency(product.price)
-          }}</span>
+        <p class="mb-2 text-xl font-bold text-red-500">
+          {{ formatCurrency(product.price) }}
+        </p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <StarFilled class="mr-1 text-yellow-400" />
+            <span class="text-base"
+              >{{ product.rating }} ({{ product.numReviews }})</span
+            >
+          </div>
+          <span class="text-base text-gray-500">Đã bán {{ product.sold }}</span>
         </div>
         <!-- Button group -->
         <div class="mt-4 flex items-center justify-between self-end">
@@ -134,6 +142,7 @@ import {
   EyeOutlined,
   ShoppingCartOutlined,
   SearchOutlined,
+  StarFilled,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import { computed, onMounted, reactive, ref } from "vue";
@@ -161,7 +170,7 @@ const query = ref({
   minPrice: null,
   maxPrice: null,
   rating: null,
-  sort: "createdAt:desc",
+  sort: "sold:desc",
   page: 1,
   limit: 16,
 });
@@ -201,10 +210,13 @@ const getProducts = async (query = { page: 1, limit: 16 }) => {
  */
 const handlePageChange = async (page) => {
   query.value.page = page;
+  current.value = page;
   await getProducts(query.value);
 };
 
 const handleQueryChange = async () => {
+  query.value.page = 1;
+  current.value = 1;
   await getProducts(query.value);
 };
 
