@@ -258,7 +258,7 @@
         message.error(`Xoá tài khoản ${user.username} thất bại!`)
       } else {
         message.success(`Xoá tài khoản ${user.username} thành công!`)
-        getAllUsers()
+        await getAllUsers(query.value)
       }
     } catch (error) {
       message.error(`Có lỗi xảy ra: ${error.message}`)
