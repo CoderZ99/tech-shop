@@ -62,7 +62,7 @@
           style="width: 175px"
           @change="handleQueryChange"
         >
-          <a-select-option value="createdAt:desc">Hàng mới</a-select-option>
+          <!-- <a-select-option value="createdAt:desc">Hàng mới</a-select-option> -->
           <a-select-option value="sold:desc">Bán chạy</a-select-option>
           <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
           <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
@@ -75,8 +75,7 @@
       rowKey="_id"
       bordered
       :loading="loading"
-      :pagination="paginationConfig"
-      @change="handleTableChange"
+      :pagination="false"
     >
       <!-- Products Name Column -->
       <a-table-column
@@ -165,6 +164,17 @@
         </template>
       </a-table-column>
     </a-table>
+    <!-- Pagination -->
+    <div class="mt-4 flex justify-end">
+      <a-pagination
+        v-model:current="current"
+        v-model:total="total"
+        v-model:page-size="pageSize"
+        @change="handlePageChange"
+        show-less-items
+        :showSizeChanger="false"
+      />
+    </div>
   </div>
   <router-view />
 </template>
@@ -176,21 +186,22 @@
   } from "@ant-design/icons-vue"
   import { deleteProduct, fetchProducts } from "@/api/productService"
   import { Modal, message } from "ant-design-vue"
-  import { onMounted, ref, watch, computed } from "vue"
+  import { onMounted, ref, watch, computed, reactive } from "vue"
   import { useRouter } from "vue-router"
   import { useProductStore } from "../../stores/productStore"
 
   const router = useRouter()
   const productStore = useProductStore()
   // Data
-  const products = ref([])
+  const products = reactive([])
   const loading = ref(false)
-  const paginationConfig = ref({
-    current: 1,
-    pageSize: 5,
-    total: 0,
-    showSizeChanger: false,
-  })
+
+  // Default current page is 1
+  // Default page size is 5
+  const current = ref(1)
+  const pageSize = ref(5)
+  const total = ref(0)
+  const pagedProducts = computed(() => products?.value || [])
 
   // State for query
   const query = ref({
@@ -199,48 +210,38 @@
     minPrice: null,
     maxPrice: null,
     rating: null,
-    sort: "createdAt:desc",
+    sort: "sold:desc",
     page: 1,
-    limit: 16,
+    limit: 5,
   })
 
-  const page = computed(() => paginationConfig.value.current || 1)
-  const pageSize = computed(() => paginationConfig.value.pageSize || 5)
-  const pagedProducts = computed(() => products?.value || [])
   // Methods
-  const getProducts = async (query = { page: 1, limit: 16 }) => {
+  const getProducts = async (query = { page: 1, limit: 5 }) => {
     loading.value = true
     try {
       let response = await fetchProducts(query)
-      if (response?.data?.products?.docs.length === 0 && page > 1) {
-        // Gọi API tải dữ liệu trang trước
-        console.log(
-          `(1)get products again ~ page: ${page}, pageSize: ${pageSize}`
-        )
-        paginationConfig.value.current -= 1
-        response = await fetchProducts(paginationConfig.value.current, pageSize)
-        products.value = []
-        products.value = [...response?.data?.products?.docs]
-      } else {
-        products.value = []
-        products.value = [...response?.data?.products?.docs]
-        // message.success("Danh sách sản phẩm đã được tải")
-      }
-      paginationConfig.value.total = response.data.products.totalDocs
+      products.value = []
+      products.value = [...response?.data?.products?.docs]
+      // message.success("Danh sách sản phẩm đã được tải");
+      total.value = response?.data?.products?.totalDocs
     } catch (error) {
-      message.error(error)
+      console.log(`🚀 ~ getProducts ~ error:${error}`)
+      message.error("Có lỗi xảy ra khi tải danh sách sản phẩm")
     } finally {
       loading.value = false
     }
   }
 
-  const handleQueryChange = async () => {
+  const handlePageChange = async (page) => {
+    query.value.page = page
+    current.value = page
     await getProducts(query.value)
   }
 
-  const handleTableChange = async (pagination) => {
-    paginationConfig.value = pagination
-    await getProducts(page.value, pageSize.value)
+  const handleQueryChange = async () => {
+    query.value.page = 1
+    current.value = 1
+    await getProducts(query.value)
   }
 
   /**
@@ -255,27 +256,27 @@
       content: `Bạn có chắc chắn muốn xóa sản phẩm: ${product.name}?`,
       onOk: async () => {
         try {
-          product.isDeleted = true
           await deleteProduct(product._id)
           message.success("Sản phẩm đã được xóa")
         } catch (error) {
           message.error("Có lỗi xảy ra khi xóa sản phẩm")
         } finally {
-          await getProducts(page.value, pageSize.value)
+          await getProducts(query.value)
         }
       },
     })
   }
 
   // Get data when init
-  onMounted(() => {
-    getProducts()
+  onMounted(async () => {
+    await getProducts()
+    console.log(`ProductView ~ onMounted ~ products:${products || []}`)
   })
 
   // When from child component page back
   const computedRouteName = computed(() => router.currentRoute.value.name)
   watch(
     () => computedRouteName.value === "product",
-    () => getProducts(page.value, pageSize.value)
+    () => getProducts()
   )
 </script>
