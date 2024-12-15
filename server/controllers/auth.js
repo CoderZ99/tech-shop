@@ -1,8 +1,10 @@
 const bcrypt = require("bcrypt")
+const crypto = require("crypto")
 
 const authService = require("../services/auth")
 const userService = require("../services/user")
 const tokenService = require("../services/token")
+const emailService = require("../services/email")
 
 const { logger } = require("../logger")
 
@@ -11,10 +13,19 @@ const authController = {
   register: async (req, res) => {
     try {
       const username = req.body.username.toLowerCase()
+      logger.debug(`Register username: ${username}`)
       // Check if the username already exists
       let checkUsername = await userService.getByUsername(username)
       if (checkUsername) {
         throw new Error("Tên tài khoản đã tồn tại!")
+      }
+
+      const email = req.body.email.toLowerCase()
+      logger.debug(`Register email: ${email}`)
+      // Check if the email already exists
+      let checkEmail = await userService.getByEmail(email)
+      if (checkEmail) {
+        throw new Error("Email này đã được đăng ký!")
       }
 
       // Hash the password
@@ -25,10 +36,17 @@ const authController = {
       logger.debug(`register password: ${password}`)
       logger.debug(`password-hashed: ${hashedPassword}`)
 
+      // Generate verify register token
+      const verifyToken = crypto.randomBytes(32).toString("hex")
+      const hashedVerify = crypto
+        .createHash("sha256")
+        .update(verifyToken)
+        .digest("hex")
+
       // Other user info
       // Create the new user
       logger.debug(`register: ~ req.body:`, req.body)
-      const created = await authService.register({
+      const newUser = await authService.register({
         username,
         password: hashedPassword,
         name: req.body?.name,
@@ -36,11 +54,20 @@ const authController = {
         phone: req.body?.phone,
         status: req.body?.status,
         email: req.body?.email,
+        verifyToken: hashedVerify,
       })
 
+      logger.debug(`${username} ~ verifyToken:${hashedVerify}`)
       // Check result register
-      if (!created) {
+      if (!newUser) {
         throw new Error("Có lỗi xảy ra, thử lại sau!!")
+      } else {
+        logger.debug(`register ~ created account: ${newUser}`)
+        // Send verification register account email
+        const verificationUrl = `${process.env.CLIENT_URL}/verify/${hashedVerify}`
+        logger.debug(`verificationUrl: ${verificationUrl}`)
+
+        await emailService.sendVerifyMail(newUser.email, verificationUrl)
       }
 
       // Return the response
@@ -63,6 +90,13 @@ const authController = {
       const user = await userService.getByUsername(username)
       if (!user) {
         return res.status(404).json({ message: "Tên đăng nhập chưa tồn tại!" })
+      }
+
+      // Check if the account is not verified
+      if (user.isVerified === false) {
+        return res
+          .status(403)
+          .json({ message: "Tài khoản chưa được xác thực!" })
       }
       // Check if the user is active
       if (user.status === "disable") {
@@ -132,6 +166,34 @@ const authController = {
       next(error)
     } finally {
       logger.info(`Login process end!`)
+    }
+  },
+  // Verify
+  verify: async (req, res) => {
+    try {
+      // Get verify token from request params
+
+      logger.debug(`req.body: ${req.body}`)
+
+      const { verifyToken } = req.body
+
+      logger.debug(`verifyToken: ${verifyToken}`)
+
+      const user = await tokenService.checkVerifyToken(verifyToken)
+
+      logger.debug(`user: ${user.username}`)
+      logger.debug(`user.isVerified: ${user.isVerified}`)
+
+      // if (!user) {
+      //   return res.status(400).json({ message: "Mã xác thực không hợp lệ" })
+      // }
+
+      // Update verify status
+      const verifiedUser = await userService.updateVerify(user.username)
+
+      res.status(200).json({ message: "Xác thực tài khoản thành công!" })
+    } catch (error) {
+      throw new Error(error)
     }
   },
   // Refresh access token

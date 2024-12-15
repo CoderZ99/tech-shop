@@ -9,6 +9,7 @@ const authService = {
     phone,
     status,
     email,
+    verifyToken,
   }) => {
     const newUser = new User({
       username,
@@ -18,6 +19,7 @@ const authService = {
       phone,
       status,
       email,
+      verifyToken,
     })
     return await newUser.save()
   },

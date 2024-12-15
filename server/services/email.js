@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer")
+const { logger } = require("../logger")
 
 class EmailService {
   constructor() {
@@ -15,7 +16,7 @@ class EmailService {
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: email,
-      subject: "Đặt lại mật khẩu Tech Shop",
+      subject: "Đặt lại mật khẩu iTech Shop",
       html: `
         <h1>Yêu cầu đặt lại mật khẩu</h1>
         <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản iTech Shop của mình.</p>
@@ -37,7 +38,23 @@ class EmailService {
     try {
       await this.transporter.sendMail(mailOptions)
     } catch (err) {
-      throw new Error("Không thể gửi email: " + err.message)
+      throw new Error(`Không thể gửi email reset mật khẩu: ${err.message}`)
+    }
+  }
+
+  async sendVerifyMail(email, verificationUrl) {
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: "Xác thực đăng ký tài khoản iTech Shop của bạn",
+      html: `<p>Vui lòng nhấp vào liên kết bên dưới để kích hoạt tài khoản của bạn:</p>
+             <a href="${verificationUrl}">${verificationUrl}</a>`,
+    }
+    try {
+      await this.transporter.sendMail(mailOptions)
+    } catch (err) {
+      logger.error(`sendVerifyMail ~ err: ${err}`)
+      throw new Error(`Không thể gửi mail xác thực tài khoản: ${err.message}`)
     }
   }
 }

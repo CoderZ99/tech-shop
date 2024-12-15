@@ -9,6 +9,8 @@ const { loginRequired } = require("../middlewares/auth")
 
 router.post("/register", authController.register)
 
+router.post("/verify", authController.verify)
+
 router.post("/login", authController.login)
 
 router.post("/refresh", authController.refreshAccessToken)
@@ -19,6 +21,10 @@ router.post("/forgot", passwordController.forgotPassword)
 
 router.post("/reset", passwordController.resetPassword)
 
-router.post("/change-password", loginRequired, passwordController.changePassword)
+router.post(
+  "/change-password",
+  loginRequired,
+  passwordController.changePassword
+)
 
 module.exports = router

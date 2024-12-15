@@ -25,6 +25,8 @@ const userSchema = new Schema(
     isDeleted: { type: Boolean, default: false },
     resetPasswordToken: { type: String, default: "" },
     resetPasswordExpires: { type: Date, default: null },
+    isVerified: { type: Boolean, default: false },
+    verifyToken: { type: String, default: "" },
   },
   { timestamps: true }
 )
@@ -32,7 +34,7 @@ const userSchema = new Schema(
 // Add plugin to paginate
 userSchema.plugin(mongoosePaginate)
 // Define index
-userSchema.index({ username: 1 }, { unique: true })
+userSchema.index({ username: 1 })
 
 // Create and export model from schema
 module.exports = mongoose.model("User", userSchema)

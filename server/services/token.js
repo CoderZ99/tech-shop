@@ -44,7 +44,7 @@ function verifyToken(token, key) {
  * @return {Promise<Object|null>} A Promise that resolves to the user object if the token is valid, or null if it is not found.
  */
 async function checkRefreshToken(token) {
-  return await User.findOne({ refresh_token: token })
+  return await User.findOne({ refreshToken: token })
 }
 
 /**
@@ -62,10 +62,15 @@ async function updateUserRefreshToken(username, refreshToken) {
   )
 }
 
+async function checkVerifyToken(token) {
+  return await User.findOne({ verifyToken: token })
+}
+
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
   verifyToken,
   checkRefreshToken,
   updateUserRefreshToken,
+  checkVerifyToken,
 }

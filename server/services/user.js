@@ -37,7 +37,14 @@ const userService = {
     return { ...users, query, options }
   },
   getByUsername: async (username) => {
-    return await User.findOne({ username: username })
+    return await User.findOne({
+      username: username,
+      role: "user",
+      // isVerified: true,
+    })
+  },
+  getByEmail: async (email) => {
+    return await User.findOne({ email: email, role: "user", isVerified: true })
   },
   blockUser: async (username) => {
     logger.info(`userService.blockUser ~ username:${username}`)
@@ -55,17 +62,34 @@ const userService = {
     )
   },
   /**
+   * Update verify status by username
+   * @param {*} username
+   * @returns {Promise} - A promise that resolves to the updated user object
+   */
+  updateVerify: async (username) => {
+    return await User.findOneAndUpdate(
+      { username: username },
+      { isVerified: true, verifyToken: "" },
+      { new: true }
+    )
+  },
+
+  /**
    * Updates user data by username
    */
   updateUser: async (username, data) => {
-    return await User.findOneAndUpdate({ username: username }, data, {
-      new: true,
-    })
+    return await User.findOneAndUpdate(
+      { username: username, role: "user" },
+      data,
+      {
+        new: true,
+      }
+    )
   },
   // Delete user by setting isDeleted to true
   deleteUser: async (username) => {
     return await User.findOneAndUpdate(
-      { username: username },
+      { username: username, role: "user" },
       { isDeleted: true },
       { new: true }
     )

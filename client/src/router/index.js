@@ -85,6 +85,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: "/verify/:token",
+      name: "verify",
+      component: () => import("../views/auth/VerifyRegisterView.vue"),
+    },
+    {
       path: "/my-reviews",
       name: "my-reviews",
       component: () => import("../views/components/UserReviews.vue"),
