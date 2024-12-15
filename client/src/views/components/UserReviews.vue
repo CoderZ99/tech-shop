@@ -76,13 +76,15 @@
       v-model:visible="editModalVisible"
       title="Chỉnh sửa đánh giá"
       @ok="handleEditSubmit"
+      okText="Cập nhật"
+      cancelText="Huỷ"
       :confirmLoading="editLoading"
     >
       <a-form :model="editForm" layout="vertical">
-        <a-form-item label="Đánh giá">
+        <a-form-item label="Số điểm đánh giá">
           <a-rate v-model:value="editForm.rating" />
         </a-form-item>
-        <a-form-item label="Nhận xét">
+        <a-form-item label="Nội dung nhận xét">
           <a-textarea
             v-model:value="editForm.comment"
             :rows="4"

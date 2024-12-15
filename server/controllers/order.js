@@ -126,6 +126,17 @@ const orderController = {
       throw new Error(error)
     }
   },
+
+  getRevenue: async (req, res) => {
+    try {
+      const revenue = await orderService.getRevenue()
+      logger.info(`orderController.getRevenue: ~ revenue${revenue}`)
+      res.status(200).json(revenue)
+    } catch (error) {
+      logger.info(`orderController.getRevenue: ~ error:`, error)
+      throw new Error(error)
+    }
+  },
 }
 
 module.exports = orderController

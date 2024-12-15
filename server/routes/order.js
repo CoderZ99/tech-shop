@@ -8,6 +8,8 @@ const { verifyAdmin } = require("../middlewares/auth")
 
 router.get("/", orderController.getAll)
 
+router.get("/revenue", orderController.getRevenue)
+
 router.get("/:id", orderController.getById)
 
 router.get("/user/:username", orderController.getAllByUsername)

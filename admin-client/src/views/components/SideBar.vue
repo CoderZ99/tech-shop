@@ -8,11 +8,20 @@
           <SettingOutlined
             :spin="true"
             class="mr-2"
-          />Admin Dashboard
+          />Admin
         </div>
       </div>
       <nav class="flex-1">
         <ul>
+          <li class="px-6 py-4 hover:bg-gray-700">
+            <button
+              @click="router.push({ name: 'statistics' })"
+              class="flex items-center"
+            >
+              <BarChartOutlined class="mr-2" />
+              Thống kê
+            </button>
+          </li>
           <li class="px-6 py-4 hover:bg-gray-700">
             <button
               @click="router.push({ name: 'user' })"
@@ -57,15 +66,16 @@
 
 <script setup>
   import { useDashboardStore } from "@/stores/dashboard"
+  import { useAuthStore } from "../../stores/auth"
+  import { useRouter } from "vue-router"
   import {
     AppstoreOutlined,
     LogoutOutlined,
     SettingOutlined,
     ShoppingCartOutlined,
     UserOutlined,
+    BarChartOutlined,
   } from "@ant-design/icons-vue"
-  import { useRouter } from "vue-router"
-  import { useAuthStore } from "../../stores/auth"
   const router = useRouter()
   const authStore = useAuthStore()
   const dashboardStore = useDashboardStore()

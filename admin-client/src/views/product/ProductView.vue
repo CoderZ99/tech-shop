@@ -10,7 +10,7 @@
         >Thêm sản phẩm</a-button
       >
       <a-button
-        @click="getProducts(page, pageSize)"
+        @click="getProducts(query)"
         :disabled="loading"
         type="primary"
       >
@@ -269,7 +269,7 @@
 
   // Get data when init
   onMounted(async () => {
-    await getProducts()
+    await getProducts(query.value)
     console.log(`ProductView ~ onMounted ~ products:${products || []}`)
   })
 
@@ -277,6 +277,6 @@
   const computedRouteName = computed(() => router.currentRoute.value.name)
   watch(
     () => computedRouteName.value === "product",
-    () => getProducts()
+    () => getProducts(query.value)
   )
 </script>

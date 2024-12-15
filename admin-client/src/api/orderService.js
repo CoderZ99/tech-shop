@@ -45,3 +45,14 @@ export const deleteOrder = async (orderId) => {
     throw error.response.data
   }
 }
+
+export const getRevenue = async () => {
+  try {
+    const endpoint = `${path}/revenue`
+    const response = await api.get(endpoint)
+    console.log(`🚀 ~ getRevenue ~ response:`, response)
+    return response
+  } catch (error) {
+    console.log(`🚀 ~ getRevenue ~ error:`, error.response.data)
+  }
+}

@@ -12,6 +12,6 @@
   import Sidebar from "../views/components/SideBar.vue"
   const router = useRouter()
   onMounted(() => {
-    router.push({ path: "/dashboard/user" })
+    router.push({ path: "/dashboard/statistics" })
   })
 </script>

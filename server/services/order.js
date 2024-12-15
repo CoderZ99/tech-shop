@@ -62,6 +62,13 @@ const orderService = {
   deleteOrder: async (id) => {
     return await Order.findByIdAndUpdate(id, { isDeleted: true }, { new: true })
   },
+
+  getRevenue: async () => {
+    const revenue = await Order.aggregate([
+      { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } },
+    ])
+    return revenue
+  },
 }
 
 module.exports = orderService

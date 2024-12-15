@@ -7,6 +7,8 @@ import AddProductView from "../views/product/AddProductView.vue"
 import EditProductView from "../views/product/EditProductView.vue"
 import ProductView from "../views/product/ProductView.vue"
 import UserView from "../views/UserView.vue"
+import Statistics from "../views/Statistics.vue"
+
 // router
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +21,11 @@ const router = createRouter({
       component: DashboardView,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: "statistics",
+          name: "statistics",
+          component: Statistics,
+        },
         {
           path: "user",
           name: "user",
