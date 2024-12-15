@@ -13,7 +13,7 @@ const userService = {
       status = "",
     } = queryParams
     // Filter deleted users by default
-    let query = { role: "user", isDeleted: false }
+    let query = { role: "user", isDeleted: false, isVerified: true }
     // Search: search by name, brand, or category
     if (search) {
       query.$or = [{ username: { $regex: search, $options: "i" } }]
@@ -39,7 +39,7 @@ const userService = {
   getByUsername: async (username) => {
     return await User.findOne({
       username: username,
-      role: "user",
+      // role: "user",
       // isVerified: true,
     })
   },

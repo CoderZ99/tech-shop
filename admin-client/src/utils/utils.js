@@ -68,6 +68,18 @@ export const orderStatuses = [
   { value: "cancelled", label: "Đã hủy" },
 ]
 
+export const disableOrderStatuses = (currentStatus) => {
+  const currentIndex = orderStatuses.findIndex(
+    (status) => status.value === currentStatus
+  )
+
+  // Thêm thuộc tính disabled vào trạng thái trước trạng thái hiện tại
+  return orderStatuses.map((status, index) => ({
+    ...status,
+    disabled: index < currentIndex, // Disable nếu index nhỏ hơn vị trí của currentStatus
+  }))
+}
+
 export const formatDate = (text) => {
   const date = new Date(text)
   return date.toLocaleDateString("vi-VN", {

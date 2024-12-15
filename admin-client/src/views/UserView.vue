@@ -129,18 +129,21 @@
         align="center"
         key="action"
         title="Hành động"
+        width="315px"
+        fixed="right"
       >
         <template #default="{ record }">
           <a-button
-            class="min-w-20 mr-2"
+            class="min-w-20 mr-2 my-2"
             size="middle"
             type="primary"
+            danger
             @click="removeUser(record)"
           >
             Xóa tài khoản
           </a-button>
           <a-button
-            class="min-w-40"
+            class="min-w-25"
             size="middle"
             :danger="record.status === 'active'"
             type="primary"
