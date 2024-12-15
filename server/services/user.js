@@ -44,7 +44,11 @@ const userService = {
     })
   },
   getByEmail: async (email) => {
-    return await User.findOne({ email: email, role: "user", isVerified: true })
+    return await User.findOne({
+      email: email,
+      role: "user",
+      // isVerified: true,
+    })
   },
   blockUser: async (username) => {
     logger.info(`userService.blockUser ~ username:${username}`)
