@@ -143,7 +143,7 @@
             Xóa tài khoản
           </a-button>
           <a-button
-            class="min-w-25"
+            class="min-w-35"
             size="middle"
             :danger="record.status === 'active'"
             type="primary"

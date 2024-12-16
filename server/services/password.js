@@ -3,7 +3,6 @@ const crypto = require("crypto")
 const bcrypt = require("bcrypt")
 const emailService = require("./email")
 const { logger } = require("../logger")
-const { changePassword } = require("../controllers/password")
 
 const passwordService = {
   forgotPassword: async (email) => {

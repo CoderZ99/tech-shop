@@ -67,7 +67,14 @@ const authController = {
         const verificationUrl = `${process.env.CLIENT_URL}/verify/${hashedVerify}`
         logger.debug(`verificationUrl: ${verificationUrl}`)
 
-        await emailService.sendVerifyMail(newUser.email, verificationUrl)
+        const sendMail = await emailService.sendVerifyMail(
+          newUser.email,
+          verificationUrl
+        )
+
+        if (!sendMail) {
+          throw new Error("Không thể gửi email xác thực tài khoản!")
+        }
       }
 
       // Return the response
