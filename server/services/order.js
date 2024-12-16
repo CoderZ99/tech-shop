@@ -65,6 +65,7 @@ const orderService = {
 
   getRevenue: async () => {
     const revenue = await Order.aggregate([
+      { $match: { status: "delivered" } },
       { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } },
     ])
     return revenue
