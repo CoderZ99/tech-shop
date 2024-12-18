@@ -68,6 +68,10 @@ export const orderStatuses = [
   { value: "cancelled", label: "Đã hủy" },
 ]
 
+export const getStatusIndex = (currentStatus) => {
+  return orderStatuses.findIndex((status) => status.value === currentStatus)
+}
+
 export const disableOrderStatuses = (currentStatus) => {
   const currentIndex = orderStatuses.findIndex(
     (status) => status.value === currentStatus

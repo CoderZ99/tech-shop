@@ -40,7 +40,12 @@
 <script setup>
   import { ref, onMounted } from "vue"
   import { message } from "ant-design-vue"
-  import { getStatusLabel, getStatusColor, orderStatuses } from "@/utils/utils"
+  import {
+    getStatusLabel,
+    getStatusColor,
+    orderStatuses,
+    getStatusIndex,
+  } from "@/utils/utils"
 
   const props = defineProps({
     visible: {

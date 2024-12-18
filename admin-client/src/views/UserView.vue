@@ -126,7 +126,7 @@
         </template>
       </a-table-column>
       <a-table-column
-        align="center"
+        align="left"
         key="action"
         title="Hành động"
         width="315px"
@@ -143,8 +143,7 @@
             Xóa tài khoản
           </a-button>
           <a-button
-            class="min-w-35"
-            size="middle"
+            class="min-w-30"
             :danger="record.status === 'active'"
             type="primary"
             @click="toggleUserStatus(record)"

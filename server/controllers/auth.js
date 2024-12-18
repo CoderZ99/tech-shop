@@ -29,6 +29,7 @@ const authController = {
       }
 
       // Hash the password
+      // Hash round = 10
       const password = req.body.password
       const salt = await bcrypt.genSalt(10)
       const hashedPassword = await bcrypt.hash(password, salt)

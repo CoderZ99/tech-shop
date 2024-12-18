@@ -238,6 +238,15 @@
     page: 1,
     limit: 5,
   })
+
+  const statusFlow = {
+    placed: ["processing", "cancelled"],
+    processing: ["shipping", "cancelled"],
+    shipping: ["delivered", "cancelled"],
+    delivered: [],
+    cancelled: [],
+  }
+
   const getAllOrders = async (query = { page: 1, limit: 5 }) => {
     loading.value = true
     try {
@@ -274,6 +283,12 @@
     console.log(`selectedOrder:`, selectedOrder)
     console.log(`selectedOrder.orderItems:`, selectedOrder.value.orderItems)
     try {
+      const allowedNextStatus = statusFlow[status]
+      if (!allowedNextStatus.includes(status)) {
+        throw new Error(
+          `Không thể cập nhật trạng thái đơn thành ${getStatusLabel(status)}`
+        )
+      }
       const response = await updateOrderStatus(
         selectedOrder?.value?._id,
         selectedOrder?.value?.orderItems,

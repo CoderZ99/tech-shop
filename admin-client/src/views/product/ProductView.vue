@@ -63,9 +63,9 @@
           @change="handleQueryChange"
         >
           <!-- <a-select-option value="createdAt:desc">Hàng mới</a-select-option> -->
-          <a-select-option value="sold:desc">Bán chạy</a-select-option>
-          <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
+          <!-- <a-select-option value="sold:desc">Bán chạy</a-select-option> -->
           <a-select-option value="price:desc">Giá cao đến thấp</a-select-option>
+          <a-select-option value="price:asc">Giá thấp đến cao</a-select-option>
         </a-select>
       </div>
     </div>
@@ -210,16 +210,17 @@
     minPrice: null,
     maxPrice: null,
     rating: null,
-    sort: "sold:desc",
+    sort: "price:desc",
     page: 1,
     limit: 5,
+    brand: "",
   })
 
   // Methods
   const getProducts = async (query = { page: 1, limit: 5 }) => {
     loading.value = true
     try {
-      let response = await fetchProducts(query)
+      let response = await fetchProducts(query?.value || query)
       products.value = []
       products.value = [...response?.data?.products?.docs]
       // message.success("Danh sách sản phẩm đã được tải");
@@ -233,8 +234,8 @@
   }
 
   const handlePageChange = async (page) => {
-    query.value.page = page
     current.value = page
+    query.value.page = page
     await getProducts(query.value)
   }
 
