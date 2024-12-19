@@ -173,11 +173,12 @@ const query = ref({
   sort: "sold:desc",
   page: 1,
   limit: 16,
+  brand: "",
 });
 
 // Lifecycle
 onMounted(async () => {
-  await getProducts();
+  await getProducts(query.value);
   console.log(`ProductView ~ onMounted ~ products:${products || []}`);
 });
 
